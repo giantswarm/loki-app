@@ -1,0 +1,4 @@
+s3_region: s3://eu-central-1
+bucketnames: gs-loki-data
+podAnnotations:
+  iam.amazonaws.com/role: loki-s3-access
