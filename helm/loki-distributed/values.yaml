@@ -203,8 +203,7 @@ ingester:
   # -- The name of the PriorityClass for ingester pods
   priorityClassName: null
   # -- Annotations for ingester pods
-  podAnnotations:
-    iam.amazonaws.com/role: loki-data-s3-access
+  podAnnotations: {}
   # -- Additional CLI args for the ingester
   extraArgs: []
   # -- Environment variables to add to the ingester pods
@@ -313,8 +312,7 @@ querier:
   # -- The name of the PriorityClass for querier pods
   priorityClassName: null
   # -- Annotations for querier pods
-  podAnnotations:
-    iam.amazonaws.com/role: loki-data-s3-access
+  podAnnotations: {}
   # -- Additional CLI args for the querier
   extraArgs: []
   # -- Environment variables to add to the querier pods
