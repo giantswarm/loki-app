@@ -1,5 +1,5 @@
-s3_region: s3://eu-central-1
-bucketnames: gs-loki-data
+s3_region: s3://eu-west-1
+bucketnames: gs-loki-storage
 podAnnotations:
   iam.amazonaws.com/role: loki-s3-access
 
@@ -11,9 +11,13 @@ gateway:
   ingress:
     enabled: true
     hosts:
-      - host: loki.8jhhc.k8s.gauss.eu-west-1.aws.gigantic.io
+      - host: loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
         paths:
           - /
+    tls:
+      - hosts:
+          - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
+        secretName: loki-ingress-cert
 
 s3_annotations: &s3-ann
   podAnnotations:
