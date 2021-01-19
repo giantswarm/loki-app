@@ -20,6 +20,12 @@ gateway:
       - hosts:
           - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
         secretName: loki-ingress-cert
+  basicAuth:
+    enabled: true
+    username: "loki"
+    password: "my-brother-is-thor"
+    # -- Existing basic auth secret to use. Must contain '.htpasswd'
+    #existingSecret: null
 
 s3_annotations: &s3-ann
   podAnnotations:
