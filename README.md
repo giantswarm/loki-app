@@ -29,7 +29,7 @@ necessary to make it work with AWS S3 using [KIAM](https://github.com/uswitch/ki
      file in S3 for you ([check here](https://grafana.com/docs/loki/latest/operations/storage/retention/) and [here](https://grafana.com/docs/loki/latest/operations/storage/table-manager/)).
 3. Prepare AWS role.
    * Create a Policy in IAM with the following permissions
-   * (adjust for your bucket name) and name it for ex. `loki-s3-access`:
+   * (adjust for your bucket name) and name it for ex. `gs-loki-storage`:
 
         ```json
         {
@@ -74,7 +74,7 @@ necessary to make it work with AWS S3 using [KIAM](https://github.com/uswitch/ki
                 {
                 "Effect": "Allow",
                 "Principal": {
-                    "AWS": "AROASUCL32KBWLWJ7QIMJ"
+                    "AWS": "arn:aws:iam::180547736195:role/m2h60-IAMManager-Role"
                 },
                 "Action": "sts:AssumeRole"
                 }
