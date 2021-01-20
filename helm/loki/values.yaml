@@ -1,7 +1,7 @@
 global:
   image:
     # -- Overrides the Docker registry globally for all images
-    registry: null
+    registry: quay.io
   # -- Overrides the priorityClassName for all pods
   priorityClassName: null
   # -- configures cluster domain ("cluster.local" by default)
@@ -23,7 +23,7 @@ loki:
     # -- The Docker registry
     registry: docker.io
     # -- Docker image repository
-    repository: grafana/loki
+    repository: giantswarm/loki
     # -- Overrides the image tag whose default is the chart's appVersion
     tag: null
     # -- Docker image pull policy
@@ -465,7 +465,7 @@ gateway:
     # -- The Docker registry for the gateway image
     registry: docker.io
     # -- The gateway image repository
-    repository: nginxinc/nginx-unprivileged
+    repository: giantswarm/nginx-unprivileged
     # -- The gateway image tag
     tag: 1.19-alpine
     # -- The gateway image pull policy
