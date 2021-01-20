@@ -1,16 +1,17 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@0.16.0
+  architect: giantswarm/architect@1.1.1
 
 workflows:
   package-and-push-chart-on-tag:
     jobs:
       - architect/push-to-app-catalog:
           context: "architect"
-          name: "package and push {CHART-NAME} chart"
-          app_catalog: "giantswarm-playground-catalog"
-          app_catalog_test: "giantswarm-playground-test-catalog"
-          chart: "{CHART-NAME}"
+          executor: "app-build-suite"
+          name: "package and push loki chart"
+          app_catalog: "giantswarm-catalog"
+          app_catalog_test: "giantswarm-test-catalog"
+          chart: "loki-distributed"
           # Trigger job on git tag.
           filters:
             tags:
