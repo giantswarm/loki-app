@@ -38,7 +38,7 @@ AWS account.
    * create a retention policy for the bucket; currently, loki won't delete
      files in S3 for you ([check here](https://grafana.com/docs/loki/latest/operations/storage/retention/) and [here](https://grafana.com/docs/loki/latest/operations/storage/table-manager/)).
 2. Prepare AWS role.
-   * Create a Policy in IAM with the following permissions (adjust for your bucket name, `gs-loki-storage` used below) and name the Policy for ex. `s3-loki-access`:
+   * Create a Policy in IAM with the following permissions (adjust for your bucket name, `gs-loki-storage` used below) and name the Policy for ex. `loki-s3-access`:
 
         ```json
         {
@@ -101,7 +101,7 @@ AWS account.
 
    ```bash
    kubectl create ns loki
-   kubectl annotate ns loki iam.amazonaws.com/permitted="s3-loki-access"
+   kubectl annotate ns loki iam.amazonaws.com/permitted="loki-s3-access"
    ```
 
 5. Install the app
