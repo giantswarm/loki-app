@@ -95,6 +95,19 @@ AWS account.
     read the comments for options and adjust to your needs. To check all available
     options, please consult the [upstream `values.yaml` file](helm/loki/values.yaml).
 
+4. Prepare the namespace
+   Currently, you have to manually pre-create the namespace and annotate it with
+   IAM Roles required for pods running in the namespace:
+
+   ```bash
+   kubectl create ns loki
+   kubectl annotate ns loki iam.amazonaws.com/permitted="s3-loki-access"
+   ```
+
+5. Install the app
+   Now you can proceed with installing the app the usual way. Don't forget to use
+   the same namespace as you prepared above for the installation.
+
 ## Source code origin
 
 The source code in `helm/loki` is a git-subtree coming from the
