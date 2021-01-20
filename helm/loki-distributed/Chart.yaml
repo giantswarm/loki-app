@@ -1,5 +1,5 @@
 apiVersion: v2
-name: loki-distributed
+name: loki
 description: Helm chart for Grafana Loki in microservices mode
 type: application
 appVersion: 2.1.0
