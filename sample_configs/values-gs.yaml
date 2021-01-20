@@ -49,9 +49,7 @@ s3_annotations: &s3-ann
     iam.amazonaws.com/role: loki-s3-access
 
 ingester: *s3-ann
-
 distributor: *s3-ann
-
 querier: *s3-ann
-
 queryFrontend: *s3-ann
+compactor: *s3-ann
