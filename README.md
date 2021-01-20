@@ -95,6 +95,20 @@ AWS account.
     read the comments for options and adjust to your needs. To check all available
     options, please consult the [upstream `values.yaml` file](helm/loki/values.yaml).
 
+    1. Setting external basic auth logins
+    If you want to use `gateway.basicAuth.existingSecret` config option, you can create
+    the secret with necessary users and passwords by using the following commands:
+
+    ```bash
+    echo "passwd01" | htpasswd -i -c.htpasswd tenant01
+    echo "passwd02" | htpasswd -i .htpasswd tenant02
+    echo "passwd03" | htpasswd -i .htpasswd tenant03
+    ...
+    kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
+    ```
+
+    Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
+
 4. Prepare the namespace
    Currently, you have to manually pre-create the namespace and annotate it with
    IAM Roles required for pods running in the namespace:
