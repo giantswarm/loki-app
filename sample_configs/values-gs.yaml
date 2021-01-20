@@ -1,25 +1,40 @@
+# the name of AWS region where you're running cluster instances and where the bucket
+# should be created
 s3_region: s3://eu-west-1
+# the name fo the bucket to store loki's data
 bucketnames: gs-loki-storage
-podAnnotations:
-  iam.amazonaws.com/role: loki-s3-access
 
+# by default, the k8s' DNS is named `kube-dns`; you might override it here
+# (please consult your cluster configuration for the correct value)
 global:
   dnsService: "coredns"
 
+# Loki consists of multiple microservices. Gateway is an nginx-based proxy
+# that routes requests to correct microservices. It should be consider the entry point
+# of your Loki deployment.
 gateway:
   replicas: 3
   ingress:
     enabled: true
     annotations:
+      # this annotation means cert-manager will automatically create a ACME certificate
       cert-manager.io/cluster-issuer: letsencrypt-giantswarm
     hosts:
+      # host name assigned to your loki instance (must be registered in DNS)
       - host: loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
         paths:
           - /
     tls:
       - hosts:
+          # host name assigned to your loki instance (must be registered in DNS)
           - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
         secretName: loki-ingress-cert
+  # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
+  # HTTP header to be set to indicate which tenant's logs are these. To enable
+  # minimal security, you can ask gateway to do HTTP basicAuth using `username` and
+  # `password` or point it to a secret containing the `.htpasswd` file, which includes
+  # multiple username-password pairs.
+  # Please note: no checking of the Tenant ID vs username is performed!
   basicAuth:
     enabled: true
     username: "loki"
@@ -27,6 +42,8 @@ gateway:
     # -- Existing basic auth secret to use. Must contain '.htpasswd'
     #existingSecret: null
 
+# pod annotations to be applied to pods; the annotation below is `kiam` specific
+# and means that pods having it can use `loki-s3-access` IAM Role
 s3_annotations: &s3-ann
   podAnnotations:
     iam.amazonaws.com/role: loki-s3-access
