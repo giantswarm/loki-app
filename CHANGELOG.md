@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1-alpha] - 2021-03-04
+
 ### Added
 
 - Annotation for routing alerts to team halo
@@ -23,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.1.0-alpha...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.1.1-alpha...HEAD
+[0.1.1-alpha]: https://github.com/giantswarm/loki-app/compare/v0.1.0-alpha...v0.1.1-alpha
 [0.1.0-alpha]: https://github.com/giantswarm/loki-app/compare/v0.1.0...v0.1.0-alpha
 [0.1.0]: https://github.com/giantswarm/loki-app/releases/tag/v0.1.0
