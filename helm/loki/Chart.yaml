@@ -20,3 +20,5 @@ maintainers:
     url: https://github.com/giantswarm/loki-app
 restrictions:
   namespaceSingleton: true
+annotations:
+  application.giantswarm.io/team: "halo"
