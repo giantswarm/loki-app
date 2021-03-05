@@ -18,6 +18,20 @@ fullnameOverride: null
 # -- Image pull secrets for Docker images
 imagePullSecrets: []
 
+# either s3 or azure supported at this point
+storage: s3
+
+aws: {}
+  # s3_region: s3://eu-west-1
+  # bucketnames: my-bucket
+azure: {}
+  # # 'Storage account' name
+  # account_name: my-account-name
+  # # 'Blob service' 'Container' name
+  # container_name: my-container-name
+  # # 'Storage account' 'Access key'
+  # account_key: my-account-key
+
 loki:
   image:
     # -- The Docker registry
@@ -86,7 +100,7 @@ loki:
       configs:
         - from: 2020-09-07
           store: boltdb-shipper
-          object_store: aws
+          object_store: {{ .Values.storage }}
           schema: v11
           index:
             prefix: loki_index_
@@ -94,11 +108,15 @@ loki:
 
     storage_config:
       aws:
-        s3: {{ .Values.s3_region }}
-        bucketnames: {{ .Values.bucketnames }}
+        s3: {{ .Values.aws.s3_region }}
+        bucketnames: {{ .Values.aws.bucketnames }}
+      azure:
+        container_name: {{ .Values.azure.container_name }}
+        account_name: {{ .Values.azure.account_name }}
+        account_key: {{ .Values.azure.account_key }}
       boltdb_shipper:
         active_index_directory: /var/loki/index
-        shared_store: s3
+        shared_store: {{ .Values.storage }}
         cache_location: /var/loki/cache
 
     query_range:
@@ -121,7 +139,7 @@ loki:
       compress_responses: true
 
     compactor:
-      shared_store: s3
+      shared_store: {{ .Values.storage }}
 
       #    ruler:
       #      storage:

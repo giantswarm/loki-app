@@ -122,6 +122,19 @@ AWS account.
    Now you can proceed with installing the app the usual way. Don't forget to use
    the same namespace as you prepared above for the installation.
 
+### Deploying on Azure
+
+1. Find the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
+1. Create 'Storage Account' on Azure ([How-to](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create)) ['Create storage account'](https://portal.azure.com/#create/Microsoft.StorageAccount)
+  - 'Account kind' should be 'BlobStorage'
+1. Create a 'Blob service' 'Container' in your storage account
+1. Go to the 'Access keys' page of your 'Storage account'
+  - Use the 'Storage account name' for `azure_storage.account_name`
+  - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
+  - Use one of the keys for `azure.storage_key`
+1. Make a personal copy of the [azure example file](sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
+1. Install the app using your values.
+
 ## Source code origin
 
 The source code in `helm/loki` is a git-subtree coming from the
