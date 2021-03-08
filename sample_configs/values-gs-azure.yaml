@@ -1,17 +1,15 @@
-# Use aws (s3) storage
-storage: s3
-
-# the name of AWS region where you're running cluster instances and where the bucket
-# should be created
-aws:
-  s3_region: s3://eu-west-1
-  # the name fo the bucket to store loki's data
-  bucketnames: gs-loki-storage
-
-# by default, the k8s' DNS is named `kube-dns`; you might override it here
-# (please consult your cluster configuration for the correct value)
 global:
   dnsService: "coredns"
+
+storage: azure
+
+azure:
+  # 'Storage account' name
+  account_name: my-account-name
+  # 'Blob service' 'Container' name
+  container_name: my-container-name
+  # 'Storage account' 'Access key'
+  account_key: my-account-key
 
 # Loki consists of multiple microservices. Gateway is an nginx-based proxy
 # that routes requests to correct microservices. It should be consider the entry point
@@ -25,13 +23,13 @@ gateway:
       cert-manager.io/cluster-issuer: letsencrypt-giantswarm
     hosts:
       # host name assigned to your loki instance (must be registered in DNS)
-      - host: loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
+      - host: loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
         paths:
           - /
     tls:
       - hosts:
           # host name assigned to your loki instance (must be registered in DNS)
-          - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
+          - loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
         secretName: loki-ingress-cert
   # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
   # HTTP header to be set to indicate which tenant's logs are these. To enable
@@ -44,28 +42,34 @@ gateway:
     username: "loki"
     password: "my-brother-is-thor"
     # -- Existing basic auth secret to use. Must contain '.htpasswd'
-    #existingSecret: null
+    # existingSecret: loki-ingress-auth
 
-# pod annotations to be applied to pods; the annotation below is `kiam` specific
-# and means that pods having it can use `loki-s3-access` IAM Role
-s3_annotations: &s3-ann
-  podAnnotations:
-    iam.amazonaws.com/role: loki-s3-access
+# Shared configuration for all components
+# key _shared_config does not actually exist in the apps values.yaml
+# We're using it in other keys through yaml anchors
+_shared_config: &shared-conf
+  persistence:
+    storageClass: default
 
-compactor: *s3-ann
+compactor: *shared-conf
+
+ruler: *shared-conf
+
+# giantswarm.io/machine-pool ids (hon60) below reference the node pool ids
+# replace them with your ids of your node pools
 
 ingester:
-  <<: *s3-ann
+  <<: *shared-conf
   replicas: 2
   affinity: |
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
         - matchExpressions:
-          - key: giantswarm.io/machine-deployment
+          - key: giantswarm.io/machine-pool
             operator: In
             values:
-            - lonp1
+            - hon60
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
@@ -81,17 +85,17 @@ ingester:
             topologyKey: failure-domain.beta.kubernetes.io/zone
 
 querier:
-  <<: *s3-ann
+  <<: *shared-conf
   replicas: 2
   affinity: |
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
         - matchExpressions:
-          - key: giantswarm.io/machine-deployment
+          - key: giantswarm.io/machine-pool
             operator: In
             values:
-            - lonp1
+            - hon60
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
