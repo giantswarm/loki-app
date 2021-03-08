@@ -45,6 +45,8 @@ gateway:
     # existingSecret: loki-ingress-auth
 
 # Shared configuration for all components
+# key _shared_config does not actually exist in the apps values.yaml
+# We're using it in other keys through yaml anchors
 _shared_config: &shared-conf
   persistence:
     storageClass: default
