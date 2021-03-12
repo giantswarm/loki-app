@@ -1,0 +1,111 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: loki-multi-tenant-proxy-auth-config
+  labels:
+    app: loki-multi-tenant-proxy
+stringData:
+  authn.yaml: |-
+    users:
+      - username: Tenant1
+        password: 1tnaneT
+        orgid: tenant-1
+      - username: Tenant2
+        password: 2tnaneT
+        orgid: tenant-2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-multi-tenant-proxy
+spec:
+  ports:
+  - port: 3100
+    protocol: TCP
+    targetPort: 3100
+  - port: 3101
+    protocol: TCP
+    targetPort: 3101
+  - port: 3102
+    protocol: TCP
+    targetPort: 3102
+  selector:
+    app: loki-multi-tenant-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: loki-multi-tenant-proxy
+  name: loki-multi-tenant-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki-multi-tenant-proxy
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: loki-multi-tenant-proxy
+    spec:
+      serviceAccountName: {{ include "loki.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.loki.podSecurityContext | nindent 8 }}
+      containers:
+        - name: loki-multi-tenant-proxy-querier
+          image: k8spin/loki-multi-tenant-proxy:v1.0.0
+          args:
+            - "run"
+            - "--port=3100"
+            - '--loki-server=http://{{ include "loki.querierFullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
+            - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
+          ports:
+            - name: http
+              containerPort: 3100
+              protocol: TCP
+          securityContext:
+            {{- toYaml .Values.loki.containerSecurityContext | nindent 12 }}
+          resources: {}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki-multi-tenant-proxy
+        - name: loki-multi-tenant-proxy-distributor
+          image: k8spin/loki-multi-tenant-proxy:v1.0.0
+          args:
+            - "run"
+            - "--port=3101"
+            - '--loki-server=http://{{ include "loki.distributorFullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
+            - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
+          ports:
+            - name: http
+              containerPort: 3101
+              protocol: TCP
+          securityContext:
+            {{- toYaml .Values.loki.containerSecurityContext | nindent 12 }}
+          resources: {}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki-multi-tenant-proxy
+        - name: loki-multi-tenant-proxy-queryfrontend
+          image: k8spin/loki-multi-tenant-proxy:v1.0.0
+          args:
+            - "run"
+            - "--port=3102"
+            - '--loki-server=http://{{ include "loki.queryFrontendFullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
+            - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
+          ports:
+            - name: http
+              containerPort: 3102
+              protocol: TCP
+          securityContext:
+            {{- toYaml .Values.loki.containerSecurityContext | nindent 12 }}
+          resources: {}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki-multi-tenant-proxy
+      volumes:
+        - name: config
+          secret:
+            secretName: loki-multi-tenant-proxy-auth-config
