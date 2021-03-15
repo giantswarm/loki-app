@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Change values.yaml to support azure storage
+- Upgrade to loki 2.2.0
 
 ## [0.1.1-alpha] - 2021-03-04
 
