@@ -677,11 +677,12 @@ gateway:
     }
 
 multiTenantAuth:
+  enabled: false
   image:
     repository: giantswarm/loki-multi-tenant-proxy
     tag: v1.0.0
     pullPolicy: IfNotPresent
-  enabled: false
+  replicas: 1
   credentials: |-
     users:
       - username: Tenant1

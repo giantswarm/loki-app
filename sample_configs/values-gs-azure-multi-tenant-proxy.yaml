@@ -14,8 +14,21 @@ azure:
 rbac:
   pspEnabled: true
 
+# By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
+# HTTP header to be set to indicate which tenant's logs are these. To enable
+# minimal security, you can configure the gateway to route traffic through loki-multi-tenant-proxy
+# to do HTTP basicAuth and overwriting the tenant id header
 multiTenantAuth:
+  replicas: 3
   enabled: true
+  credentials: |-
+    users:
+      - username: Tenant1
+        password: 1tnaneT
+        orgid: tenant-1
+      - username: Tenant2
+        password: 2tnaneT
+        orgid: tenant-2
 
 # Loki consists of multiple microservices. Gateway is an nginx-based proxy
 # that routes requests to correct microservices. It should be consider the entry point
@@ -37,18 +50,6 @@ gateway:
           # host name assigned to your loki instance (must be registered in DNS)
           - loki.5bgo7.k8s.gremlin.germanywestcentral.azure.gigantic.io
         secretName: loki-ingress-cert
-  # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
-  # HTTP header to be set to indicate which tenant's logs are these. To enable
-  # minimal security, you can ask gateway to do HTTP basicAuth using `username` and
-  # `password` or point it to a secret containing the `.htpasswd` file, which includes
-  # multiple username-password pairs.
-  # Please note: no checking of the Tenant ID vs username is performed!
-  # basicAuth:
-  #   enabled: true
-  #   username: "loki"
-  #   password: "my-brother-is-thor"
-  #   # -- Existing basic auth secret to use. Must contain '.htpasswd'
-  #   # existingSecret: loki-ingress-auth
   nginxConfig: |
     worker_processes  5;  ## Default: 1
     error_log  /dev/stderr;

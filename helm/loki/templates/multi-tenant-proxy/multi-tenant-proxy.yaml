@@ -33,7 +33,7 @@ metadata:
     app: loki-multi-tenant-proxy
   name: loki-multi-tenant-proxy
 spec:
-  replicas: 1
+  replicas: {{ .Values.multiTenantAuth.replicas }}
   selector:
     matchLabels:
       app: loki-multi-tenant-proxy
