@@ -14,6 +14,9 @@ azure:
 rbac:
   pspEnabled: true
 
+multiTenantAuth:
+  enabled: true
+
 # Loki consists of multiple microservices. Gateway is an nginx-based proxy
 # that routes requests to correct microservices. It should be consider the entry point
 # of your Loki deployment.

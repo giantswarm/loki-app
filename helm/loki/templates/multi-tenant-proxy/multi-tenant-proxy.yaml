@@ -1,18 +1,12 @@
+{{- if .Values.multiTenantAuth.enabled }}
 apiVersion: v1
 kind: Secret
 metadata:
   name: loki-multi-tenant-proxy-auth-config
   labels:
     app: loki-multi-tenant-proxy
-stringData:
-  authn.yaml: |-
-    users:
-      - username: Tenant1
-        password: 1tnaneT
-        orgid: tenant-1
-      - username: Tenant2
-        password: 2tnaneT
-        orgid: tenant-2
+data:
+  authn.yaml: {{ .Values.multiTenantAuth.credentials | b64enc }}
 ---
 apiVersion: v1
 kind: Service
@@ -50,11 +44,16 @@ spec:
         app: loki-multi-tenant-proxy
     spec:
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.loki.podSecurityContext | nindent 8 }}
       containers:
         - name: loki-multi-tenant-proxy-querier
-          image: k8spin/loki-multi-tenant-proxy:v1.0.0
+          image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.image.repository }}:{{ .Values.multiTenantAuth.image.tag }}"
+          imagePullPolicy: {{ .Values.multiTenantAuth.image.pullPolicy }}
           args:
             - "run"
             - "--port=3100"
@@ -71,7 +70,8 @@ spec:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
         - name: loki-multi-tenant-proxy-distributor
-          image: k8spin/loki-multi-tenant-proxy:v1.0.0
+          image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.image.repository }}:{{ .Values.multiTenantAuth.image.tag }}"
+          imagePullPolicy: {{ .Values.multiTenantAuth.image.pullPolicy }}
           args:
             - "run"
             - "--port=3101"
@@ -88,7 +88,8 @@ spec:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
         - name: loki-multi-tenant-proxy-queryfrontend
-          image: k8spin/loki-multi-tenant-proxy:v1.0.0
+          image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.image.repository }}:{{ .Values.multiTenantAuth.image.tag }}"
+          imagePullPolicy: {{ .Values.multiTenantAuth.image.pullPolicy }}
           args:
             - "run"
             - "--port=3102"
@@ -108,3 +109,4 @@ spec:
         - name: config
           secret:
             secretName: loki-multi-tenant-proxy-auth-config
+{{- end }}
