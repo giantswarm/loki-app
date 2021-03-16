@@ -22,13 +22,13 @@ spec:
   ports:
   - port: 3100
     protocol: TCP
-    targetPort: http-querier
+    name: http-querier
   - port: 3101
     protocol: TCP
-    targetPort: http-distributor
+    name: http-distributor
   - port: 3102
     protocol: TCP
-    targetPort: http-queryfrontend
+    name: http-queryfrontend
   selector:
     app: loki-multi-tenant-proxy
 ---

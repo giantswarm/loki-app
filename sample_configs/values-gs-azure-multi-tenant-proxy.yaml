@@ -11,6 +11,9 @@ azure:
   # 'Storage account' 'Access key'
   account_key: my-account-key
 
+rbac:
+  pspEnabled: true
+
 # Loki consists of multiple microservices. Gateway is an nginx-based proxy
 # that routes requests to correct microservices. It should be consider the entry point
 # of your Loki deployment.
@@ -23,13 +26,13 @@ gateway:
       cert-manager.io/cluster-issuer: letsencrypt-giantswarm
     hosts:
       # host name assigned to your loki instance (must be registered in DNS)
-      - host: loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
+      - host: loki.5bgo7.k8s.gremlin.germanywestcentral.azure.gigantic.io
         paths:
           - /
     tls:
       - hosts:
           # host name assigned to your loki instance (must be registered in DNS)
-          - loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
+          - loki.5bgo7.k8s.gremlin.germanywestcentral.azure.gigantic.io
         secretName: loki-ingress-cert
   # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
   # HTTP header to be set to indicate which tenant's logs are these. To enable
@@ -137,7 +140,7 @@ ingester:
           - key: giantswarm.io/machine-pool
             operator: In
             values:
-            - hon60
+            - 0mgdg
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
@@ -163,7 +166,7 @@ querier:
           - key: giantswarm.io/machine-pool
             operator: In
             values:
-            - hon60
+            - 0mgdg
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
