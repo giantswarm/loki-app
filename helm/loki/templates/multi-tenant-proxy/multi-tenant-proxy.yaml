@@ -1,4 +1,3 @@
----
 apiVersion: v1
 kind: Secret
 metadata:
@@ -23,13 +22,13 @@ spec:
   ports:
   - port: 3100
     protocol: TCP
-    targetPort: 3100
+    targetPort: http-querier
   - port: 3101
     protocol: TCP
-    targetPort: 3101
+    targetPort: http-distributor
   - port: 3102
     protocol: TCP
-    targetPort: 3102
+    targetPort: http-queryfrontend
   selector:
     app: loki-multi-tenant-proxy
 ---
@@ -62,7 +61,7 @@ spec:
             - '--loki-server=http://{{ include "loki.querierFullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
           ports:
-            - name: http
+            - name: http-querier
               containerPort: 3100
               protocol: TCP
           securityContext:
@@ -79,7 +78,7 @@ spec:
             - '--loki-server=http://{{ include "loki.distributorFullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
           ports:
-            - name: http
+            - name: http-distributor
               containerPort: 3101
               protocol: TCP
           securityContext:
@@ -96,7 +95,7 @@ spec:
             - '--loki-server=http://{{ include "loki.queryFrontendFullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
           ports:
-            - name: http
+            - name: http-queryfrontend
               containerPort: 3102
               protocol: TCP
           securityContext:
