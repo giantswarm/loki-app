@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/giantswarm/loki-app.svg?style=shield)](https://circleci.com/gh/giantswarm/loki-app)
 
-This chart provides a distributed loki setup based on this
+Giant Swarm offers Loki as a managed app. This chart provides a distributed loki setup based on this
 [upstream chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed).
 It tunes a bunch of options from the upstream to make the chart easier to deploy.
 
@@ -140,6 +140,19 @@ AWS account.
 The source code in `helm/loki` is a git-subtree coming from the
 <https://github.com/giantswarm/grafana-helm-charts-upstream>. Giant Swarm uses that
 repository to track and adjust or charts maintained by Grafana Labs.
+
+## About Giant Swarm managed apps
+
+Once your Kubernetes clusters are up and running, you can use dozens of apps to take control of every part of your cluster. For example, apps to configure DNS servers (External DNS), to generate and renew certificates (Cert Manager), to monitor (Prometheus), to log (EFK or Loki), and to trace (Jaeger) your workloads, to keep your clusters secure, to autoscale resources… and many more.
+
+To help with these, we provide managed apps. Between DIY-ing open source tools and contracting with upstream for enterprise support, there is a gap. This gap is where you (1) want to use an app ‘for real’, (2) need quick and efficient support with engineers, (3) but are not ready to commit yet to contracting with upstream. Our managed apps are our customers’ 'one hand to shake’ for all the many apps still within this gap.
+
+## Links
+
+- [Loki demo for Giant Swarm customers (YouTube)](https://www.youtube.com/watch?v=KeJwfOiVA7o)
+- [Part 1: How the Cloud-Native Stack Helps Writing Minimal Microservices (blog series)](https://www.giantswarm.io/blog/how-the-cloud-native-stack-helps-writing-minimal-microservices/)
+- [Achieving cloud-native observability with open-source (on demand demo and slides)](https://www.giantswarm.io/on-demand-webinar-achieving-cloud-native-observability-with-open-source)
+- [The radical way Giant Swarm handles Service Level Objectives](https://www.giantswarm.io/blog/the-radical-way-giant-swarm-handles-service-level-objectives)
 
 ## Credit
 
