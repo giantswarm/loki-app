@@ -174,7 +174,7 @@ serviceAccount:
 # RBAC configuration
 rbac:
   # -- If enabled, a PodSecurityPolicy is created
-  pspEnabled: false
+  pspEnabled: true
 
 # ServiceMonitor configuration
 serviceMonitor:
