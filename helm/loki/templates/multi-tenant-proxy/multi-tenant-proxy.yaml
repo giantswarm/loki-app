@@ -78,7 +78,7 @@ spec:
             - '--loki-server=http://{{ include "loki.distributorFullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
           ports:
-            - name: http-distributor
+            - name: http-distributo
               containerPort: 3101
               protocol: TCP
           securityContext:
@@ -95,7 +95,7 @@ spec:
             - '--loki-server=http://{{ include "loki.queryFrontendFullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
           ports:
-            - name: http-queryfrontend
+            - name: http-queryfront
               containerPort: 3102
               protocol: TCP
           securityContext:
