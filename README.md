@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/giantswarm/loki-app.svg?style=shield)](https://circleci.com/gh/giantswarm/loki-app)
 
-Giant Swarm offers Loki as a managed app. This chart provides a distributed loki setup based on this
+Giant Swarm offers Loki as a [managed app](#about-giant-swarm-managed-apps). This chart provides a distributed loki setup based on this
 [upstream chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed).
 It tunes a bunch of options from the upstream to make the chart easier to deploy.
 
