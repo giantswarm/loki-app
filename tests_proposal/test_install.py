@@ -3,6 +3,7 @@ from functools import partial
 import time
 import random
 import string
+from textwrap import dedent, indent
 # from pathlib import Path
 # from typing import Optional
 
@@ -23,13 +24,8 @@ class TestInstall:
     # @pytest.mark.skip()
     def test_simple_installation(self, kubernetes_cluster, random_namespace):
 
-        # let's try putting app and chart cr in the same namespace with the other
-        # to be created resources. makes clean up easier.
-
         app_destination_namespace = random_namespace
         app_resource_namespace = app_destination_namespace
-        # app_name_suffix = ''.join(random.choices(string.ascii_lowercase, k=5))
-        # app_version = "0.4.2-test1"
 
         LOGGER.info(f"Destination namespace is [[ {app_destination_namespace} ]]")
 
@@ -48,13 +44,19 @@ class TestInstall:
             "version": "0.1.1-alpha2",
             "namespace": app_destination_namespace,
             "app_resource_namespace": app_resource_namespace,
-            "values_for_configmap": {
-            }
+            # "values_for_configmap": {}
         }
 
-        # FIXME read values.yaml in instead of inline
+        # for convinience read in values in yaml format
+        app_data["values_for_configmap"] = yaml.safe_load(dedent(f"""
+            global:
+              dnsService: "coredns"
+            rbac:
+              pspEnabled: true
+            storage: filesystem
 
-        # app_data["values_for_configmap"] = .read() -> yaml safe load
+            # multi-tenant on
+        """))
 
         kubectl_n("create", input=yaml.safe_dump_all(app_template(**app_data)), output=None)
         LOGGER.info(f"App resource {app_name} created")
