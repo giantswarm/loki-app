@@ -160,7 +160,7 @@ class TestInstall:
             # Information about the Loki endpoint to connect to. Currently the chart supports
             # only a single upstream connection.
             config:
-              lokiAddress: "http://loki-{app_name_suffix}-gateway/api/v1/push"
+              lokiAddress: "http://loki-{app_name_suffix}-gateway/loki/api/v1/push"
               snippets:
                 extraClientConfigs: |
                   tenant_id: 1
@@ -219,7 +219,7 @@ class TestInstall:
 
           kubeStateMetrics:
             enabled: true
-          
+
           nodeExporter.enabled:
             enabled: true
 
@@ -268,12 +268,12 @@ class TestInstall:
                 httpHeaderName1: 'X-Scope-OrgID'
               secureJsonData:
                 basicAuthPassword: my-brother-is-thor
-                # FIXME Should this the same as tenant-id for promtail?
+                # FIXME Should this the same as tenant-id for promtail? yes
                 httpHeaderValue1: '1'
 
           prometheusOperator:
             enabled: true
-            
+
             ## Namespaces to scope the interaction of the Prometheus Operator and the apiserver (allow list).
             ## This is mutually exclusive with denyNamespaces. Setting this to an empty object will disable the configuration
             ##
@@ -346,4 +346,3 @@ class TestInstall:
         # ^also this seems to be started several times..
 
 # test if all pod images are from qyuai/giantswarm?
-
