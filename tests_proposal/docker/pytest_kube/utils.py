@@ -44,7 +44,9 @@ def wait_for_rollout(kubectl_fn, name, **kwargs):
     while True:
         try:
             if len(kubectl_fn(f"get {name}", **kwargs)) > 0:
-                return kubectl_fn(f"rollout status {name}", **kwargs, output=None)
+                kubectl_fn(f"rollout status {name}", **kwargs, output=None)
+                LOGGER.info(f"{name} is ready")
+                return 
         except Exception as e:
             # FIXME following message is probably on stderr
             # Error from server (NotFound): deployments.apps "aqua-app-server-eaofv-console" not found
