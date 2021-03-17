@@ -80,7 +80,8 @@ class TestInstall:
                 password: "my-brother-is-thor"
 
             ingester:
-              replicas: 1
+              # at least 2 live replicas required
+              replicas: 2
 
             querier:
               replicas: 1
@@ -118,6 +119,16 @@ class TestInstall:
             if api_result == "OK":
                 break
             time.sleep(5)
+
+        # FIXME test moar api
+
+        # kubectl port-forward -n pytest-bxatt service/loki-drppq-gateway 3100:80
+        #
+        # curl -s \
+        #   --user loki:my-brother-is-thor \
+        #   --header "X-Scope-OrgID: 1" \
+        #   --get --data-urlencode 'query=sum(rate({job="varlogs"}[10m])) by (level)' \
+        #   "http://localhost:3100/loki/api/v1/query" | jq
 
         # FIXME test access to ServiceMonitor
 
@@ -172,9 +183,9 @@ class TestInstall:
                     max_period: 10m
                   # this set of labels will be added to every log entry forwarded by this promtail
                   # instance
-                  external_labels:
-                    installation: ginger
-                    cluster: my-test-promtail
+                  # external_labels:
+                  #   installation: ginger
+                  #   cluster: my-test-promtail
         """))
 
         kubectl_n("create", input=yaml.safe_dump_all(app_template(**app_data)), output=None)
@@ -263,7 +274,6 @@ class TestInstall:
               url: http://loki-{app_name_suffix}-gateway
               basicAuth: true
               basicAuthUser: loki
-                # password: my-brother-is-thor
               jsonData:
                 httpHeaderName1: 'X-Scope-OrgID'
               secureJsonData:
