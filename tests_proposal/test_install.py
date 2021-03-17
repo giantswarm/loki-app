@@ -72,6 +72,10 @@ class TestInstall:
 
             gateway:
               replicas: 1
+              basicAuth:
+                enabled: true
+                username: "loki"
+                password: "my-brother-is-thor"
 
             ingester:
               replicas: 1
@@ -172,22 +176,21 @@ class TestInstall:
             # Information about the Loki endpoint to connect to. Currently the chart supports
             # only a single upstream connection.
             config:
-              lokiAddress: "https:///loki-{app_name_suffix}-gateway/api/v1/push"
+              lokiAddress: "http:///loki-{app_name_suffix}-gateway/api/v1/push"
               snippets:
                 extraClientConfigs: |
+                  tenant_id: 1
                   # basic auth data
                   basic_auth:
-                    username: Tenant2
-                    password: 2tnaneT
-                  tls_config:
-                    insecure_skip_verify: true
+                    username: loki
+                    password: my-brother-is-thor
                   backoff_config:
                     max_period: 10m
                   # this set of labels will be added to every log entry forwarded by this promtail
                   # instance
                   external_labels:
                     installation: ginger
-                    cluster: my-test-cluster-2
+                    cluster: my-test-promtail
         """))
 
         kubectl_n("create", input=yaml.safe_dump_all(app_template(**app_data)), output=None)
