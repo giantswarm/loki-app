@@ -145,7 +145,7 @@ repository to track and adjust or charts maintained by Grafana Labs.
 
 Once your Kubernetes clusters are up and running, you can use dozens of apps to take control of every part of your cluster. For example, apps to configure DNS servers (External DNS), to generate and renew certificates (Cert Manager), to monitor (Prometheus), to log (EFK or Loki), and to trace (Jaeger) your workloads, to keep your clusters secure, to autoscale resources… and many more.
 
-To help with these, we provide managed apps. When using open source tools, one has two choices. Either DIY or contract with enterprise upstream. Between these two, there is a gap. This gap is where you (1) want to use an app ‘for real’, (2) need quick and efficient support with engineers, (3) but don't have the use case yet to commit to contracting with upstream (if the option is even available). Our managed apps are our customers’ 'one hand to shake’ for all the many apps within this gap.
+To help with these, we provide managed apps. When using open source tools, one has two choices. Either DIY or contract with upstream enterprise for support (if available). Between these two, there is a gap. This gap is where you (1) want to use an app ‘for real’, (2) need quick and efficient support with engineers, (3) but don't have the use case yet to commit to contract with upstream enterprise. Our managed apps are our customers’ 'one hand to shake’ for all the many apps within this gap.
 
 ## Links
 
