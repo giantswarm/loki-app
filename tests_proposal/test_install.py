@@ -49,16 +49,23 @@ class TestInstall:
             # "values_for_configmap": {}
         }
 
+        dns_service_name = kubernetes_cluster.kubectl("get service", selector="k8s-app in (coredns, kube-dns)", namespace="kube-system", output="go-template='{{ (index .items 0).metadata.name }}'")
+        LOGGER.info(f"Using [[ {dns_service_name} ]] as resolver")
+
         # for convinience read in values in yaml format
         app_data["values_for_configmap"] = yaml.safe_load(dedent(f"""
             global:
-              dnsService: "coredns"
+              dnsService: {dns_service_name}
             rbac:
               pspEnabled: true
             storage: filesystem
 
+            _shared_config: &shared-conf
+              persistence:
+                storageClass: ""
+
             serviceMonitor:
-              enabled: true
+              enabled: false
               # groups:
               #   - name: loki-rules
               #     rules:
@@ -72,6 +79,9 @@ class TestInstall:
             # memcachedExporter:
             #   enabled: true
 
+            distributor:
+              replicas: 1
+
             gateway:
               replicas: 1
               basicAuth:
@@ -80,10 +90,16 @@ class TestInstall:
                 password: "my-brother-is-thor"
 
             ingester:
+              <<: *shared-conf
               # at least 2 live replicas required
               replicas: 2
 
+            compactor: *shared-conf
+
+            ruler: *shared-conf
+
             querier:
+              <<: *shared-conf
               replicas: 1
 
             # multi-tenant on
@@ -162,7 +178,7 @@ class TestInstall:
               pspEnabled: true
 
             serviceMonitor:
-              enabled: true
+              enabled: false
 
             # make promtail print config on start
             extraArgs:
