@@ -1,6 +1,11 @@
-skip-steps: test_all
+skip-steps: test_functional
 chart-dir: helm/loki
 replace-chart-version-with-git: true
 replace-app-version-with-git: false
 generate-metadata: true
 catalog-base-url: https://giantswarm.github.io/giantswarm-catalog/
+smoke-tests-cluster-type: kind
+smoke-tests-cluster-config-file: helm/loki/tests/kind_config.yaml
+# app-tests-app-config-file: sample/kind.yaml
+
+app-tests-skip-app-deploy: true
