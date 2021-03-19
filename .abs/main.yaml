@@ -6,6 +6,4 @@ generate-metadata: true
 catalog-base-url: https://giantswarm.github.io/giantswarm-catalog/
 smoke-tests-cluster-type: kind
 smoke-tests-cluster-config-file: helm/loki/tests/kind_config.yaml
-# app-tests-app-config-file: sample/kind.yaml
-
 app-tests-skip-app-deploy: true
