@@ -33,8 +33,8 @@ workflows:
           name: execute chart tests
           requires:
             - hold app tests
-            - package and push efk-stack-app chart
-          resource_class: 2xlarge
+            - package and push loki chart
+          # resource_class: 2xlarge
           chart_dir: ./helm/loki
           filters:
             # Do not trigger the job on master branch or release tags.
