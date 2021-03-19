@@ -24,7 +24,29 @@ app_name_suffix = ''.join(random.choices(string.ascii_lowercase, k=5))
 # @pytest.mark.usefixtures("kubernetes_cluster", "random_namespace")
 # class TestInstall:
 
-    # @pytest.mark.skip()
+def ensure_appcatalog(kubectl):
+    app_catalog = dedent("""
+        apiVersion: application.giantswarm.io/v1alpha1
+        kind: AppCatalog
+        metadata:
+          name: giantswarm
+          labels:
+            app-operator.giantswarm.io/version: 1.0.0
+            application.giantswarm.io/catalog-type: stable
+            application.giantswarm.io/catalog-visibility: public
+        spec:
+          title: Giant Swarm Catalog
+          description: This catalog holds Apps managed by Giant Swarm.
+          logoURL: /images/repo_icons/managed.png
+          storage:
+            URL: https://giantswarm.github.io/giantswarm-catalog/
+            type: helm
+    """)
+
+    kubectl("apply", input=app_catalog, output=None)
+    LOGGER.info(f"App catalog applied")
+
+
 @pytest.mark.smoke
 def test_simple_installation(kubernetes_cluster, random_namespace, chart_version):
 
@@ -154,6 +176,8 @@ def test_simple_installation(kubernetes_cluster, random_namespace, chart_version
 @pytest.mark.smoke
 def test_promtail_installation(kubernetes_cluster, random_namespace):
 
+    ensure_appcatalog(kubernetes_cluster.kubectl)
+
     app_destination_namespace = random_namespace
     app_resource_namespace = app_destination_namespace
 
@@ -218,6 +242,8 @@ def test_promtail_installation(kubernetes_cluster, random_namespace):
 
 @pytest.mark.smoke
 def test_kube_prometheus_installation(kubernetes_cluster, random_namespace):
+
+    ensure_appcatalog(kubernetes_cluster.kubectl)
 
     app_destination_namespace = random_namespace
     app_resource_namespace = app_destination_namespace

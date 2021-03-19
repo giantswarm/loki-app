@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@2.1.0
+  architect: giantswarm/architect@2.3.0
 
 workflows:
   package-and-push-chart-on-tag:
@@ -16,3 +16,30 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+
+      # Require manual approval for running tests.
+      - hold-tests:
+          name: hold app tests
+          type: approval
+          filters:
+            # Do not trigger the job on master branch or release tags.
+            branches:
+              ignore:
+                - master
+            tags:
+              ignore: /^v.*/
+
+      - architect/run-tests-with-abs:
+          name: execute chart tests
+          requires:
+            - hold app tests
+            - package and push efk-stack-app chart
+          resource_class: 2xlarge
+          chart_dir: ./helm/loki
+          filters:
+            # Do not trigger the job on master branch or release tags.
+            branches:
+              ignore:
+                - master
+            tags:
+              ignore: /^v.*/
