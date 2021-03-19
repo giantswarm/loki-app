@@ -676,6 +676,22 @@ gateway:
       }
     }
 
+multiTenantAuth:
+  enabled: false
+  image:
+    repository: giantswarm/loki-multi-tenant-proxy
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  credentials: |-
+    users:
+      - username: Tenant1
+        password: 1tnaneT
+        orgid: tenant-1
+      - username: Tenant2
+        password: 2tnaneT
+        orgid: tenant-2
+
 # Configuration for the compactor
 compactor:
   # -- Specifies whether compactor should be enabled

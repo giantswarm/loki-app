@@ -95,19 +95,40 @@ AWS account.
     read the comments for options and adjust to your needs. To check all available
     options, please consult the [upstream `values.yaml` file](helm/loki/values.yaml).
 
-    1. Setting external basic auth logins
-    If you want to use `gateway.basicAuth.existingSecret` config option, you can create
-    the secret with necessary users and passwords by using the following commands:
+    1. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
+    `gateway.basicAuth.existingSecret` config option.
+    To create the secret with necessary users and passwords use the following commands:
 
     ```bash
-    echo "passwd01" | htpasswd -i -c.htpasswd tenant01
-    echo "passwd02" | htpasswd -i .htpasswd tenant02
-    echo "passwd03" | htpasswd -i .htpasswd tenant03
+    echo "passwd01" | htpasswd -i -c.htpasswd user01
+    echo "passwd02" | htpasswd -i .htpasswd user02
+    echo "passwd03" | htpasswd -i .htpasswd user03
     ...
     kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
     ```
 
     Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
+
+    2. In multi tenant setups<a name="multi-tenant-config"></a>, you can enable [loki-multi-tenant-proxy](https://github.com/k8spin/loki-multi-tenant-proxy)
+    to manage credentials for different tenants.
+
+    Enable the deployment of loki-multi-tenant-proxy by setting `multiTenantAuth.enabled` to `true`.
+
+    Write down your credentials in `multiTenantAuth.credentials`.
+    They should be formatted in your values file like this:
+
+    ```yaml
+    multiTenantAuth:
+      enabled: true
+      credentials: |-
+        users:
+          - username: Tenant1
+            password: 1tnaneT
+            orgid: tenant-1
+          - username: Tenant2
+            password: 2tnaneT
+            orgid: tenant-2
+    ```
 
 4. Prepare the namespace
    Currently, you have to manually pre-create the namespace and annotate it with
@@ -125,15 +146,17 @@ AWS account.
 ### Deploying on Azure
 
 1. Find the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
-1. Create 'Storage Account' on Azure ([How-to](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create)) ['Create storage account'](https://portal.azure.com/#create/Microsoft.StorageAccount)
+2. Create 'Storage Account' on Azure ([How-to](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create)) ['Create storage account'](https://portal.azure.com/#create/Microsoft.StorageAccount)
   - 'Account kind' should be 'BlobStorage'
-1. Create a 'Blob service' 'Container' in your storage account
-1. Go to the 'Access keys' page of your 'Storage account'
+3. Create a 'Blob service' 'Container' in your storage account
+4. Go to the 'Access keys' page of your 'Storage account'
   - Use the 'Storage account name' for `azure_storage.account_name`
   - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
   - Use one of the keys for `azure.storage_key`
-1. Make a personal copy of the [azure example file](sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
-1. Install the app using your values.
+5. Make a personal copy of the [azure example file](sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
+6. Install the app using your values.
+
+Check out AWS instructions for [single tenant setup](#single-tenant-config) and [multi tenant setup](#multi-tenant-config) configurations.
 
 ## Source code origin
 
