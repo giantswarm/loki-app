@@ -2,9 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/giantswarm/loki-app.svg?style=shield)](https://circleci.com/gh/giantswarm/loki-app)
 
-This chart provides a distributed loki setup based on this
+Giant Swarm offers Loki as a [managed app](https://docs.giantswarm.io/changes/managed-apps/). This chart provides a distributed loki setup based on this
 [upstream chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed).
-It tunes a bunch of options from the upstream to make the chart easier to deploy.
+It tunes some options from upstream to make the chart easier to deploy.
 
 This chart is meant to be used with S3 compatible storage only. Access to the S3
 storage must be ensured for the chart to work. You can check
@@ -140,6 +140,13 @@ AWS account.
 The source code in `helm/loki` is a git-subtree coming from the
 <https://github.com/giantswarm/grafana-helm-charts-upstream>. Giant Swarm uses that
 repository to track and adjust or charts maintained by Grafana Labs.
+
+## Links
+
+- [Loki demo for Giant Swarm customers (YouTube)](https://www.youtube.com/watch?v=KeJwfOiVA7o)
+- [Part 1: How the Cloud-Native Stack Helps Writing Minimal Microservices (blog series)](https://www.giantswarm.io/blog/how-the-cloud-native-stack-helps-writing-minimal-microservices/)
+- [Achieving cloud-native observability with open-source (on demand demo and slides)](https://www.giantswarm.io/on-demand-webinar-achieving-cloud-native-observability-with-open-source)
+- [The radical way Giant Swarm handles Service Level Objectives](https://www.giantswarm.io/blog/the-radical-way-giant-swarm-handles-service-level-objectives)
 
 ## Credit
 
