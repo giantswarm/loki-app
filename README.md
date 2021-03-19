@@ -2,9 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/giantswarm/loki-app.svg?style=shield)](https://circleci.com/gh/giantswarm/loki-app)
 
-Giant Swarm offers Loki as a [managed app](#about-giant-swarm-managed-apps). This chart provides a distributed loki setup based on this
+Giant Swarm offers Loki as a [managed app](https://docs.giantswarm.io/changes/managed-apps/). This chart provides a distributed loki setup based on this
 [upstream chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed).
-It tunes a bunch of options from the upstream to make the chart easier to deploy.
+It tunes some options from upstream to make the chart easier to deploy.
 
 This chart is meant to be used with S3 compatible storage only. Access to the S3
 storage must be ensured for the chart to work. You can check
@@ -140,12 +140,6 @@ AWS account.
 The source code in `helm/loki` is a git-subtree coming from the
 <https://github.com/giantswarm/grafana-helm-charts-upstream>. Giant Swarm uses that
 repository to track and adjust or charts maintained by Grafana Labs.
-
-## About Giant Swarm managed apps
-
-Once your Kubernetes clusters are up and running, you can use dozens of apps to take control of every part of your cluster. For example, apps to configure DNS servers (External DNS), to generate and renew certificates (Cert Manager), to monitor (Prometheus), to log (EFK or Loki), and to trace (Jaeger) your workloads, to keep your clusters secure, to autoscale resources… and many more.
-
-To help with these, we provide managed apps. When using open source tools, one has two choices. Either DIY or contract with upstream enterprise for support (if available). Between these two, there is a gap. This gap is where you (1) want to use an app ‘for real’, (2) need quick and efficient support with engineers, (3) but don't have the use case yet to commit to contract with upstream enterprise. Our managed apps are our customers’ 'one hand to shake’ for the many apps in this gap.
 
 ## Links
 
