@@ -164,7 +164,6 @@ AWS account.
 ```
 > az storage container create -n CONTAINER_NAME --public-access off --account-name STORAGE_ACCOUNT_NAME
 ```
-3. Create a 'Blob service' 'Container' in your storage account
 4. Go to the 'Access keys' page of your 'Storage account'
   - Use the 'Storage account name' for `azure_storage.account_name`
   - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
