@@ -148,7 +148,22 @@ AWS account.
 1. Find the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
 2. Create 'Storage Account' on Azure ([How-to](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create)) ['Create storage account'](https://portal.azure.com/#create/Microsoft.StorageAccount)
   - 'Account kind' should be 'BlobStorage'
+  - You can do it using Powershell in Azure portal. Example:
+  ```
+> az storage account create `
+     --name STORAGE_ACCOUNT_NAME `
+     --resource-group RESOURCE_GROUP `
+     --sku Standard_GRS `
+     --encryption-services blob `
+     --https-only true `
+     --kind BlobStorage `
+     --access-tier Hot 
+```
 3. Create a 'Blob service' 'Container' in your storage account
+  - Example on how to do it with Powershell in Azure portal:
+```
+> az storage container create -n CONTAINER_NAME --public-access off --account-name STORAGE_ACCOUNT_NAME
+```
 4. Go to the 'Access keys' page of your 'Storage account'
   - Use the 'Storage account name' for `azure_storage.account_name`
   - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
