@@ -75,9 +75,6 @@ spec:
               mountPath: /etc/loki/config
             - name: data
               mountPath: /var/loki
-            {{- with .Values.ingester.extraVolumeMounts }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
           resources:
             {{- toYaml .Values.ingester.resources | nindent 12 }}
       {{- with .Values.ingester.affinity }}
@@ -96,9 +93,6 @@ spec:
         - name: config
           configMap:
             name: {{ include "loki.fullname" . }}
-        {{- with .Values.ingester.extraVolumes }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
   {{- if not .Values.ingester.persistence.enabled }}
         - name: data
           emptyDir: {}
