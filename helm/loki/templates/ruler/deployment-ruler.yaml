@@ -79,6 +79,9 @@ spec:
             - name: {{ include "loki.rulerRulesDirName" $dir }}
               mountPath: /etc/loki/rules/{{ $dir }}
             {{- end }}
+            {{- with .Values.ruler.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           resources:
             {{- toYaml .Values.ruler.resources | nindent 12 }}
       {{- with .Values.ruler.affinity }}
@@ -106,4 +109,7 @@ spec:
           emptyDir: {}
         - name: data
           emptyDir: {}
+        {{- with .Values.ruler.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
 {{- end }}
