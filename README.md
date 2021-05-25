@@ -159,6 +159,7 @@ AWS account.
      --kind BlobStorage `
      --access-tier Hot 
 ```
+(It may be required to set the location using the `--location` flag.)
 3. Create a 'Blob service' 'Container' in your storage account
   - Example on how to do it with Powershell in Azure portal:
 ```
