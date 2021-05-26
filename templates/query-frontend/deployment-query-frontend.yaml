@@ -66,6 +66,9 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/loki/config
+            {{- with .Values.queryFrontend.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           resources:
             {{- toYaml .Values.queryFrontend.resources | nindent 12 }}
       {{- with .Values.queryFrontend.affinity }}
@@ -82,5 +85,13 @@ spec:
       {{- end }}
       volumes:
         - name: config
+          {{- if .Values.loki.existingSecretForConfig -}}
+          secret:
+            secretName: {{- .Values.loki.existingSecretForConfig }}
+          {{- else }}
           configMap:
             name: {{ include "loki.fullname" . }}
+          {{- end }}
+        {{- with .Values.queryFrontend.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
