@@ -1,7 +1,7 @@
 global:
   image:
     # -- Overrides the Docker registry globally for all images
-    registry: null
+    registry: quay.io
   # -- Overrides the priorityClassName for all pods
   priorityClassName: null
   # -- configures cluster domain ("cluster.local" by default)
@@ -20,6 +20,20 @@ fullnameOverride: null
 # -- Image pull secrets for Docker images
 imagePullSecrets: []
 
+# either s3 or azure supported at this point
+storage: s3
+
+aws: {}
+  # s3_region: s3://eu-west-1
+  # bucketnames: my-bucket
+azure: {}
+  # # 'Storage account' name
+  # account_name: my-account-name
+  # # 'Blob service' 'Container' name
+  # container_name: my-container-name
+  # # 'Storage account' 'Access key'
+  # account_key: my-account-key
+
 loki:
   # Configures the readiness probe for all of the Loki pods
   readinessProbe:
@@ -32,7 +46,7 @@ loki:
     # -- The Docker registry
     registry: docker.io
     # -- Docker image repository
-    repository: grafana/loki
+    repository: giantswarm/loki
     # -- Overrides the image tag whose default is the chart's appVersion
     tag: null
     # -- Docker image pull policy
@@ -97,7 +111,7 @@ loki:
       configs:
         - from: 2020-09-07
           store: boltdb-shipper
-          object_store: aws
+          object_store: {{ .Values.storage }}
           schema: v11
           index:
             prefix: loki_index_
@@ -105,11 +119,15 @@ loki:
 
     storage_config:
       aws:
-        s3: {{ .Values.s3_region }}
-        bucketnames: {{ .Values.bucketnames }}
+        s3: {{ .Values.aws.s3_region }}
+        bucketnames: {{ .Values.aws.bucketnames }}
+      azure:
+        container_name: {{ .Values.azure.container_name }}
+        account_name: {{ .Values.azure.account_name }}
+        account_key: {{ .Values.azure.account_key }}
       boltdb_shipper:
         active_index_directory: /var/loki/index
-        shared_store: s3
+        shared_store: {{ .Values.storage }}
         cache_location: /var/loki/cache
 
     query_range:
@@ -132,7 +150,7 @@ loki:
       compress_responses: true
 
     compactor:
-      shared_store: s3
+      shared_store: {{ .Values.storage }}
 
       #    ruler:
       #      storage:
@@ -160,7 +178,7 @@ serviceAccount:
 # RBAC configuration
 rbac:
   # -- If enabled, a PodSecurityPolicy is created
-  pspEnabled: false
+  pspEnabled: true
 
 # ServiceMonitor configuration
 serviceMonitor:
@@ -221,8 +239,7 @@ ingester:
   # -- The name of the PriorityClass for ingester pods
   priorityClassName: null
   # -- Annotations for ingester pods
-  podAnnotations:
-    iam.amazonaws.com/role: loki-data-s3-access
+  podAnnotations: {}
   # -- Additional CLI args for the ingester
   extraArgs: []
   # -- Environment variables to add to the ingester pods
@@ -335,8 +352,7 @@ querier:
   # -- The name of the PriorityClass for querier pods
   priorityClassName: null
   # -- Annotations for querier pods
-  podAnnotations:
-    iam.amazonaws.com/role: loki-data-s3-access
+  podAnnotations: {}
   # -- Additional CLI args for the querier
   extraArgs: []
   # -- Environment variables to add to the querier pods
@@ -495,7 +511,7 @@ gateway:
     # -- The Docker registry for the gateway image
     registry: docker.io
     # -- The gateway image repository
-    repository: nginxinc/nginx-unprivileged
+    repository: giantswarm/nginx-unprivileged
     # -- The gateway image tag
     tag: 1.19-alpine
     # -- The gateway image pull policy
@@ -689,6 +705,22 @@ gateway:
           {{- end }}
         }
       }
+
+multiTenantAuth:
+  enabled: false
+  image:
+    repository: giantswarm/loki-multi-tenant-proxy
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  credentials: |-
+    users:
+      - username: Tenant1
+        password: 1tnaneT
+        orgid: tenant-1
+      - username: Tenant2
+        password: 2tnaneT
+        orgid: tenant-2
 
 # Configuration for the compactor
 compactor:
