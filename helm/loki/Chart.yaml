@@ -13,7 +13,6 @@ sources:
   - https://github.com/giantswarm/grafana-helm-charts-upstream
   - https://github.com/giantswarm/loki-app
 icon: https://grafana.com/docs/loki/latest/logo_and_name.png
-upstreamChartVersion: 0.33.0
 upstreamChartURL: https://github.com/grafana/helm-charts/
 maintainers:
   - name: unguiculus
