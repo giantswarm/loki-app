@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Upgrade to upstream chart version [0.31.3](https://github.com/grafana/helm-charts/releases/tag/loki-distributed-0.31.3)
+- Upgrade to upstream chart version [0.33.0](https://github.com/grafana/helm-charts/releases/tag/loki-distributed-0.33.0)
 - Upgrade loki to version [2.2.1](https://github.com/grafana/loki/releases/tag/v2.2.1)
 - Add `loki.existingSecretForConfig` to make it possible to specify an existing secret for loki configuration
 - **Breaking**: Upgrades require manual intervention. A change in the `StatefulSet`'s `podManagementPolicy` requires existing pods to be manually deleted. See [this link](https://github.com/giantswarm/loki-app/blob/master/helm/loki/README.md#from-030x-to-0310) for instructions.
