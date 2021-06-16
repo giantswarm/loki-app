@@ -4,6 +4,7 @@ metadata:
   name: {{ include "loki.queryFrontendFullname" . }}
   labels:
     {{- include "loki.queryFrontendLabels" . | nindent 4 }}
+    giantswarm.io/monitoring: "true"
 spec:
   type: ClusterIP
   clusterIP: None

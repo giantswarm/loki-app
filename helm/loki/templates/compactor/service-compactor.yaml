@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "loki.labels" . | nindent 4 }}
     app.kubernetes.io/component: compactor
+    giantswarm.io/monitoring: "true"
 spec:
   type: ClusterIP
   ports:
