@@ -31,6 +31,8 @@ kind: Deployment
 metadata:
   labels:
     app: loki-multi-tenant-proxy
+    giantswarm.io/service-type: "managed"
+    giantswarm.io/monitoring_basic_sli: "true"
   name: loki-multi-tenant-proxy
 spec:
   replicas: {{ .Values.multiTenantAuth.replicas }}
