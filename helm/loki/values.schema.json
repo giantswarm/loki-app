@@ -87,7 +87,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -184,7 +183,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -416,7 +414,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -562,7 +559,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -781,7 +777,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -837,7 +832,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -894,7 +888,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -957,7 +950,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -1020,7 +1012,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -1237,7 +1228,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -1317,7 +1307,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -1425,7 +1414,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
@@ -1561,7 +1549,6 @@
                 },
                 "resources": {
                     "type": "object",
-                    "required": ["limits", "requests"],
                     "properties": {
                         "limits": {
                             "type": "object",
