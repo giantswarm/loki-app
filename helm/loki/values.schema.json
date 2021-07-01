@@ -1303,7 +1303,8 @@
                     "type": ["string", "null"]
                 },
                 "replicas": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 2
                 },
                 "resources": {
                     "type": "object",
