@@ -86,7 +86,29 @@
                     "type": ["string", "null"]
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "serviceAccount": {
                     "type": "object",
@@ -161,7 +183,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -371,7 +415,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "service": {
                     "type": "object",
@@ -495,7 +561,29 @@
                     "minimum": 3
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -692,7 +780,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -726,7 +836,29 @@
                     }
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 }
             }
         },
@@ -761,7 +893,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -802,7 +956,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -843,7 +1019,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -1038,7 +1236,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -1096,7 +1316,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -1182,7 +1424,29 @@
                     "type": "integer"
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
@@ -1296,7 +1560,29 @@
                     "type": ["string", "null"]
                 },
                 "resources": {
-                    "type": "object"
+                    "type": "object",
+                    "required": ["limits", "requests"],
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        },
+                        "requests": {
+                            "type": "object",
+                            "required": ["cpu", "memory"],
+                            "properties": {
+                            "cpu": { "type": "string" },
+                            "memory": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "terminationGracePeriodSeconds": {
                     "type": "integer"
