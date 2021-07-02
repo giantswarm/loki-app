@@ -450,7 +450,7 @@ queryFrontend:
     limits:
       memory: 1200Mi
     requests:
-      cpu: "2"
+      cpu: 500m
       memory: 600Mi
   # -- Grace period to allow the query-frontend to shutdown before it is killed
   terminationGracePeriodSeconds: 30
