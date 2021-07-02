@@ -177,7 +177,8 @@
                     "type": ["string", "null"]
                 },
                 "replicas": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 3
                 },
                 "resources": {
                     "type": "object",
