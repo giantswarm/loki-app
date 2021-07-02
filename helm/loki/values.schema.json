@@ -90,7 +90,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -99,7 +98,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -186,7 +184,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -195,7 +192,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -417,7 +413,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -426,7 +421,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -562,7 +556,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -571,7 +564,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -780,7 +772,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -789,7 +780,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -835,7 +825,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -844,7 +833,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -891,7 +879,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -900,7 +887,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -953,7 +939,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -962,7 +947,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1015,7 +999,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1024,7 +1007,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1231,7 +1213,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1240,7 +1221,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1311,7 +1291,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1320,7 +1299,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1418,7 +1396,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1427,7 +1404,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1553,7 +1529,6 @@
                     "properties": {
                         "limits": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
@@ -1562,7 +1537,6 @@
                         },
                         "requests": {
                             "type": "object",
-                            "required": ["cpu", "memory"],
                             "properties": {
                             "cpu": { "type": "string" },
                             "memory": { "type": "string" }
