@@ -4,6 +4,9 @@ metadata:
   name: {{ include "loki.ingesterFullname" . }}
   labels:
     {{- include "loki.ingesterLabels" . | nindent 4 }}
+    giantswarm.io/monitoring: "true"
+  annotations:
+    giantswarm.io/monitoring-port: "3100"
 spec:
   type: ClusterIP
   ports:

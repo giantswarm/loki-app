@@ -5,6 +5,8 @@ metadata:
   labels:
     {{- include "loki.distributorLabels" . | nindent 4 }}
     app.kubernetes.io/part-of: memberlist
+    giantswarm.io/service-type: "managed"
+    giantswarm.io/monitoring_basic_sli: "true"
 spec:
   replicas: {{ .Values.distributor.replicas }}
   strategy:
