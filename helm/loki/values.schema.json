@@ -177,8 +177,7 @@
                     "type": ["string", "null"]
                 },
                 "replicas": {
-                    "type": "integer",
-                    "minimum": 3
+                    "type": "integer"
                 },
                 "resources": {
                     "type": "object",
@@ -549,8 +548,7 @@
                     "type": ["string", "null"]
                 },
                 "replicas": {
-                    "type": "integer",
-                    "minimum": 3
+                    "type": "integer"
                 },
                 "resources": {
                     "type": "object",
@@ -1284,8 +1282,7 @@
                     "type": ["string", "null"]
                 },
                 "replicas": {
-                    "type": "integer",
-                    "minimum": 2
+                    "type": "integer"
                 },
                 "resources": {
                     "type": "object",
