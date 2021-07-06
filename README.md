@@ -22,6 +22,11 @@ what configuration you need on the AWS side.
   * v12.5.1 for AWS
   * v12.3.1 for KVM.
 
+### General recommendations
+
+The number of `replicas` in the [default values file](helm/loki/values.yaml) are generally considered as safe.
+If you reduce the number of `replicas` below the default recommended values, expect undefined behaviour and problems.
+
 ### Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
@@ -157,7 +162,7 @@ AWS account.
      --encryption-services blob `
      --https-only true `
      --kind BlobStorage `
-     --access-tier Hot 
+     --access-tier Hot
 ```
 (It may be required to set the location using the `--location` flag.)
 3. Create a 'Blob service' 'Container' in your storage account

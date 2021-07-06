@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Prevent running less than three ingester replicas through values schema validation
+- Add livenessProbes to all deployments and statefulsets
+- Add default requests/limits to resources
+
 ## [0.2.0] - 2021-06-08
 
 ### Changed

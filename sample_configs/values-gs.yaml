@@ -138,7 +138,7 @@ compactor: *s3-ann
 
 ingester:
   <<: *s3-ann
-  replicas: 2
+  replicas: 3
   affinity: |
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
