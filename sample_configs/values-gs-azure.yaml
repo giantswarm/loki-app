@@ -142,7 +142,7 @@ ruler: *shared-conf
 
 ingester:
   <<: *shared-conf
-  replicas: 2
+  replicas: 3
   affinity: |
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:

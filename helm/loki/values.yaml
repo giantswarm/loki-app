@@ -42,6 +42,11 @@ loki:
       port: http
     initialDelaySeconds: 30
     timeoutSeconds: 1
+  livenessProbe:
+    httpGet:
+      path: /ready
+      port: http
+    initialDelaySeconds: 45
   image:
     # -- The Docker registry
     registry: docker.io
@@ -252,7 +257,12 @@ ingester:
   # -- Volumes to add to the ingester pods
   extraVolumes: []
   # -- Resource requests and limits for the ingester
-  resources: {}
+  resources:
+    limits:
+      memory: 4096Mi
+    requests:
+      memory: 3072Mi
+      cpu: 200m
   # -- Grace period to allow the ingester to shutdown before it is killed. Especially for the ingestor,
   # this must be increased. It must be long enough so ingesters can be gracefully shutdown flushing/transferring
   # all data and to successfully leave the member ring on shutdown.
@@ -315,7 +325,12 @@ distributor:
   # -- Volumes to add to the distributor pods
   extraVolumes: []
   # -- Resource requests and limits for the distributor
-  resources: {}
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      memory: 128Mi
+      cpu: 200m
   # -- Grace period to allow the distributor to shutdown before it is killed
   terminationGracePeriodSeconds: 30
   # -- Affinity for distributor pods. Passed through `tpl` and, thus, to be configured as string
@@ -365,7 +380,12 @@ querier:
   # -- Volumes to add to the querier pods
   extraVolumes: []
   # -- Resource requests and limits for the querier
-  resources: {}
+  resources:
+    limits:
+      memory: 1536Mi
+    requests:
+      cpu: 700m
+      memory: 1Gi
   # -- Grace period to allow the querier to shutdown before it is killed
   terminationGracePeriodSeconds: 30
   # -- Affinity for querier pods. Passed through `tpl` and, thus, to be configured as string
@@ -426,7 +446,12 @@ queryFrontend:
   # -- Volumes to add to the query-frontend pods
   extraVolumes: []
   # -- Resource requests and limits for the query-frontend
-  resources: {}
+  resources:
+    limits:
+      memory: 1200Mi
+    requests:
+      cpu: 500m
+      memory: 600Mi
   # -- Grace period to allow the query-frontend to shutdown before it is killed
   terminationGracePeriodSeconds: 30
   # -- Affinity for query-frontend pods. Passed through `tpl` and, thus, to be configured as string
@@ -543,7 +568,12 @@ gateway:
         - ALL
     allowPrivilegeEscalation: false
   # -- Resource requests and limits for the gateway
-  resources: {}
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
   # -- Grace period to allow the gateway to shutdown before it is killed
   terminationGracePeriodSeconds: 30
   # -- Affinity for gateway pods. Passed through `tpl` and, thus, to be configured as string
@@ -618,6 +648,11 @@ gateway:
       port: http
     initialDelaySeconds: 15
     timeoutSeconds: 1
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 30
   nginxConfig:
     # -- NGINX log format
     logFormat: |-
@@ -747,7 +782,12 @@ compactor:
   # -- Volumes to add to the compactor pods
   extraVolumes: []
   # -- Resource requests and limits for the compactor
-  resources: {}
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 25m
+      memory: 64Mi
   # -- Grace period to allow the compactor to shutdown before it is killed
   terminationGracePeriodSeconds: 30
   # -- Node selector for compactor pods
