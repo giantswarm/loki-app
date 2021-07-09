@@ -5,6 +5,7 @@ metadata:
   name: {{ include "loki.tableManagerFullname" . }}
   labels:
     {{- include "loki.tableManagerLabels" . | nindent 4 }}
+    giantswarm.io/monitoring_basic_sli: "true"
 spec:
   replicas: 1
   revisionHistoryLimit: {{ .Values.loki.revisionHistoryLimit }}

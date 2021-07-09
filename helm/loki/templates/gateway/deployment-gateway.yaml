@@ -5,6 +5,7 @@ metadata:
   name: {{ include "loki.gatewayFullname" . }}
   labels:
     {{- include "loki.gatewayLabels" . | nindent 4 }}
+    giantswarm.io/monitoring_basic_sli: "true"
 spec:
   replicas: {{ .Values.gateway.replicas }}
   strategy:

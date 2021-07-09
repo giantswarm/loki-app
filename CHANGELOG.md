@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Enable metric scraping
 - Prevent running less than three ingester replicas through values schema validation
 - Add livenessProbes to all deployments and statefulsets
 - Add default requests/limits to resources
