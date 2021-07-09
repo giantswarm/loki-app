@@ -4,7 +4,6 @@ metadata:
   name: {{ include "loki.queryFrontendFullname" . }}
   labels:
     {{- include "loki.queryFrontendLabels" . | nindent 4 }}
-    giantswarm.io/service-type: "managed"
     giantswarm.io/monitoring_basic_sli: "true"
 spec:
   replicas: {{ .Values.queryFrontend.replicas }}

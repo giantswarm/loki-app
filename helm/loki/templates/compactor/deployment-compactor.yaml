@@ -5,7 +5,6 @@ metadata:
   name: {{ include "loki.compactorFullname" . }}
   labels:
     {{- include "loki.compactorLabels" . | nindent 4 }}
-    giantswarm.io/service-type: "managed"
     giantswarm.io/monitoring_basic_sli: "true"
 spec:
   replicas: 1
