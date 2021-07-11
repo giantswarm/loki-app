@@ -1,0 +1,29 @@
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: giantswarm-catalog
+#   namespace: giantswarm
+# data:
+#   values: |
+#     provider: aws
+
+---
+apiVersion: application.giantswarm.io/v1alpha1
+kind: AppCatalog
+metadata:
+  name: giantswarm
+  labels:
+    app-operator.giantswarm.io/version: 1.0.0
+    application.giantswarm.io/catalog-type: stable
+    application.giantswarm.io/catalog-visibility: public
+spec:
+  title: Giant Swarm Catalog
+  description: This catalog holds Apps managed by Giant Swarm.
+  # config:
+  #   configMap:
+  #     name: giantswarm-catalog
+  #     namespace: giantswarm
+  logoURL: /images/repo_icons/managed.png
+  storage:
+    URL: https://giantswarm.github.io/giantswarm-catalog/
+    type: helm
