@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@3.3.0
+  architect: giantswarm/architect@dev:update-conftest
 
 workflows:
   package-and-push-chart-on-tag:
@@ -12,6 +12,7 @@ workflows:
           app_catalog: "giantswarm-catalog"
           app_catalog_test: "giantswarm-test-catalog"
           chart: "loki"
+          skip_conftest_deprek8ion: true
           # Trigger job on git tag.
           filters:
             tags:
