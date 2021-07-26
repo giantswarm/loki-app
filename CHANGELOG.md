@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2021-07-26
+
 ### Added
 
 - Basic SLI for ingester and querier StatefulSets
@@ -61,7 +63,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/giantswarm/loki-app/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/giantswarm/loki-app/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/giantswarm/loki-app/compare/v0.1.2-beta...v0.2.0
 [0.1.2-beta]: https://github.com/giantswarm/loki-app/compare/v0.1.1-alpha2...v0.1.2-beta
