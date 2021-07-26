@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Basic SLI for ingester and querier StatefulSets
+
 ## [0.3.0] - 2021-07-09
 
 ### Added
