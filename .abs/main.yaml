@@ -1,4 +1,3 @@
-skip-steps: test_all
 chart-dir: helm/loki
 replace-chart-version-with-git: true
 replace-app-version-with-git: false

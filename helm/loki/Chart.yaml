@@ -14,6 +14,7 @@ sources:
   - https://github.com/giantswarm/loki-app
 icon: https://grafana.com/docs/loki/latest/logo_and_name.png
 upstreamChartURL: https://github.com/grafana/helm-charts/
+upstreamChartVersion: loki-distributed-0.33.0
 maintainers:
   - name: unguiculus
   - name: Giant Swarm applications team
