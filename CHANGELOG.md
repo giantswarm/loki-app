@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.3] - 2021-11-04
 
+- Update app metadata
+
 ## [0.3.2] - 2021-10-22
 
 - Update app metadata
