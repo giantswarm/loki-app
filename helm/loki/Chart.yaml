@@ -20,4 +20,4 @@ maintainers:
 restrictions:
   namespaceSingleton: true
 annotations:
-  application.giantswarm.io/team: atlas
+  application.giantswarm.io/team: team-atlas
