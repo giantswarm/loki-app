@@ -40,13 +40,13 @@ loki:
     httpGet:
       path: /ready
       port: http
-    initialDelaySeconds: 30
+    initialDelaySeconds: 300
     timeoutSeconds: 1
   livenessProbe:
     httpGet:
       path: /ready
       port: http
-    initialDelaySeconds: 45
+    initialDelaySeconds: 300
   image:
     # -- The Docker registry
     registry: docker.io
