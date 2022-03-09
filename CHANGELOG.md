@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2022-03-09
+
 ### Fixed
 
 - Increase ingester probe initialDelay to 300 seconds
@@ -85,7 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
 [0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
 [0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
