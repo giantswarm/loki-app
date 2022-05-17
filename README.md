@@ -8,7 +8,7 @@ It tunes some options from upstream to make the chart easier to deploy.
 
 This chart is meant to be used with S3 compatible storage only. Access to the S3
 storage must be ensured for the chart to work. You can check
-[the sample config file](sample_configs/values-gs.yaml) to check for annotations
+[the sample config file](https://github.com/giantswarm/loki-app/sample_configs/values-gs.yaml) to check for annotations
 that can be used to make it work with AWS S3 using
 [KIAM](https://github.com/uswitch/kiam). Check [below](#deploying-on-aws) to see
 what configuration you need on the AWS side.
@@ -24,7 +24,7 @@ what configuration you need on the AWS side.
 
 ### General recommendations
 
-The number of `replicas` in the [default values file](helm/loki/values.yaml) are generally considered as safe.
+The number of `replicas` in the [default values file](https://github.com/giantswarm/loki-app/helm/loki/values.yaml) are generally considered as safe.
 If you reduce the number of `replicas` below the default recommended values, expect undefined behaviour and problems.
 
 ### Deploying on AWS
@@ -34,6 +34,8 @@ has `kiam`, `cert-manager` and `external-dns` included, you should be good to us
 the instructions below to setup S3 bucket and the necessary permissions in your
 AWS account.
 
+Make sure you create this config for the *workload cluster* where you are deploying Loki.
+
 1. Prepare AWS S3 storage. Create a new private S3 bucket based in the same region
    as your instances. Ex. `gs-loki-storage`.
    * encryption is not required, but strongly recommended: Loki won't encrypt your data
@@ -42,6 +44,7 @@ AWS account.
    * it is recommended to use S3 bucket class for frequent access (`S3 standard`),
    * create a retention policy for the bucket; currently, loki won't delete
      files in S3 for you ([check here](https://grafana.com/docs/loki/latest/operations/storage/retention/) and [here](https://grafana.com/docs/loki/latest/operations/storage/table-manager/)).
+
 2. Prepare AWS role.
    * Create a Policy in IAM with the following permissions (adjust for your bucket name, `gs-loki-storage` used below) and name the Policy for ex. `loki-s3-access`:
 
@@ -96,9 +99,9 @@ AWS account.
         ```
 
 3. Create app config file
-    Grab the included [sample config file](sample_configs/values-gs.yaml),
+    Grab the included [sample config file](https://github.com/giantswarm/loki-app/sample_configs/values-gs.yaml),
     read the comments for options and adjust to your needs. To check all available
-    options, please consult the [upstream `values.yaml` file](helm/loki/values.yaml).
+    options, please consult the [upstream `values.yaml` file](https://github.com/giantswarm/loki-app/helm/loki/values.yaml).
 
     1. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
     `gateway.basicAuth.existingSecret` config option.
@@ -134,6 +137,10 @@ AWS account.
             password: 2tnaneT
             orgid: tenant-2
     ```
+
+    3. update `nodeSelectorTerms` to match your nodes (if unsure, `k describe nodes [one worker node] | grep machine-deployment` should give you the right id)
+
+    4. update `gateway.ingress.hosts.host` and `gateway.ingress.tls.host` 
 
 4. Prepare the namespace
    Currently, you have to manually pre-create the namespace and annotate it with
@@ -174,10 +181,22 @@ AWS account.
   - Use the 'Storage account name' for `azure_storage.account_name`
   - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
   - Use one of the keys for `azure.storage_key`
-5. Make a personal copy of the [azure example file](sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
+5. Make a personal copy of the [azure example file](https://github.com/giantswarm/loki-app/sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
 6. Install the app using your values.
 
 Check out AWS instructions for [single tenant setup](#single-tenant-config) and [multi tenant setup](#multi-tenant-config) configurations.
+
+
+## Testing your deployment
+
+1. Install latest logcli from https://github.com/grafana/loki/releases
+
+2. Here are a few test queries for Loki, that you should adapt to your address credentials:
+```
+# List all streams
+logcli --username=Tenant1 --password=1tnaneT --addr="loki.nx4tn.k8s.gauss.eu-west-1.aws.gigantic.io" series '{}'
+```
+
 
 ## Source code origin
 
