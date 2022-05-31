@@ -40,7 +40,7 @@ loki:
     httpGet:
       path: /ready
       port: http
-    initialDelaySeconds: 300
+    initialDelaySeconds: 30
     timeoutSeconds: 1
   livenessProbe:
     httpGet:
