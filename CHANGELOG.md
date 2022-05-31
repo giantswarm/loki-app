@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- startup crashloop due to incorrect initialDelay settings.
 - Compatibility with Ingress v1 API
 - Links in documentation
 
