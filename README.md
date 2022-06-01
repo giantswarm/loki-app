@@ -201,14 +201,64 @@ Check out AWS instructions for [single tenant setup](#single-tenant-config) and 
 
 ## Testing your deployment
 
+### Reading data with logcli
+
 1. Install latest logcli from https://github.com/grafana/loki/releases
 
-2. Here are a few test queries for Loki, that you should adapt to your address credentials:
+2. Here are a few test queries for Loki, that you should adapt with your URL and credentials:
+
+  * test from WAN
 ```
 # List all streams
-logcli --username=Tenant1 --password=1tnaneT --addr="loki.nx4tn.k8s.gauss.eu-west-1.aws.gigantic.io" series '{}'
+logcli --username=Tenant1 --password=1tnaneT --addr="http://loki.nx4tn.k8s.gauss.eu-west-1.aws.gigantic.io" series '{}'
+```
+  * Test direct access to querier
+```
+# port-forward querier to local port 3101
+k port-forward -n loki loki-querier-0 3101:3100
+# or loki-query-frontend-xxxx port 3100 accepts the same queries
+
+# List all streams
+$ logcli --org-id="tenant-1" --addr="http://localhost:3100" series '{}'
+http://localhost:3100/loki/api/v1/series?end=1654091687961363182&match=%7B%7D&start=1654088087961363182
 ```
 
+### Ingesting data with promtail
+
+* Get promtail from https://github.com/grafana/loki/releases
+* Create basic promtail config file `promtail-test.yml`:
+```
+---
+server:
+  disable: true
+positions:
+  filename: /tmp/promtail_test_positions.yaml
+clients:
+  - url: http://localhost:3100/loki/api/v1/push
+    tenant_id: tenant-1
+scrape_configs:
+  - job_name: logfile
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: logfile
+          host: local
+          __path__: /tmp/lokitest.log
+```
+* port-forward Loki distributor to localhost:3100
+```
+k port-forward -n loki loki-distributor-67c7c49cfc-rwwsv 3100:3100
+```
+* Launch promtail
+```
+promtail --config.file=promtail-test.yml --inspect
+```
+* Add data to your log file
+```
+(while : ; do echo "test log line $(date)"; sleep 1; done ) >> /tmp/lokitest.log
+```
+* Query promtail and see your data
 
 ## Source code origin
 
