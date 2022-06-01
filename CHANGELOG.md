@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Documentation minor updates
+- Documentation minor updates and fixes
 - Documentation: how to test your Loki deployment
 
 ## [0.3.2] - 2022-03-09

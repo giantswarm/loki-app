@@ -27,6 +27,18 @@ what configuration you need on the AWS side.
 The number of `replicas` in the [default values file](https://github.com/giantswarm/loki-app/helm/loki/values.yaml) are generally considered as safe.
 If you reduce the number of `replicas` below the default recommended values, expect undefined behaviour and problems.
 
+#### Prepare config file
+
+1. Create app config file
+    Grab the included [sample config file](https://github.com/giantswarm/loki-app/sample_configs/values-gs.yaml) or [azure sample config file](https://github.com/giantswarm/loki-app/sample_configs/values-gs-azure.yaml) ,
+    read the comments for options and adjust to your needs. To check all available
+    options, please consult the [upstream `values.yaml` file](https://github.com/giantswarm/loki-app/helm/loki/values.yaml).
+
+2. update `nodeSelectorTerms` to match your nodes (if unsure, `kubectl describe nodes [one worker node] | grep machine-` should give you the right id for `machine-deployment` or `machine-pool` depending on your provider). Beware, there's 2 places to update!
+
+3. update `gateway.ingress.hosts.host` and `gateway.ingress.tls.host` 
+
+
 ### Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
@@ -98,10 +110,7 @@ Make sure you create this config for the *workload cluster* where you are deploy
         }
         ```
 
-3. Create app config file
-    Grab the included [sample config file](https://github.com/giantswarm/loki-app/sample_configs/values-gs.yaml),
-    read the comments for options and adjust to your needs. To check all available
-    options, please consult the [upstream `values.yaml` file](https://github.com/giantswarm/loki-app/helm/loki/values.yaml).
+3. AWS-specific config file tuning
 
     1. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
     `gateway.basicAuth.existingSecret` config option.
@@ -138,9 +147,6 @@ Make sure you create this config for the *workload cluster* where you are deploy
             orgid: tenant-2
     ```
 
-    3. update `nodeSelectorTerms` to match your nodes (if unsure, `k describe nodes [one worker node] | grep machine-deployment` should give you the right id)
-
-    4. update `gateway.ingress.hosts.host` and `gateway.ingress.tls.host` 
 
 4. Prepare the namespace
    Currently, you have to manually pre-create the namespace and annotate it with
@@ -157,31 +163,37 @@ Make sure you create this config for the *workload cluster* where you are deploy
 
 ### Deploying on Azure
 
-1. Find the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
+1. Find the 'Subscription' (usually named after your installation) name and the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
+
 2. Create 'Storage Account' on Azure ([How-to](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create)) ['Create storage account'](https://portal.azure.com/#create/Microsoft.StorageAccount)
   - 'Account kind' should be 'BlobStorage'
   - You can do it using Powershell in Azure portal. Example:
   ```
-> az storage account create `
-     --name STORAGE_ACCOUNT_NAME `
-     --resource-group RESOURCE_GROUP `
-     --sku Standard_GRS `
-     --encryption-services blob `
-     --https-only true `
-     --kind BlobStorage `
+> az storage account create \
+     --subscription SUBSCRIPTION_NAME
+     --name STORAGE_ACCOUNT_NAME \
+     --resource-group RESOURCE_GROUP \
+     --sku Standard_GRS \
+     --encryption-services blob \
+     --https-only true \
+     --kind BlobStorage \
      --access-tier Hot
 ```
 (It may be required to set the location using the `--location` flag.)
+
 3. Create a 'Blob service' 'Container' in your storage account
   - Example on how to do it with Powershell in Azure portal:
 ```
-> az storage container create -n CONTAINER_NAME --public-access off --account-name STORAGE_ACCOUNT_NAME
+> az storage container create --subscription SUBSCRIPTION_NAME -n CONTAINER_NAME --public-access off --account-name STORAGE_ACCOUNT_NAME
 ```
+
 4. Go to the 'Access keys' page of your 'Storage account'
   - Use the 'Storage account name' for `azure_storage.account_name`
   - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
   - Use one of the keys for `azure.storage_key`
+
 5. Make a personal copy of the [azure example file](https://github.com/giantswarm/loki-app/sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
+
 6. Install the app using your values.
 
 Check out AWS instructions for [single tenant setup](#single-tenant-config) and [multi tenant setup](#multi-tenant-config) configurations.
