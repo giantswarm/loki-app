@@ -24,7 +24,7 @@ what configuration you need on the AWS side.
 
 ### General recommendations
 
-The number of `replicas` in the [default values file](https://github.com/giantswarm/loki-app/helm/loki/values.yaml) are generally considered as safe.
+The number of `replicas` in the [default values file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml) are generally considered as safe.
 If you reduce the number of `replicas` below the default recommended values, expect undefined behaviour and problems.
 
 #### Prepare config file
