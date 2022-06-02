@@ -30,7 +30,7 @@ If you reduce the number of `replicas` below the default recommended values, exp
 #### Prepare config file
 
 1. Create app config file
-    Grab the included [sample config file](https://github.com/giantswarm/loki-app/sample_configs/values-gs.yaml) or [azure sample config file](https://github.com/giantswarm/loki-app/sample_configs/values-gs-azure.yaml) ,
+    Grab the included [sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs.yaml) or [azure sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs-azure.yaml) ,
     read the comments for options and adjust to your needs. To check all available
     options, please consult the [upstream `values.yaml` file](https://github.com/giantswarm/loki-app/helm/loki/values.yaml).
 
