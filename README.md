@@ -192,7 +192,7 @@ Make sure to create this config for the *cluster* where you are deploying Loki, 
   - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
   - Use one of the keys for `azure.storage_key`
 
-5. Make a personal copy of the [azure example file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
+5. Fill in the values from previous step as well as cluster id and node pool ids in your config (`values.yaml`) file.
 
 6. Install the app using your values.
 
