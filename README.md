@@ -32,7 +32,7 @@ If you reduce the number of `replicas` below the default recommended values, exp
 1. Create app config file
     Grab the included [sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs.yaml) or [azure sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs-azure.yaml) ,
     read the comments for options and adjust to your needs. To check all available
-    options, please consult the [upstream `values.yaml` file](https://github.com/giantswarm/loki-app/helm/loki/values.yaml).
+    options, please consult the [full `values.yaml` file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml).
 
 2. update `nodeSelectorTerms` to match your nodes (if unsure, `kubectl describe nodes [one worker node] | grep machine-` should give you the right id for `machine-deployment` or `machine-pool` depending on your provider). Beware, there's 2 places to update!
 
@@ -46,7 +46,7 @@ has `kiam`, `cert-manager` and `external-dns` included, you should be good to us
 the instructions below to setup S3 bucket and the necessary permissions in your
 AWS account.
 
-Make sure you create this config for the *workload cluster* where you are deploying Loki.
+Make sure to create this config for the *cluster* where you are deploying Loki, and not at installation-level.
 
 1. Prepare AWS S3 storage. Create a new private S3 bucket based in the same region
    as your instances. Ex. `gs-loki-storage`.
@@ -258,7 +258,7 @@ promtail --config.file=promtail-test.yml --inspect
 ```
 (while true ; do echo "test log line $(date)"; sleep 1; done ) >> /tmp/lokitest.log
 ```
-* Query promtail and see your data
+* Query loki with `logcli` and see your data
 
 ## Source code origin
 
