@@ -256,7 +256,7 @@ promtail --config.file=promtail-test.yml --inspect
 ```
 * Add data to your log file
 ```
-(while : ; do echo "test log line $(date)"; sleep 1; done ) >> /tmp/lokitest.log
+(while true ; do echo "test log line $(date)"; sleep 1; done ) >> /tmp/lokitest.log
 ```
 * Query promtail and see your data
 
