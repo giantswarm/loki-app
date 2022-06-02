@@ -192,7 +192,7 @@ Make sure you create this config for the *workload cluster* where you are deploy
   - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
   - Use one of the keys for `azure.storage_key`
 
-5. Make a personal copy of the [azure example file](https://github.com/giantswarm/loki-app/sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
+5. Make a personal copy of the [azure example file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
 
 6. Install the app using your values.
 
