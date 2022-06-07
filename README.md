@@ -170,7 +170,7 @@ Make sure to create this config for the *cluster* where you are deploying Loki, 
   - You can do it using Powershell in Azure portal. Example:
   ```
 > az storage account create \
-     --subscription SUBSCRIPTION_NAME
+     --subscription SUBSCRIPTION_NAME \
      --name STORAGE_ACCOUNT_NAME \
      --resource-group RESOURCE_GROUP \
      --sku Standard_GRS \
@@ -212,15 +212,23 @@ Check out AWS instructions for [single tenant setup](#single-tenant-config) and 
 # List all streams
 logcli --username=Tenant1 --password=1tnaneT --addr="http://loki.nx4tn.k8s.gauss.eu-west-1.aws.gigantic.io" series '{}'
 ```
-  * Test direct access to querier
+
+  * Test with a port-forward to the gateway:
+```
+k port-forward -n loki svc/loki-gateway 8080:80
+logcli --username=Tenant1 --password=1tnaneT --addr="http://localhost:8080" series '{}'
+```
+
+  * You can also test direct access to querier
 ```
 # port-forward querier to local port 3101
-k port-forward -n loki loki-querier-0 3101:3100
+k port-forward -n loki svc/loki-querier 3101:3100
 # or loki-query-frontend-xxxx port 3100 accepts the same queries
 
 # List all streams
-$ logcli --org-id="tenant-1" --addr="http://localhost:3100" series '{}'
-http://localhost:3100/loki/api/v1/series?end=1654091687961363182&match=%7B%7D&start=1654088087961363182
+# Note that we use "org-id" rather than "username/password" when we bypass the gateway
+$ logcli --org-id="tenant-1" --addr="http://localhost:3101" series '{}'
+http://localhost:3101/loki/api/v1/series?end=1654091687961363182&match=%7B%7D&start=1654088087961363182
 ```
 
 ### Ingesting data with promtail
@@ -234,8 +242,11 @@ server:
 positions:
   filename: /tmp/promtail_test_positions.yaml
 clients:
-  - url: http://localhost:3100/loki/api/v1/push
-    tenant_id: tenant-1
+  - url: http://localhost:8080/loki/api/v1/push
+    # tenant_id: tenant-1
+    basic_auth:
+      username: Tenant1
+      password: 1tnaneT
 scrape_configs:
   - job_name: logfile
     static_configs:
@@ -246,9 +257,10 @@ scrape_configs:
           host: local
           __path__: /tmp/lokitest.log
 ```
-* port-forward Loki distributor to localhost:3100
+* If you want to bypass the gateway, you can port-forward Loki distributor to localhost:3100
 ```
-k port-forward -n loki loki-distributor-67c7c49cfc-rwwsv 3100:3100
+k port-forward -n loki svc/loki-distributor 3100:3100
+# Don't forget to change your promtail URL, and use tenant_id rather than basic_auth!
 ```
 * Launch promtail
 ```
