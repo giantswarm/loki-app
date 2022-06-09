@@ -7,11 +7,10 @@ Giant Swarm offers Loki as a [managed app](https://docs.giantswarm.io/changes/ma
 It tunes some options from upstream to make the chart easier to deploy.
 
 This chart is meant to be used with S3 compatible storage only. Access to the S3
-storage must be ensured for the chart to work. You can check
-[the sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs.yaml) to check for annotations
-that can be used to make it work with AWS S3 using
-[KIAM](https://github.com/uswitch/kiam). Check [below](#deploying-on-aws) to see
-what configuration you need on the AWS side.
+storage must be ensured for the chart to work.
+* Check [below](#deploying-on-aws) to see what configuration you need on the AWS side.
+* or [below](#deploying-on-azure) to see what configuration you need on the Azure side.
+
 
 ## Requirements
 
@@ -42,7 +41,7 @@ If you reduce the number of `replicas` below the default recommended values, exp
 ### Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
-has `kiam`, `cert-manager` and `external-dns` included, you should be good to use
+has `kiam` (https://github.com/uswitch/kiam), `cert-manager` and `external-dns` included, you should be good to use
 the instructions below to setup S3 bucket and the necessary permissions in your
 AWS account.
 
