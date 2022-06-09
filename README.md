@@ -246,21 +246,21 @@ logcli --username=Tenant1 --password=1tnaneT --addr="http://localhost:8080" seri
 
   * You can also test direct access to querier
 ```
-# port-forward querier to local port 3101
-k port-forward -n loki svc/loki-querier 3101:3100
+# port-forward querier to local port 3100
+k port-forward -n loki svc/loki-querier 3100:3100
 # or loki-query-frontend-xxxx port 3100 accepts the same queries
 
 # List all streams
 # Note that we use "org-id" rather than "username/password" when we bypass the gateway
-$ logcli --org-id="tenant-1" --addr="http://localhost:3101" series '{}'
-http://localhost:3101/loki/api/v1/series?end=1654091687961363182&match=%7B%7D&start=1654088087961363182
+$ logcli --org-id="tenant-1" --addr="http://localhost:3100" series '{}'
+http://localhost:3100/loki/api/v1/series?end=1654091687961363182&match=%7B%7D&start=1654088087961363182
 ```
 
 ### Ingesting data with promtail
 
 * Get promtail from https://github.com/grafana/loki/releases
 * Create basic promtail config file `promtail-test.yml`:
-```
+```yaml
 ---
 server:
   disable: true
