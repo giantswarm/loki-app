@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - startup crashloop due to incorrect initialDelay settings.
 - Compatibility with Ingress v1 API
+- Links in documentation
+
+### Changed
+
+- Documentation minor updates and fixes
+- Documentation: how to test your Loki deployment
 
 ## [0.3.2] - 2022-03-09
 

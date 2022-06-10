@@ -7,11 +7,10 @@ Giant Swarm offers Loki as a [managed app](https://docs.giantswarm.io/changes/ma
 It tunes some options from upstream to make the chart easier to deploy.
 
 This chart is meant to be used with S3 compatible storage only. Access to the S3
-storage must be ensured for the chart to work. You can check
-[the sample config file](sample_configs/values-gs.yaml) to check for annotations
-that can be used to make it work with AWS S3 using
-[KIAM](https://github.com/uswitch/kiam). Check [below](#deploying-on-aws) to see
-what configuration you need on the AWS side.
+storage must be ensured for the chart to work.
+* Check [below](#deploying-on-aws) to see what configuration you need on the AWS side.
+* or [below](#deploying-on-azure) to see what configuration you need on the Azure side.
+
 
 ## Requirements
 
@@ -24,15 +23,29 @@ what configuration you need on the AWS side.
 
 ### General recommendations
 
-The number of `replicas` in the [default values file](helm/loki/values.yaml) are generally considered as safe.
+The number of `replicas` in the [default values file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml) are generally considered safe.
 If you reduce the number of `replicas` below the default recommended values, expect undefined behaviour and problems.
+
+#### Prepare config file
+
+1. Create app config file
+    Grab the included [sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs.yaml) or [azure sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs-azure.yaml) ,
+    read the comments for options and adjust to your needs. To check all available
+    options, please consult the [full `values.yaml` file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml).
+
+2. update `nodeSelectorTerms` to match your nodes (if unsure, `kubectl describe nodes [one worker node] | grep machine-` should give you the right id for `machine-deployment` or `machine-pool` depending on your provider). Beware, there's 2 places to update!
+
+3. update `gateway.ingress.hosts.host` and `gateway.ingress.tls.host` 
+
 
 ### Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
-has `kiam`, `cert-manager` and `external-dns` included, you should be good to use
+has `kiam` (https://github.com/uswitch/kiam), `cert-manager` and `external-dns` included, you should be good to use
 the instructions below to setup S3 bucket and the necessary permissions in your
 AWS account.
+
+Make sure to create this config for the *cluster* where you are deploying Loki, and not at installation-level.
 
 1. Prepare AWS S3 storage. Create a new private S3 bucket based in the same region
    as your instances. Ex. `gs-loki-storage`.
@@ -42,6 +55,7 @@ AWS account.
    * it is recommended to use S3 bucket class for frequent access (`S3 standard`),
    * create a retention policy for the bucket; currently, loki won't delete
      files in S3 for you ([check here](https://grafana.com/docs/loki/latest/operations/storage/retention/) and [here](https://grafana.com/docs/loki/latest/operations/storage/table-manager/)).
+
 2. Prepare AWS role.
    * Create a Policy in IAM with the following permissions (adjust for your bucket name, `gs-loki-storage` used below) and name the Policy for ex. `loki-s3-access`:
 
@@ -95,10 +109,7 @@ AWS account.
         }
         ```
 
-3. Create app config file
-    Grab the included [sample config file](sample_configs/values-gs.yaml),
-    read the comments for options and adjust to your needs. To check all available
-    options, please consult the [upstream `values.yaml` file](helm/loki/values.yaml).
+3. AWS-specific config file tuning
 
     1. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
     `gateway.basicAuth.existingSecret` config option.
@@ -135,6 +146,7 @@ AWS account.
             orgid: tenant-2
     ```
 
+
 4. Prepare the namespace
    Currently, you have to manually pre-create the namespace and annotate it with
    IAM Roles required for pods running in the namespace:
@@ -150,34 +162,139 @@ AWS account.
 
 ### Deploying on Azure
 
-1. Find the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
+1. Find the 'Subscription name' (usually named after your installation) name and the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
+  - list subscriptions:
+```
+az account list -otable
+export SUBSCRIPTION_NAME="your subscription"
+```
+  - list resource groups:
+```
+az group list --subscription "$SUBSCRIPTION_NAME" -otable
+export RESOURCE_GROUP="your resource group"
+```
+
 2. Create 'Storage Account' on Azure ([How-to](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create)) ['Create storage account'](https://portal.azure.com/#create/Microsoft.StorageAccount)
   - 'Account kind' should be 'BlobStorage'
-  - You can do it using Powershell in Azure portal. Example:
-  ```
-> az storage account create `
-     --name STORAGE_ACCOUNT_NAME `
-     --resource-group RESOURCE_GROUP `
-     --sku Standard_GRS `
-     --encryption-services blob `
-     --https-only true `
-     --kind BlobStorage `
+  - Example with Azure CLI:
+```
+# Chose your storage account name
+export STORAGE_ACCOUNT_NAME="loki$RESOURCE_GROUP"
+# then create it
+az storage account create \
+     --subscription "$SUBSCRIPTION_NAME" \
+     --name "$STORAGE_ACCOUNT_NAME" \
+     --resource-group "$RESOURCE_GROUP" \
+     --sku Standard_GRS \
+     --encryption-services blob \
+     --https-only true \
+     --kind BlobStorage \
      --access-tier Hot
 ```
 (It may be required to set the location using the `--location` flag.)
+
 3. Create a 'Blob service' 'Container' in your storage account
   - Example on how to do it with Powershell in Azure portal:
 ```
-> az storage container create -n CONTAINER_NAME --public-access off --account-name STORAGE_ACCOUNT_NAME
+export CONTAINER_NAME="$STORAGE_ACCOUNT_NAME"container
+az storage container create \
+     --subscription "$SUBSCRIPTION_NAME" \
+     -n "$CONTAINER_NAME" \
+     --public-access off \
+     --account-name "$STORAGE_ACCOUNT_NAME"
 ```
+
 4. Go to the 'Access keys' page of your 'Storage account'
   - Use the 'Storage account name' for `azure_storage.account_name`
   - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
   - Use one of the keys for `azure.storage_key`
-5. Make a personal copy of the [azure example file](sample_configs/values-gs-azure.yaml) and fill in the values from previous step and also cluster id and node pool ids
+  - With azure CLI
+```
+az storage account keys list \
+     --subscription "$SUBSCRIPTION_NAME" \
+     --account-name "$STORAGE_ACCOUNT_NAME" \
+| jq -r '.[]|select(.keyName=="key1").value'
+```
+
+5. Fill in the values from previous step as well as cluster id and node pool ids in your config (`values.yaml`) file.
+
 6. Install the app using your values.
 
 Check out AWS instructions for [single tenant setup](#single-tenant-config) and [multi tenant setup](#multi-tenant-config) configurations.
+
+
+## Testing your deployment
+
+### Reading data with logcli
+
+1. Install latest logcli from https://github.com/grafana/loki/releases
+
+2. Here are a few test queries for Loki, that you should adapt with your URL and credentials:
+
+  * test from WAN
+```
+# List all streams
+logcli --username=Tenant1 --password=1tnaneT --addr="http://loki.nx4tn.k8s.gauss.eu-west-1.aws.gigantic.io" series '{}'
+```
+
+  * Test with a port-forward to the gateway:
+```
+k port-forward -n loki svc/loki-gateway 8080:80
+logcli --username=Tenant1 --password=1tnaneT --addr="http://localhost:8080" series '{}'
+```
+
+  * You can also test direct access to querier
+```
+# port-forward querier to local port 3100
+k port-forward -n loki svc/loki-querier 3100:3100
+# or loki-query-frontend-xxxx port 3100 accepts the same queries
+
+# List all streams
+# Note that we use "org-id" rather than "username/password" when we bypass the gateway
+$ logcli --org-id="tenant-1" --addr="http://localhost:3100" series '{}'
+http://localhost:3100/loki/api/v1/series?end=1654091687961363182&match=%7B%7D&start=1654088087961363182
+```
+
+### Ingesting data with promtail
+
+* Get promtail from https://github.com/grafana/loki/releases
+* Create basic promtail config file `promtail-test.yml`:
+```yaml
+---
+server:
+  disable: true
+positions:
+  filename: /tmp/promtail_test_positions.yaml
+clients:
+  - url: http://localhost:8080/loki/api/v1/push
+    # tenant_id: tenant-1
+    basic_auth:
+      username: Tenant1
+      password: 1tnaneT
+scrape_configs:
+  - job_name: logfile
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: logfile
+          host: local
+          __path__: /tmp/lokitest.log
+```
+* If you want to bypass the gateway, you can port-forward Loki distributor to localhost:3100
+```
+k port-forward -n loki svc/loki-distributor 3100:3100
+# Don't forget to change your promtail URL, and use tenant_id rather than basic_auth!
+```
+* Launch promtail
+```
+promtail --config.file=promtail-test.yml --inspect
+```
+* Add data to your log file
+```
+(while true ; do echo "test log line $(date)"; sleep 1; done ) >> /tmp/lokitest.log
+```
+* Query loki with `logcli` and see your data
 
 ## Source code origin
 
