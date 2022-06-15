@@ -21,62 +21,63 @@ storage must be ensured for the chart to work.
   * v12.5.1 for AWS
   * v12.3.1 for KVM.
 
-### General recommendations
+## General recommendations
 
 The number of `replicas` in the [default values file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml) are generally considered safe.
 If you reduce the number of `replicas` below the default recommended values, expect undefined behaviour and problems.
 
-#### Prepare config file
+## Prepare config file
 
 1. Create app config file
-    Grab the included [sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs.yaml) or [azure sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs-azure.yaml) ,
-    read the comments for options and adjust to your needs. To check all available
-    options, please consult the [full `values.yaml` file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml).
+Grab the included [sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs.yaml)
+or [azure sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs-azure.yaml),
+read the comments for options and adjust to your needs. To check all available
+options, please consult the [full `values.yaml` file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml).
 
-2. update `nodeSelectorTerms` to match your nodes (if unsure, `kubectl describe nodes [one worker node] | grep machine-` should give you the right id for `machine-deployment` or `machine-pool` depending on your provider). Beware, there's 2 places to update!
+2. update `nodeSelectorTerms` to match your nodes (if unsure, `kubectl describe nodes [one worker node] | grep machine-`
+should give you the right id for `machine-deployment` or `machine-pool` depending on your provider). Beware, there's 2 places to update!
 
 3. update `gateway.ingress.hosts.host` and `gateway.ingress.tls.host` 
 
-4. Multi-tenant tuning
+#### Multi-tenant setup
 
-    1. The default GiantSwarm template is prepared for multi-tenancy.
-    In multi tenant setups<a name="multi-tenant-config"></a>, you can enable [loki-multi-tenant-proxy](https://github.com/k8spin/loki-multi-tenant-proxy)
-    to manage credentials for different tenants.
+1. The default GiantSwarm template is prepared for multi-tenancy.
+In multi tenant setups<a name="multi-tenant-config"></a>, you can enable [loki-multi-tenant-proxy](https://github.com/k8spin/loki-multi-tenant-proxy)
+to manage credentials for different tenants.
 
-    Enable the deployment of loki-multi-tenant-proxy by setting `multiTenantAuth.enabled` to `true`.
+Enable the deployment of loki-multi-tenant-proxy by setting `multiTenantAuth.enabled` to `true`.
 
-    Write down your credentials in `multiTenantAuth.credentials`.
-    They should be formatted in your values file like this:
+Write down your credentials in `multiTenantAuth.credentials`.
+They should be formatted in your values file like this:
 
-    ```yaml
-    multiTenantAuth:
-      enabled: true
-      credentials: |-
-        users:
-          - username: Tenant1
-            password: 1tnaneT
-            orgid: tenant-1
-          - username: Tenant2
-            password: 2tnaneT
-            orgid: tenant-2
-    ```
+```yaml
+multiTenantAuth:
+  enabled: true
+  credentials: |-
+    users:
+      - username: Tenant1
+        password: 1tnaneT
+        orgid: tenant-1
+      - username: Tenant2
+        password: 2tnaneT
+        orgid: tenant-2
+```
 
-    2. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
-    `gateway.basicAuth.existingSecret` config option.
-    To create the secret with necessary users and passwords use the following commands:
+2. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
+`gateway.basicAuth.existingSecret` config option.
+To create the secret with necessary users and passwords use the following commands:
 
-    ```bash
-    echo "passwd01" | htpasswd -i -c.htpasswd user01
-    echo "passwd02" | htpasswd -i .htpasswd user02
-    echo "passwd03" | htpasswd -i .htpasswd user03
-    ...
-    kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
-    ```
+```bash
+echo "passwd01" | htpasswd -i -c.htpasswd user01
+echo "passwd02" | htpasswd -i .htpasswd user02
+echo "passwd03" | htpasswd -i .htpasswd user03
 
-    Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
+kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
+```
+Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
 
 
-### Deploying on AWS
+## Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
 has `kiam` (https://github.com/uswitch/kiam), `cert-manager` and `external-dns` included, you should be good to use
@@ -85,15 +86,17 @@ AWS account.
 
 Make sure to create this config for the *cluster* where you are deploying Loki, and not at installation-level.
 
-1. Prepare AWS S3 storage. Create a new private S3 bucket based in the same region
-   as your instances. Ex. `gs-loki-storage`.
-   * encryption is not required, but strongly recommended: Loki won't encrypt your data
-   * consider creating private VPC endpoint for S3 - traffic volume might be
-     considerable and this might save you some money for the transfer fees,
-   * it is recommended to use S3 bucket class for frequent access (`S3 standard`),
-   * create a retention policy for the bucket; currently, loki won't delete
-     files in S3 for you ([check here](https://grafana.com/docs/loki/latest/operations/storage/retention/) and [here](https://grafana.com/docs/loki/latest/operations/storage/table-manager/)).
-   * CLI procedure:
+#### Prepare AWS S3 storage.
+Create a new private S3 bucket based in the same region
+as your instances. Ex. `gs-loki-storage`.
+* encryption is not required, but strongly recommended: Loki won't encrypt your data
+* consider creating private VPC endpoint for S3 - traffic volume might be
+  considerable and this might save you some money for the transfer fees,
+* it is recommended to use S3 bucket class for frequent access (`S3 standard`),
+* create a retention policy for the bucket; currently, loki won't delete
+  files in S3 for you ([check here](https://grafana.com/docs/loki/latest/operations/storage/retention/)
+  and [here](https://grafana.com/docs/loki/latest/operations/storage/table-manager/)).
+* CLI procedure:
 ```bash
 # prepare environment
 export CLUSTER_NAME=zj88t
@@ -108,8 +111,8 @@ export LOKI_ROLE="$BUCKET_NAME"-role
 aws --profile="$AWS_PROFILE" s3 mb s3://"$BUCKET_NAME" --region "$REGION"
 ```
 
-2. Prepare AWS role.
-   * Create an IAM Policy in IAM. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
+#### Prepare AWS role.
+* Create an IAM Policy in IAM. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
 ```bash
 # Create policy
 POLICY_DOC='{
@@ -142,11 +145,10 @@ POLICY_DOC='{
 }'
 aws --profile="$AWS_PROFILE" iam create-policy --policy-name "$LOKI_POLICY" --policy-document "$POLICY_DOC"
 ```
-
-   * create a new IAM Role that allows the necessary instances (k8s masters in the
-     case of using `kiam`) to access resources from the policy. Set trust to allow
-     the Role used by `kiam` to claim the S3 access role.
-     If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
+* create a new IAM Role that allows the necessary instances (k8s masters in the
+  case of using `kiam`) to access resources from the policy. Set trust to allow
+  the Role used by `kiam` to claim the S3 access role.
+  If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
 ```bash
 # Create role
 PRINCIPAL_ARN="$(aws --profile="$AWS_PROFILE" iam get-role --role-name "$CLUSTER_NAME"-IAMManager-Role | sed -n 's/.*Arn.*"\(arn:.*\)".*/\1/p')"
@@ -165,36 +167,38 @@ ROLE_DOC='{
 aws --profile="$AWS_PROFILE" iam create-role --role-name "$LOKI_ROLE" --assume-role-policy-document "$ROLE_DOC"
 ```
 
-3. Prepare the namespace
-   Currently, you have to manually pre-create the namespace and annotate it with
-   IAM Roles required for pods running in the namespace:
+#### Prepare the namespace
+Currently, you have to manually pre-create the namespace and annotate it with
+IAM Roles required for pods running in the namespace:
 
-   ```bash
-   kubectl create ns loki
-   kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_POLICY"
-   ```
+```bash
+kubectl create ns loki
+kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_POLICY"
+```
 
-4. Install the app
-   Now you can proceed with installing the app the usual way. Don't forget to use
-   the same namespace as you prepared above for the installation.
+#### Install the app
+Now you can proceed with installing the app the usual way. Don't forget to use
+the same namespace as you prepared above for the installation.
 
-### Deploying on Azure
+## Deploying on Azure
 
-1. Find the 'Subscription name' (usually named after your installation) name and the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
-  - list subscriptions:
+#### Gather data
+Find the 'Subscription name' (usually named after your installation) name and the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
+* list subscriptions:
 ```
 az account list -otable
 export SUBSCRIPTION_NAME="your subscription"
 ```
-  - list resource groups:
+* list resource groups:
 ```
 az group list --subscription "$SUBSCRIPTION_NAME" -otable
 export RESOURCE_GROUP="your resource group"
 ```
 
-2. Create 'Storage Account' on Azure ([How-to](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create)) ['Create storage account'](https://portal.azure.com/#create/Microsoft.StorageAccount)
-  - 'Account kind' should be 'BlobStorage'
-  - Example with Azure CLI:
+#### object storage setup
+1. Create 'Storage Account' on Azure ([How-to](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create)) ['Create storage account'](https://portal.azure.com/#create/Microsoft.StorageAccount)
+    * 'Account kind' should be 'BlobStorage'
+    * Example with Azure CLI:
 ```
 # Chose your storage account name
 export STORAGE_ACCOUNT_NAME="loki$RESOURCE_GROUP"
@@ -211,8 +215,8 @@ az storage account create \
 ```
 (It may be required to set the location using the `--location` flag.)
 
-3. Create a 'Blob service' 'Container' in your storage account
-  - Example on how to do it with Powershell in Azure portal:
+2. Create a 'Blob service' 'Container' in your storage account
+    * Example on how to do it with Powershell in Azure portal:
 ```
 export CONTAINER_NAME="$STORAGE_ACCOUNT_NAME"container
 az storage container create \
@@ -222,11 +226,11 @@ az storage container create \
      --account-name "$STORAGE_ACCOUNT_NAME"
 ```
 
-4. Go to the 'Access keys' page of your 'Storage account'
-  - Use the 'Storage account name' for `azure_storage.account_name`
-  - Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
-  - Use one of the keys for `azure.storage_key`
-  - With azure CLI
+3. Go to the 'Access keys' page of your 'Storage account'
+    * Use the 'Storage account name' for `azure_storage.account_name`
+    * Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
+    * Use one of the keys for `azure.storage_key`
+    * With azure CLI
 ```
 az storage account keys list \
      --subscription "$SUBSCRIPTION_NAME" \
@@ -234,11 +238,12 @@ az storage account keys list \
 | jq -r '.[]|select(.keyName=="key1").value'
 ```
 
-5. Fill in the values from previous step as well as cluster id and node pool ids in your config (`values.yaml`) file.
+#### Install your app
 
-6. Install the app using your values.
+* Fill in the values from previous step as well as cluster id and node pool ids in your config (`values.yaml`) file.
 
-Check out AWS instructions for [single tenant setup](#single-tenant-config) and [multi tenant setup](#multi-tenant-config) configurations.
+* Install the app using your values.
+
 
 
 ## Testing your deployment
