@@ -165,6 +165,9 @@ ROLE_DOC='{
     ]
 }'
 aws --profile="$AWS_PROFILE" iam create-role --role-name "$LOKI_ROLE" --assume-role-policy-document "$ROLE_DOC"
+# Attach the policy to the role
+LOKI_POLICY_ARN="${PRINCIPAL_ARN%role/gs-cluster-*}policy/$LOKI_POLICY"
+aws --profile="$AWS_PROFILE" iam attach-role-policy --policy-arn "$LOKI_POLICY_ARN" --role-name "$LOKI_ROLE"
 ```
 
 #### Prepare the namespace
@@ -173,7 +176,8 @@ IAM Roles required for pods running in the namespace:
 
 ```bash
 kubectl create ns loki
-kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_POLICY"
+LOKI_ROLE_ARN="${PRINCIPAL_ARN%gs-cluster-*}$LOKI_ROLE"
+kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_ROLE_ARN"
 ```
 
 #### Install the app
@@ -238,7 +242,7 @@ az storage account keys list \
 | jq -r '.[]|select(.keyName=="key1").value'
 ```
 
-#### Install your app
+#### Install the app
 
 * Fill in the values from previous step as well as cluster id and node pool ids in your config (`values.yaml`) file.
 
