@@ -37,95 +37,10 @@ If you reduce the number of `replicas` below the default recommended values, exp
 
 3. update `gateway.ingress.hosts.host` and `gateway.ingress.tls.host` 
 
+4. Multi-tenant tuning
 
-### Deploying on AWS
-
-The recommended deployment mode is using S3 storage mode. Assuming your cluster
-has `kiam` (https://github.com/uswitch/kiam), `cert-manager` and `external-dns` included, you should be good to use
-the instructions below to setup S3 bucket and the necessary permissions in your
-AWS account.
-
-Make sure to create this config for the *cluster* where you are deploying Loki, and not at installation-level.
-
-1. Prepare AWS S3 storage. Create a new private S3 bucket based in the same region
-   as your instances. Ex. `gs-loki-storage`.
-   * encryption is not required, but strongly recommended: Loki won't encrypt your data
-   * consider creating private VPC endpoint for S3 - traffic volume might be
-     considerable and this might save you some money for the transfer fees,
-   * it is recommended to use S3 bucket class for frequent access (`S3 standard`),
-   * create a retention policy for the bucket; currently, loki won't delete
-     files in S3 for you ([check here](https://grafana.com/docs/loki/latest/operations/storage/retention/) and [here](https://grafana.com/docs/loki/latest/operations/storage/table-manager/)).
-
-2. Prepare AWS role.
-   * Create a Policy in IAM with the following permissions (adjust for your bucket name, `gs-loki-storage` used below) and name the Policy for ex. `loki-s3-access`:
-
-        ```json
-        {
-        "Version": "2012-10-17",
-        "Statement": [
-                {
-                    "Sid": "VisualEditor0",
-                    "Effect": "Allow",
-                    "Action": [
-                        "s3:ListBucket",
-                        "s3:PutObject",
-                        "s3:GetObject",
-                        "s3:DeleteObject" ],
-                    "Resource": [
-                        "arn:aws:s3:::gs-loki-storage",
-                        "arn:aws:s3:::gs-loki-storage/*"
-                    ]
-                },
-                {
-                    "Sid": "VisualEditor1",
-                    "Effect": "Allow",
-                    "Action": [
-                        "s3:GetAccessPoint",
-                        "s3:GetAccountPublicAccessBlock",
-                        "s3:ListAccessPoints"
-                    ],
-                    "Resource": "*"
-                }
-        ]
-        }
-        ```
-
-   * create a new IAM Role that allows the necessary instances (k8s masters in the
-     case of using `kiam`) to access resources from the policy. Set trust to allow
-     the Role used by `kiam` to claim the S3 access role:
-
-        ```json
-        {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                "Effect": "Allow",
-                "Principal": {
-                    "AWS": "arn:aws:iam::180547736195:role/m2h60-IAMManager-Role"
-                },
-                "Action": "sts:AssumeRole"
-                }
-            ]
-        }
-        ```
-
-3. AWS-specific config file tuning
-
-    1. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
-    `gateway.basicAuth.existingSecret` config option.
-    To create the secret with necessary users and passwords use the following commands:
-
-    ```bash
-    echo "passwd01" | htpasswd -i -c.htpasswd user01
-    echo "passwd02" | htpasswd -i .htpasswd user02
-    echo "passwd03" | htpasswd -i .htpasswd user03
-    ...
-    kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
-    ```
-
-    Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
-
-    2. In multi tenant setups<a name="multi-tenant-config"></a>, you can enable [loki-multi-tenant-proxy](https://github.com/k8spin/loki-multi-tenant-proxy)
+    1. The default GiantSwarm template is prepared for multi-tenancy.
+    In multi tenant setups<a name="multi-tenant-config"></a>, you can enable [loki-multi-tenant-proxy](https://github.com/k8spin/loki-multi-tenant-proxy)
     to manage credentials for different tenants.
 
     Enable the deployment of loki-multi-tenant-proxy by setting `multiTenantAuth.enabled` to `true`.
@@ -146,17 +61,120 @@ Make sure to create this config for the *cluster* where you are deploying Loki, 
             orgid: tenant-2
     ```
 
+    2. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
+    `gateway.basicAuth.existingSecret` config option.
+    To create the secret with necessary users and passwords use the following commands:
 
-4. Prepare the namespace
+    ```bash
+    echo "passwd01" | htpasswd -i -c.htpasswd user01
+    echo "passwd02" | htpasswd -i .htpasswd user02
+    echo "passwd03" | htpasswd -i .htpasswd user03
+    ...
+    kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
+    ```
+
+    Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
+
+
+### Deploying on AWS
+
+The recommended deployment mode is using S3 storage mode. Assuming your cluster
+has `kiam` (https://github.com/uswitch/kiam), `cert-manager` and `external-dns` included, you should be good to use
+the instructions below to setup S3 bucket and the necessary permissions in your
+AWS account.
+
+Make sure to create this config for the *cluster* where you are deploying Loki, and not at installation-level.
+
+1. Prepare AWS S3 storage. Create a new private S3 bucket based in the same region
+   as your instances. Ex. `gs-loki-storage`.
+   * encryption is not required, but strongly recommended: Loki won't encrypt your data
+   * consider creating private VPC endpoint for S3 - traffic volume might be
+     considerable and this might save you some money for the transfer fees,
+   * it is recommended to use S3 bucket class for frequent access (`S3 standard`),
+   * create a retention policy for the bucket; currently, loki won't delete
+     files in S3 for you ([check here](https://grafana.com/docs/loki/latest/operations/storage/retention/) and [here](https://grafana.com/docs/loki/latest/operations/storage/table-manager/)).
+   * CLI procedure:
+```bash
+# prepare environment
+export CLUSTER_NAME=zj88t
+export NODEPOOL_ID=oy9v0
+export REGION=eu-central-1
+export BUCKET_NAME=gs-loki-storage-"$CLUSTER_NAME" # must be globally unique
+export AWS_PROFILE=gorilla-atlas # your AWS CLI profile
+export LOKI_POLICY="$BUCKET_NAME"-policy
+export LOKI_ROLE="$BUCKET_NAME"-role
+
+# create bucket
+aws --profile="$AWS_PROFILE" s3 mb s3://"$BUCKET_NAME" --region "$REGION"
+```
+
+2. Prepare AWS role.
+   * Create an IAM Policy in IAM. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
+```bash
+# Create policy
+POLICY_DOC='{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject" ],
+            "Resource": [
+                "arn:aws:s3:::'"$BUCKET_NAME"'",
+                "arn:aws:s3:::'"$BUCKET_NAME"'/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetAccessPoint",
+                "s3:GetAccountPublicAccessBlock",
+                "s3:ListAccessPoints"
+            ],
+            "Resource": "*"
+        }
+    ]
+}'
+aws --profile="$AWS_PROFILE" iam create-policy --policy-name "$LOKI_POLICY" --policy-document "$POLICY_DOC"
+```
+
+   * create a new IAM Role that allows the necessary instances (k8s masters in the
+     case of using `kiam`) to access resources from the policy. Set trust to allow
+     the Role used by `kiam` to claim the S3 access role.
+     If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
+```bash
+# Create role
+PRINCIPAL_ARN="$(aws --profile="$AWS_PROFILE" iam get-role --role-name "$CLUSTER_NAME"-IAMManager-Role | sed -n 's/.*Arn.*"\(arn:.*\)".*/\1/p')"
+ROLE_DOC='{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+        "Effect": "Allow",
+        "Principal": {
+            "AWS": "'"$PRINCIPAL_ARN"'"
+        },
+        "Action": "sts:AssumeRole"
+        }
+    ]
+}'
+aws --profile="$AWS_PROFILE" iam create-role --role-name "$LOKI_ROLE" --assume-role-policy-document "$ROLE_DOC"
+```
+
+3. Prepare the namespace
    Currently, you have to manually pre-create the namespace and annotate it with
    IAM Roles required for pods running in the namespace:
 
    ```bash
    kubectl create ns loki
-   kubectl annotate ns loki iam.amazonaws.com/permitted="loki-s3-access"
+   kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_POLICY"
    ```
 
-5. Install the app
+4. Install the app
    Now you can proceed with installing the app the usual way. Don't forget to use
    the same namespace as you prepared above for the installation.
 
