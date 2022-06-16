@@ -1,6 +1,3 @@
-global:
-  dnsService: "coredns"
-
 storage: azure
 
 azure:
@@ -10,6 +7,16 @@ azure:
   container_name: my-container-name
   # 'Storage account' 'Access key'
   account_key: my-account-key
+
+giantswarm:
+  nodepool_id: my-nodepool-id
+  ingress_name: &ingress_name loki.mycluster.k8s.gremlin.germanywestcentral.azure.gigantic.io
+
+# by default, the k8s' DNS is named `kube-dns`; you might override it here
+# (please consult your cluster configuration for the correct value)
+global:
+  dnsService: "coredns"
+  clusterDomain: "cluster.local"
 
 rbac:
   pspEnabled: true
@@ -42,13 +49,13 @@ gateway:
       cert-manager.io/cluster-issuer: letsencrypt-giantswarm
     hosts:
       # host name assigned to your loki instance (must be registered in DNS)
-      - host: loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
+      - host: *ingress_name
         paths:
           - /
     tls:
       - hosts:
           # host name assigned to your loki instance (must be registered in DNS)
-          - loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
+          - *ingress_name
         secretName: loki-ingress-cert
   nginxConfig:
     file: |
@@ -137,9 +144,6 @@ compactor: *shared-conf
 
 ruler: *shared-conf
 
-# giantswarm.io/machine-pool ids (hon60) below reference the node pool ids
-# replace them with your ids of your node pools
-
 ingester:
   <<: *shared-conf
   replicas: 3
@@ -151,7 +155,7 @@ ingester:
           - key: giantswarm.io/machine-pool
             operator: In
             values:
-            - hon60
+            - {{ .Values.giantswarm.nodepool_id }}
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
@@ -177,7 +181,7 @@ querier:
           - key: giantswarm.io/machine-pool
             operator: In
             values:
-            - hon60
+            - {{ .Values.giantswarm.nodepool_id }}
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:

@@ -1,4 +1,3 @@
-# Use aws (s3) storage
 storage: s3
 
 # the name of AWS region where you're running cluster instances and where the bucket
@@ -6,12 +5,18 @@ storage: s3
 aws:
   s3_region: s3://eu-west-1
   # the name fo the bucket to store loki's data
-  bucketnames: gs-loki-storage
+  bucketnames: my-bucket-name
+
+giantswarm:
+  nodepool_id: my-nodepool-id
+  ingress_name: &ingress_name loki.mycluster.k8s.gauss.eu-west-1.aws.gigantic.io
+  s3_role: &s3_role my-s3-accesrole
 
 # by default, the k8s' DNS is named `kube-dns`; you might override it here
 # (please consult your cluster configuration for the correct value)
 global:
   dnsService: "coredns"
+  clusterDomain: "eu-west-1.local"
 
 rbac:
   pspEnabled: true
@@ -44,13 +49,13 @@ gateway:
       cert-manager.io/cluster-issuer: letsencrypt-giantswarm
     hosts:
       # host name assigned to your loki instance (must be registered in DNS)
-      - host: loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
+      - host: *ingress_name
         paths:
           - /
     tls:
       - hosts:
           # host name assigned to your loki instance (must be registered in DNS)
-          - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
+          - *ingress_name
         secretName: loki-ingress-cert
   nginxConfig:
     file: |
@@ -128,16 +133,23 @@ gateway:
         }
       }
 
-# pod annotations to be applied to pods; the annotation below is `kiam` specific
-# and means that pods having it can use `loki-s3-access` IAM Role
-s3_annotations: &s3-ann
+# Shared configuration for all components
+# key _shared_config does not actually exist in the apps values.yaml
+# We're using it in other keys through yaml anchors
+_shared_config: &shared-conf
   podAnnotations:
-    iam.amazonaws.com/role: loki-s3-access
+    # The annotation below is `kiam` specific
+    # and means that pods having it can use the IAM Role for S3 access
+    iam.amazonaws.com/role: *s3_role
+  persistence:
+    storageClass: default
 
-compactor: *s3-ann
+compactor: *shared-conf
+
+ruler: *shared-conf
 
 ingester:
-  <<: *s3-ann
+  <<: *shared-conf
   replicas: 3
   affinity: |
     nodeAffinity:
@@ -147,7 +159,7 @@ ingester:
           - key: giantswarm.io/machine-deployment
             operator: In
             values:
-            - lonp1
+            - {{ .Values.giantswarm.nodepool_id }}
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
@@ -163,7 +175,7 @@ ingester:
             topologyKey: failure-domain.beta.kubernetes.io/zone
 
 querier:
-  <<: *s3-ann
+  <<: *shared-conf
   replicas: 2
   affinity: |
     nodeAffinity:
@@ -173,7 +185,7 @@ querier:
           - key: giantswarm.io/machine-deployment
             operator: In
             values:
-            - lonp1
+            - {{ .Values.giantswarm.nodepool_id }}
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
