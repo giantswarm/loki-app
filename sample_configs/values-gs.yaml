@@ -142,7 +142,7 @@ _shared_config: &shared-conf
     # and means that pods having it can use the IAM Role for S3 access
     iam.amazonaws.com/role: *s3_role
   persistence:
-    storageClass: default
+    storageClass: gp3
 
 compactor: *shared-conf
 
