@@ -166,7 +166,7 @@ ROLE_DOC='{
 }'
 aws --profile="$AWS_PROFILE" iam create-role --role-name "$LOKI_ROLE" --assume-role-policy-document "$ROLE_DOC"
 # Attach the policy to the role
-LOKI_POLICY_ARN="${PRINCIPAL_ARN%role/gs-cluster-*}policy/$LOKI_POLICY"
+LOKI_POLICY_ARN="${PRINCIPAL_ARN%role/*}policy/$LOKI_POLICY"
 aws --profile="$AWS_PROFILE" iam attach-role-policy --policy-arn "$LOKI_POLICY_ARN" --role-name "$LOKI_ROLE"
 ```
 
@@ -176,13 +176,14 @@ IAM Roles required for pods running in the namespace:
 
 ```bash
 kubectl create ns loki
-LOKI_ROLE_ARN="${PRINCIPAL_ARN%gs-cluster-*}$LOKI_ROLE"
+LOKI_ROLE_ARN="${PRINCIPAL_ARN%role/*}role/$LOKI_ROLE"
 kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_ROLE_ARN"
 ```
 
 #### Install the app
-Now you can proceed with installing the app the usual way. Don't forget to use
-the same namespace as you prepared above for the installation.
+Now you can proceed with installing the app the usual way.
+* Don't forget to configure your `values.yaml` file.
+* Don't forget to use the same namespace as you prepared above for the installation.
 
 ## Deploying on Azure
 
