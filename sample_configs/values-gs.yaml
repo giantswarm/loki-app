@@ -16,7 +16,9 @@ giantswarm:
 # (please consult your cluster configuration for the correct value)
 global:
   dnsService: "coredns"
-  clusterDomain: "eu-west-1.local"
+  clusterDomain: "cluster.local"
+  # You may require a specific domain, depending on your DNS setup.
+  # clusterDomain: "eu-west-1.local"
 
 rbac:
   pspEnabled: true
