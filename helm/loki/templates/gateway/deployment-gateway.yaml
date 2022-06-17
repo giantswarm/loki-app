@@ -5,6 +5,7 @@ metadata:
   name: {{ include "loki.gatewayFullname" . }}
   labels:
     {{- include "loki.gatewayLabels" . | nindent 4 }}
+    giantswarm.io/monitoring_basic_sli: "true"
   {{- with .Values.loki.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -67,6 +68,8 @@ spec:
           {{- end }}
           readinessProbe:
             {{- toYaml .Values.gateway.readinessProbe | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.gateway.livenessProbe | nindent 12 }}
           securityContext:
             {{- toYaml .Values.gateway.containerSecurityContext | nindent 12 }}
           volumeMounts:

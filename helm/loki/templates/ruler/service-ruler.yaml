@@ -8,6 +8,9 @@ metadata:
     {{- with .Values.ruler.serviceLabels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+    giantswarm.io/monitoring: "true"
+  annotations:
+    giantswarm.io/monitoring-port: "3100"
 spec:
   type: ClusterIP
   clusterIP: None

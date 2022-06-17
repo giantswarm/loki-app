@@ -5,6 +5,7 @@ metadata:
   name: {{ include "loki.memcachedIndexQueriesFullname" . }}
   labels:
     {{- include "loki.memcachedIndexQueriesLabels" . | nindent 4 }}
+    giantswarm.io/monitoring_basic_sli: "true"
   {{- with .Values.loki.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -75,6 +76,10 @@ spec:
               port: http
             initialDelaySeconds: 5
             timeoutSeconds: 1
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
           resources:
             {{- toYaml .Values.memcachedIndexQueries.resources | nindent 12 }}
         {{- if .Values.memcachedExporter.enabled }}

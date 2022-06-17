@@ -8,6 +8,9 @@ metadata:
     {{- with .Values.memcachedFrontend.serviceLabels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+    giantswarm.io/monitoring: "true"
+  annotations:
+    giantswarm.io/monitoring-port: "9150"
 spec:
   type: ClusterIP
   clusterIP: None

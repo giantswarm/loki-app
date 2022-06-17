@@ -5,6 +5,7 @@ metadata:
   name: {{ include "loki.compactorFullname" . }}
   labels:
     {{- include "loki.compactorLabels" . | nindent 4 }}
+    giantswarm.io/monitoring_basic_sli: "true"
 spec:
   replicas: 1
   revisionHistoryLimit: {{ .Values.loki.revisionHistoryLimit }}
@@ -68,6 +69,8 @@ spec:
             {{- toYaml .Values.loki.containerSecurityContext | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.loki.readinessProbe | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.loki.livenessProbe | nindent 12 }}
           volumeMounts:
             - name: temp
               mountPath: /tmp

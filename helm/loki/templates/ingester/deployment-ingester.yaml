@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "loki.ingesterLabels" . | nindent 4 }}
     app.kubernetes.io/part-of: memberlist
+    giantswarm.io/monitoring_basic_sli: "true"
 spec:
   replicas: {{ .Values.ingester.replicas }}
   revisionHistoryLimit: {{ .Values.loki.revisionHistoryLimit }}
@@ -67,6 +68,8 @@ spec:
             {{- toYaml .Values.loki.containerSecurityContext | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.loki.readinessProbe | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.loki.livenessProbe | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /etc/loki/config

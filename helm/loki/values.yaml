@@ -1,7 +1,7 @@
 global:
   image:
     # -- Overrides the Docker registry globally for all images
-    registry: null
+    registry: quay.io
   # -- Overrides the priorityClassName for all pods
   priorityClassName: null
   # -- configures cluster domain ("cluster.local" by default)
@@ -33,11 +33,16 @@ loki:
       port: http
     initialDelaySeconds: 30
     timeoutSeconds: 1
+  livenessProbe:
+    httpGet:
+      path: /ready
+      port: http
+    initialDelaySeconds: 300
   image:
     # -- The Docker registry
     registry: docker.io
     # -- Docker image repository
-    repository: grafana/loki
+    repository: giantswarm/loki
     # -- Overrides the image tag whose default is the chart's appVersion
     tag: null
     # -- Docker image pull policy
@@ -207,7 +212,7 @@ serviceAccount:
 # RBAC configuration
 rbac:
   # -- If pspEnabled true, a PodSecurityPolicy is created for K8s that use psp.
-  pspEnabled: false
+  pspEnabled: true
   # -- For OpenShift set pspEnabled to 'false' and sccEnabled to 'true' to use the SecurityContextConstraints.
   sccEnabled: false
 
@@ -291,7 +296,12 @@ ingester:
   # -- Volumes to add to the ingester pods
   extraVolumes: []
   # -- Resource requests and limits for the ingester
-  resources: {}
+  resources:
+    limits:
+      memory: 4096Mi
+    requests:
+      memory: 3072Mi
+      cpu: 200m
   # -- Containers to add to the ingester pods
   extraContainers: []
   # -- Grace period to allow the ingester to shutdown before it is killed. Especially for the ingestor,
@@ -371,7 +381,12 @@ distributor:
   # -- Volumes to add to the distributor pods
   extraVolumes: []
   # -- Resource requests and limits for the distributor
-  resources: {}
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      memory: 128Mi
+      cpu: 200m
   # -- Containers to add to the distributor pods
   extraContainers: []
   # -- Grace period to allow the distributor to shutdown before it is killed
@@ -438,7 +453,12 @@ querier:
   # -- Volumes to add to the querier pods
   extraVolumes: []
   # -- Resource requests and limits for the querier
-  resources: {}
+  resources:
+    limits:
+      memory: 1536Mi
+    requests:
+      cpu: 700m
+      memory: 1Gi
   # -- Containers to add to the querier pods
   extraContainers: []
   # -- Grace period to allow the querier to shutdown before it is killed
@@ -516,7 +536,12 @@ queryFrontend:
   # -- Volumes to add to the query-frontend pods
   extraVolumes: []
   # -- Resource requests and limits for the query-frontend
-  resources: {}
+  resources:
+    limits:
+      memory: 1200Mi
+    requests:
+      cpu: 500m
+      memory: 600Mi
   # -- Containers to add to the query-frontend pods
   extraContainers: []
   # -- Grace period to allow the query-frontend to shutdown before it is killed
@@ -621,11 +646,14 @@ gateway:
   # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   deploymentStrategy:
     type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   image:
     # -- The Docker registry for the gateway image
     registry: docker.io
     # -- The gateway image repository
-    repository: nginxinc/nginx-unprivileged
+    repository: giantswarm/nginx-unprivileged
     # -- The gateway image tag
     tag: 1.19-alpine
     # -- The gateway image pull policy
@@ -660,7 +688,12 @@ gateway:
         - ALL
     allowPrivilegeEscalation: false
   # -- Resource requests and limits for the gateway
-  resources: {}
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
   # -- Containers to add to the gateway pods
   extraContainers: []
   # -- Grace period to allow the gateway to shutdown before it is killed
@@ -745,6 +778,11 @@ gateway:
       port: http
     initialDelaySeconds: 15
     timeoutSeconds: 1
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 30
   nginxConfig:
     # -- NGINX log format
     logFormat: |-
@@ -857,6 +895,22 @@ gateway:
         }
       }
 
+multiTenantAuth:
+  enabled: false
+  image:
+    repository: giantswarm/loki-multi-tenant-proxy
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  credentials: |-
+    users:
+      - username: Tenant1
+        password: 1tnaneT
+        orgid: tenant-1
+      - username: Tenant2
+        password: 2tnaneT
+        orgid: tenant-2
+
 # Configuration for the compactor
 compactor:
   # -- Specifies whether compactor should be enabled
@@ -887,7 +941,12 @@ compactor:
   # -- Volumes to add to the compactor pods
   extraVolumes: []
   # -- Resource requests and limits for the compactor
-  resources: {}
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 25m
+      memory: 64Mi
   # -- Containers to add to the compactor pods
   extraContainers: []
   # -- Grace period to allow the compactor to shutdown before it is killed

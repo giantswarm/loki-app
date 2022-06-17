@@ -40,6 +40,7 @@ helm.sh/chart: {{ include "loki.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+giantswarm.io/service-type: "managed"
 {{- end }}
 
 {{/*
