@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- Upgrade upstream chart from 0.33.0 to [0.48.5](https://github.com/grafana/helm-charts/releases/tag/loki-distributed-0.48.5)
+- Upgrade Loki from 2.2.1 to [2.5.0](https://github.com/grafana/loki/releases/tag/v2.5.0)
+- **Breaking**: Upgrade requires manual intervention.
+
+### Changes required in your `values.yaml` file:
+- now `ruler`, `distributor` and `queryFrontend` require access to the object storage.
+- storage config is more similar to loki config file, and is done on `loki.schemaConfig` and `loki.storageConfig`.
+- data format has not changed, so as long as you keep the same schema version and storage setup, you can upgrade/rollback with no data loss.
+- feel free to ask us if you need help regarding your specific setup.
+
+### Upgrade procedure
+1. create your updated `values.yaml` file.
+2. in `happa`, update loki version.
+3. in `happa`, replace values with your updated `values.yaml` file.
+
+Notes:
+* during upgrade, log histogram can be inconsistent. This only impacts log histogram, and only during upgrade.
+* In case of rollback, logs times may be wrong because latest loki version adjusts timestamps.
+
 ## [0.3.2] - 2022-06-20
 
 ### Fixed
