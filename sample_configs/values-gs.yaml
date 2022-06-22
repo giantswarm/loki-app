@@ -1,13 +1,3 @@
-# Use aws (s3) storage
-storage: s3
-
-# the name of AWS region where you're running cluster instances and where the bucket
-# should be created
-aws:
-  s3_region: s3://eu-west-1
-  # the name fo the bucket to store loki's data
-  bucketnames: gs-loki-storage
-
 # by default, the k8s' DNS is named `kube-dns`; you might override it here
 # (please consult your cluster configuration for the correct value)
 global:
@@ -16,6 +6,38 @@ global:
 rbac:
   pspEnabled: true
 
+# By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
+# HTTP header to be set to indicate which tenant's logs are these. To enable
+# minimal security, you can configure the gateway to route traffic through loki-multi-tenant-proxy
+# to do HTTP basicAuth and overwriting the tenant id header
+multiTenantAuth:
+  enabled: true
+  replicas: 3
+  credentials: |-
+    users:
+      - username: Tenant1
+        password: 1tnaneT
+        orgid: tenant-1
+      - username: Tenant2
+        password: 2tnaneT
+        orgid: tenant-2
+
+loki:
+  schemaConfig:
+    configs:
+      - from: "2020-09-07"
+        store: boltdb-shipper
+        object_store: s3
+        schema: v11
+        index:
+          prefix: loki_index_
+          period: 24h
+  storageConfig:
+    boltdb_shipper:
+      shared_store: s3
+    aws:
+      s3: s3://eu-west-1/gs-loki-storage
+
 # Loki consists of multiple microservices. Gateway is an nginx-based proxy
 # that routes requests to correct microservices. It should be consider the entry point
 # of your Loki deployment.
@@ -23,6 +45,7 @@ gateway:
   replicas: 3
   ingress:
     enabled: true
+    ingressClassName: nginx
     annotations:
       # this annotation means cert-manager will automatically create a ACME certificate
       cert-manager.io/cluster-issuer: letsencrypt-giantswarm
@@ -30,36 +53,131 @@ gateway:
       # host name assigned to your loki instance (must be registered in DNS)
       - host: loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
         paths:
-          - /
+          - path: /
+            pathType: ImplementationSpecific
     tls:
       - hosts:
           # host name assigned to your loki instance (must be registered in DNS)
           - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
         secretName: loki-ingress-cert
-  # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
-  # HTTP header to be set to indicate which tenant's logs are these. To enable
-  # minimal security, you can ask gateway to do HTTP basicAuth using `username` and
-  # `password` or point it to a secret containing the `.htpasswd` file, which includes
-  # multiple username-password pairs.
-  # Please note: no checking of the Tenant ID vs username is performed!
-  basicAuth:
-    enabled: true
-    username: "loki"
-    password: "my-brother-is-thor"
-    # -- Existing basic auth secret to use. Must contain '.htpasswd'
-    #existingSecret: null
+  nginxConfig:
+    file: |
+      worker_processes  5;  ## Default: 1
+      error_log  /dev/stderr;
+      pid        /tmp/nginx.pid;
+      worker_rlimit_nofile 8192;
 
-# pod annotations to be applied to pods; the annotation below is `kiam` specific
-# and means that pods having it can use `loki-s3-access` IAM Role
-s3_annotations: &s3-ann
+      events {
+        worker_connections  4096;  ## Default: 1024
+      }
+
+      http {
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp_path;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
+
+        default_type application/octet-stream;
+        log_format   {{ .Values.gateway.nginxConfig.logFormat }}
+
+        {{- if .Values.gateway.verboseLogging }}
+        access_log   /dev/stderr  main;
+        {{- else }}
+
+        map $status $loggable {
+          ~^[23]  0;
+          default 1;
+        }
+        access_log   /dev/stderr  main  if=$loggable;
+        {{- end }}
+
+        sendfile     on;
+        tcp_nopush   on;
+        resolver {{ .Values.global.dnsService }}.{{ .Values.global.dnsNamespace }}.svc.{{ .Values.global.clusterDomain }};
+
+        {{- with .Values.gateway.nginxConfig.httpSnippet }}
+        {{ . | nindent 2 }}
+        {{- end }}
+
+        server {
+          listen             8080;
+
+          {{- if .Values.gateway.basicAuth.enabled }}
+          auth_basic           "Loki";
+          auth_basic_user_file /etc/nginx/secrets/.htpasswd;
+          {{- end }}
+
+          location = / {
+            return 200 'OK';
+            auth_basic off;
+          }
+
+          location = /api/prom/push {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3101$request_uri;
+          }
+
+          location = /api/prom/tail {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+          }
+
+          # Ruler
+          location ~ /prometheus/api/v1/alerts.* {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
+          }
+          location ~ /prometheus/api/v1/rules.* {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
+          }
+          location ~ /api/prom/rules.* {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
+          }
+          location ~ /api/prom/alerts.* {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
+          }
+
+          location ~ /api/prom/.* {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
+          }
+
+          location = /loki/api/v1/push {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3101$request_uri;
+          }
+
+          location = /loki/api/v1/tail {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+          }
+
+          location ~ /loki/api/.* {
+            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
+          }
+
+          {{- with .Values.gateway.nginxConfig.serverSnippet }}
+          {{ . | nindent 4 }}
+          {{- end }}
+        }
+      }
+
+_shared_config: &shared-conf
   podAnnotations:
+    # The annotation below is `kiam` specific
+    # and means that pods having it can use `loki-s3-access` IAM Role for S3 access
     iam.amazonaws.com/role: loki-s3-access
 
-compactor: *s3-ann
+compactor: *shared-conf
+
+ruler: *shared-conf
+
+distributor: *shared-conf
+
+queryFrontend: *shared-conf
 
 ingester:
-  <<: *s3-ann
-  replicas: 2
+  <<: *shared-conf
+  replicas: 3
   affinity: |
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -84,7 +202,7 @@ ingester:
             topologyKey: failure-domain.beta.kubernetes.io/zone
 
 querier:
-  <<: *s3-ann
+  <<: *shared-conf
   replicas: 2
   affinity: |
     nodeAffinity:
