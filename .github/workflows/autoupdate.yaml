@@ -1,0 +1,22 @@
+name: Auto update application
+on:
+  schedule:
+    - cron: '* * * * *' # Every 5 minutes for testing
+jobs:
+  sync-downstream:
+    name: Update downstream chart
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: nxtlvlsoftware/git-subtree-action@1.1
+        with:
+          repo: 'https://github.com/grafana/helm-charts'
+          path: 'charts/loki-distributed'
+          deploy_key: ${{ secrets.GITHUB_TOKEN }}
+          force: true # will force push to the downstream repository
+          branch: upstream-sync
