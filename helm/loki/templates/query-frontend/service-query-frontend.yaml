@@ -4,6 +4,9 @@ metadata:
   name: {{ include "loki.queryFrontendFullname" . }}
   labels:
     {{- include "loki.queryFrontendLabels" . | nindent 4 }}
+    {{- with .Values.queryFrontend.serviceLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
     giantswarm.io/monitoring: "true"
   annotations:
     giantswarm.io/monitoring-port: "3100"
@@ -18,6 +21,10 @@ spec:
       protocol: TCP
     - name: grpc
       port: 9095
+      targetPort: grpc
+      protocol: TCP
+    - name: grpclb
+      port: 9096
       targetPort: grpc
       protocol: TCP
   selector:

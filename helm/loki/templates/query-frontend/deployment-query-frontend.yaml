@@ -5,8 +5,14 @@ metadata:
   labels:
     {{- include "loki.queryFrontendLabels" . | nindent 4 }}
     giantswarm.io/monitoring_basic_sli: "true"
+  {{- with .Values.loki.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
+{{- if not .Values.queryFrontend.autoscaling.enabled }}
   replicas: {{ .Values.queryFrontend.replicas }}
+{{- end }}
   strategy:
     rollingUpdate:
       maxSurge: 0
@@ -27,6 +33,12 @@ spec:
         {{- end }}
       labels:
         {{- include "loki.queryFrontendSelectorLabels" . | nindent 8 }}
+        {{- with .Values.loki.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.queryFrontend.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
@@ -38,7 +50,7 @@ spec:
         {{- toYaml .Values.loki.podSecurityContext | nindent 8 }}
       terminationGracePeriodSeconds: {{ .Values.queryFrontend.terminationGracePeriodSeconds }}
       containers:
-        - name: loki
+        - name: query-frontend
           image: {{ include "loki.queryFrontendImage" . }}
           imagePullPolicy: {{ .Values.loki.image.pullPolicy }}
           args:
@@ -76,6 +88,9 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.queryFrontend.resources | nindent 12 }}
+        {{- if .Values.queryFrontend.extraContainers }}
+        {{- toYaml .Values.queryFrontend.extraContainers | nindent 8}}
+        {{- end }}
       {{- with .Values.queryFrontend.affinity }}
       affinity:
         {{- tpl . $ | nindent 8 }}

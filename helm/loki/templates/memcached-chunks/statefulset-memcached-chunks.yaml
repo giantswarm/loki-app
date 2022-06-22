@@ -5,6 +5,7 @@ metadata:
   name: {{ include "loki.memcachedChunksFullname" . }}
   labels:
     {{- include "loki.memcachedChunksLabels" . | nindent 4 }}
+    giantswarm.io/monitoring_basic_sli: "true"
 spec:
   replicas: {{ .Values.memcachedChunks.replicas }}
   updateStrategy:
@@ -28,6 +29,12 @@ spec:
       {{- end }}
       labels:
         {{- include "loki.memcachedChunksSelectorLabels" . | nindent 8 }}
+        {{- with .Values.loki.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.memcachedChunks.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
@@ -84,6 +91,9 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.memcachedExporter.resources | nindent 12 }}
+        {{- end }}
+        {{- if .Values.memcachedChunks.extraContainers }}
+        {{- toYaml .Values.memcachedChunks.extraContainers | nindent 8}}
         {{- end }}
       {{- with .Values.memcachedChunks.affinity }}
       affinity:
