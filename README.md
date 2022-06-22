@@ -329,6 +329,8 @@ The source code in `helm/loki` is a git-subtree coming from the
 <https://github.com/giantswarm/grafana-helm-charts-upstream>. Giant Swarm uses that
 repository to track and adjust or charts maintained by Grafana Labs.
 
+Notes specific to upstream upgrade can be found in UPSTREAM_UPGRADE.md
+
 ## Links
 
 - [Loki demo for Giant Swarm customers (YouTube)](https://www.youtube.com/watch?v=KeJwfOiVA7o)

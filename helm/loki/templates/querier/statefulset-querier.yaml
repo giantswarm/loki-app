@@ -1,3 +1,4 @@
+{{- if not .Values.indexGateway.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -6,6 +7,10 @@ metadata:
     {{- include "loki.querierLabels" . | nindent 4 }}
     app.kubernetes.io/part-of: memberlist
     giantswarm.io/monitoring_basic_sli: "true"
+  {{- with .Values.loki.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.querier.replicas }}
   podManagementPolicy: Parallel
@@ -30,6 +35,12 @@ spec:
       labels:
         {{- include "loki.querierSelectorLabels" . | nindent 8 }}
         app.kubernetes.io/part-of: memberlist
+        {{- with .Values.loki.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.querier.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
@@ -41,7 +52,7 @@ spec:
         {{- toYaml .Values.loki.podSecurityContext | nindent 8 }}
       terminationGracePeriodSeconds: {{ .Values.querier.terminationGracePeriodSeconds }}
       containers:
-        - name: loki
+        - name: querier
           image: {{ include "loki.querierImage" . }}
           imagePullPolicy: {{ .Values.loki.image.pullPolicy }}
           args:
@@ -84,6 +95,9 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.querier.resources | nindent 12 }}
+        {{- if .Values.querier.extraContainers }}
+        {{- toYaml .Values.querier.extraContainers | nindent 8}}
+        {{- end }}
       {{- with .Values.querier.affinity }}
       affinity:
         {{- tpl . $ | nindent 8 }}
@@ -125,3 +139,4 @@ spec:
           requests:
             storage: {{ .Values.querier.persistence.size | quote }}
   {{- end }}
+{{- end }}

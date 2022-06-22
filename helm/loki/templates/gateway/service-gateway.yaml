@@ -5,8 +5,13 @@ metadata:
   name: {{ include "loki.gatewayFullname" . }}
   labels:
     {{- include "loki.gatewayLabels" . | nindent 4 }}
-  {{- with .Values.gateway.service.annotations }}
+    {{- with .Values.gateway.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    giantswarm.io/monitoring: "true"  
   annotations:
+    giantswarm.io/monitoring-port: "{{ .Values.gateway.service.port }}"
+  {{- with .Values.gateway.service.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:

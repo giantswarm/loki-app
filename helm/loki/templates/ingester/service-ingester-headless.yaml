@@ -4,9 +4,7 @@ metadata:
   name: {{ include "loki.ingesterFullname" . }}-headless
   labels:
     {{- include "loki.ingesterSelectorLabels" . | nindent 4 }}
-    giantswarm.io/monitoring: "true"
-  annotations:
-    giantswarm.io/monitoring-port: "3100"
+    prometheus.io/service-monitor: "false"
 spec:
   type: ClusterIP
   clusterIP: None

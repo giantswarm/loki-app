@@ -5,6 +5,12 @@ metadata:
   name: {{ include "loki.memcachedChunksFullname" . }}
   labels:
     {{- include "loki.memcachedChunksSelectorLabels" . | nindent 4 }}
+    {{- with .Values.memcachedChunks.serviceLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    giantswarm.io/monitoring: "true"
+  annotations:
+    giantswarm.io/monitoring-port: "9150"
 spec:
   type: ClusterIP
   clusterIP: None
