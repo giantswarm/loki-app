@@ -10,8 +10,6 @@ metadata:
     {{- end }}
     app.kubernetes.io/component: compactor
     giantswarm.io/monitoring: "true"
-  annotations:
-    giantswarm.io/monitoring-port: "3100"
 spec:
   type: ClusterIP
   ports:

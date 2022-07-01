@@ -761,16 +761,16 @@ gateway:
     # -- Enables basic authentication for the gateway
     enabled: false
     # -- The basic auth username for the gateway
-    username: null
+    username: ""
     # -- The basic auth password for the gateway
-    password: null
+    password: ""
     # -- Uses the specified username and password to compute a htpasswd using Sprig's `htpasswd` function.
     # The value is templated using `tpl`. Override this to use a custom htpasswd, e.g. in case the default causes
     # high CPU load.
     htpasswd: >-
       {{ htpasswd (required "'gateway.basicAuth.username' is required" .Values.gateway.basicAuth.username) (required "'gateway.basicAuth.password' is required" .Values.gateway.basicAuth.password) }}
     # -- Existing basic auth secret to use. Must contain '.htpasswd'
-    existingSecret: null
+    existingSecret: ""
   # Configures the readiness probe for the gateway
   readinessProbe:
     httpGet:
@@ -793,6 +793,8 @@ gateway:
     serverSnippet: ""
     # -- Allows appending custom configuration to the http block
     httpSnippet: ""
+    # -- Allows overriding the DNS resolver address nginx will use.
+    resolver: ""
     # -- Config file contents for Nginx. Passed through the `tpl` function to allow templating
     # @default -- See values.yaml
     file: |
@@ -828,7 +830,11 @@ gateway:
 
         sendfile     on;
         tcp_nopush   on;
+        {{- if .Values.gateway.nginxConfig.resolver }}
+        resolver {{ .Values.gateway.nginxConfig.resolver }};
+        {{- else }}
         resolver {{ .Values.global.dnsService }}.{{ .Values.global.dnsNamespace }}.svc.{{ .Values.global.clusterDomain }};
+        {{- end }}
 
         {{- with .Values.gateway.nginxConfig.httpSnippet }}
         {{ . | nindent 2 }}
@@ -1186,6 +1192,15 @@ indexGateway:
     storageClass: null
 
 memcached:
+  readinessProbe:
+    tcpSocket:
+      port: http
+    initialDelaySeconds: 5
+    timeoutSeconds: 1
+  livenessProbe:
+    tcpSocket:
+      port: http
+    initialDelaySeconds: 10
   image:
     # -- The Docker registry for the memcached
     registry: docker.io

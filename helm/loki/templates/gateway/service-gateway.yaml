@@ -8,10 +8,9 @@ metadata:
     {{- with .Values.gateway.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    giantswarm.io/monitoring: "true"  
-  annotations:
-    giantswarm.io/monitoring-port: "{{ .Values.gateway.service.port }}"
+    giantswarm.io/monitoring: "true"
   {{- with .Values.gateway.service.annotations }}
+  annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:

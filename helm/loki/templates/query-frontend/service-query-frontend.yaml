@@ -9,7 +9,7 @@ metadata:
     {{- end }}
     giantswarm.io/monitoring: "true"
   annotations:
-    giantswarm.io/monitoring-port: "3100"
+    giantswarm.io/monitoring-port: "http"
 spec:
   type: ClusterIP
   clusterIP: None

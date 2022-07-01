@@ -265,16 +265,16 @@
                             "type": "boolean"
                         },
                         "existingSecret": {
-                            "type": ["string", "null"]
+                            "type": "string"
                         },
                         "htpasswd": {
                             "type": "string"
                         },
                         "password": {
-                            "type": ["string", "null"]
+                            "type": "string"
                         },
                         "username": {
-                            "type": ["string", "null"]
+                            "type": "string"
                         }
                     }
                 },
@@ -439,6 +439,9 @@
                             "type": "string"
                         },
                         "logFormat": {
+                            "type": "string"
+                        },
+                        "resolver": {
                             "type": "string"
                         },
                         "serverSnippet": {
@@ -1009,6 +1012,22 @@
                         }
                     }
                 },
+                "livenessProbe": {
+                    "type": "object",
+                    "properties": {
+                        "initialDelaySeconds": {
+                            "type": "integer"
+                        },
+                        "tcpSocket": {
+                            "type": "object",
+                            "properties": {
+                                "port": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
                 "podLabels": {
                     "type": "object"
                 },
@@ -1025,6 +1044,25 @@
                             "type": "boolean"
                         },
                         "runAsUser": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "readinessProbe": {
+                    "type": "object",
+                    "properties": {
+                        "initialDelaySeconds": {
+                            "type": "integer"
+                        },
+                        "tcpSocket": {
+                            "type": "object",
+                            "properties": {
+                                "port": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "timeoutSeconds": {
                             "type": "integer"
                         }
                     }
