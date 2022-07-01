@@ -4,6 +4,12 @@ metadata:
   name: {{ include "loki.distributorFullname" . }}
   labels:
     {{- include "loki.distributorLabels" . | nindent 4 }}
+    {{- with .Values.distributor.serviceLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    giantswarm.io/monitoring: "true"
+  annotations:
+    giantswarm.io/monitoring-port: "http"
 spec:
   type: ClusterIP
   ports:
