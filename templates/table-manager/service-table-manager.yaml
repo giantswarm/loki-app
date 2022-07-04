@@ -5,7 +5,13 @@ metadata:
   name: {{ include "loki.fullname" . }}-table-manager
   labels:
     {{- include "loki.labels" . | nindent 4 }}
+    {{- with .Values.tableManager.serviceLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
     app.kubernetes.io/component: table-manager
+    giantswarm.io/monitoring: "true"
+  annotations:
+    giantswarm.io/monitoring-port: "http"
 spec:
   type: ClusterIP
   ports:

@@ -5,6 +5,12 @@ metadata:
   name: {{ include "loki.memcachedIndexQueriesFullname" . }}
   labels:
     {{- include "loki.memcachedIndexQueriesSelectorLabels" . | nindent 4 }}
+    {{- with .Values.memcachedIndexQueries.serviceLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    giantswarm.io/monitoring: "true"
+  annotations:
+    giantswarm.io/monitoring-port: "http-metrics"
 spec:
   type: ClusterIP
   clusterIP: None

@@ -1,14 +1,23 @@
 apiVersion: v2
-name: loki-distributed
+name: loki
 description: Helm chart for Grafana Loki in microservices mode
 type: application
-appVersion: 2.1.0
-version: 0.22.0
-home: https://grafana.github.io/helm-charts
+appVersion: 2.5.0
+version: 0.49.0
+home: https://github.com/giantswarm/loki-app
 sources:
   - https://github.com/grafana/loki
   - https://grafana.com/oss/loki/
   - https://grafana.com/docs/loki/latest/
-icon: https://grafana.com/docs/loki/latest/logo_and_name.png
+  - https://grafana.github.io/helm-charts
+icon: https://s.giantswarm.io/app-icons/grafana-loki/2/dark.svg
+upstreamChartURL: https://github.com/grafana/helm-charts/
+upstreamChartVersion: loki-distributed-0.49.0
 maintainers:
   - name: unguiculus
+  - name: Giant Swarm applications team
+    url: https://github.com/giantswarm/loki-app
+restrictions:
+  namespaceSingleton: true
+annotations:
+  application.giantswarm.io/team: "atlas"
