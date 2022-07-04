@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Upgrade upstream chart from 0.48.5 to [0.49.0](https://github.com/grafana/helm-charts/releases/tag/loki-distributed-0.49.0)
 
+### Fixed
+
+- Fix schema validation
+
 ## [0.4.1] - 2022-06-24
 
 ### Fixed
