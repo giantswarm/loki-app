@@ -1,0 +1,11 @@
+checks:	
+  addAllBuiltIn: true	
+  exclude:	
+  - "unset-cpu-requirements"	
+  - "unset-memory-requirements"	
+  - "required-annotation-email"	
+  - "required-label-owner"
+  - "minimum-three-replicas"
+  - "no-rolling-update-strategy"
+  - "non-isolated-pod"
+  - "use-namespace"
