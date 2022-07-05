@@ -1,0 +1,28 @@
+{{- if .Values.memcachedChunks.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "loki.memcachedChunksFullname" . }}
+  labels:
+    {{- include "loki.memcachedChunksSelectorLabels" . | nindent 4 }}
+    {{- with .Values.memcachedChunks.serviceLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    giantswarm.io/monitoring: "true"
+  annotations:
+    giantswarm.io/monitoring-port: "http-metrics"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: http
+      port: 11211
+      targetPort: http
+      protocol: TCP
+    - name: http-metrics
+      port: 9150
+      targetPort: http-metrics
+      protocol: TCP
+  selector:
+    {{- include "loki.memcachedChunksSelectorLabels" . | nindent 4 }}
+{{- end }}
