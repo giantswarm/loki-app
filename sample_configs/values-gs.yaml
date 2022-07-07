@@ -167,7 +167,14 @@ _shared_config: &shared-conf
     # and means that pods having it can use `loki-s3-access` IAM Role for S3 access
     iam.amazonaws.com/role: loki-s3-access
 
-compactor: *shared-conf
+# giantswarm.io/machine-deployment ids (hon60) below reference the node pool ids
+# replace them with your ids of your node pools
+
+compactor:
+  <<: *shared-conf
+  # nodeselector until we can use affinity like for ingester and querier
+  nodeSelector:
+    giantswarm.io/machine-deployment: lonp1
 
 ruler: *shared-conf
 
