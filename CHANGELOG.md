@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Azure sample config file: storage setup
+- Sample config files: placement for compactor
+
 ## [0.4.3] - 2022-07-06
 
 ### Fixed
