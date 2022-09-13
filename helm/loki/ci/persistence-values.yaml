@@ -1,12 +1,18 @@
-ingester:
+read:
+  replicas: 1
   persistence:
     enabled: true
     size: 100Mi
 
-querier:
+write:
+  replicas: 1
   persistence:
     enabled: true
     size: 100Mi
+
+loki:
+  commonConfig:
+    replication_factor: 1
 
 gateway:
   nginxConfig:

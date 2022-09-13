@@ -32,11 +32,14 @@ loki:
         index:
           prefix: loki_index_
           period: 24h
-  storageConfig:
-    boltdb_shipper:
-      shared_store: s3
-    aws:
-      s3: s3://eu-west-1/gs-loki-storage
+  storage:
+    type: s3
+    bucketNames:
+      chunks: gs-loki-storage-m2h60
+      ruler: gs-loki-storage-m2h60
+      admin: gs-loki-storage-m2h60
+    s3:
+      region: eu-west-1
 
 # Loki consists of multiple microservices. Gateway is an nginx-based proxy
 # that routes requests to correct microservices. It should be consider the entry point
@@ -164,72 +167,24 @@ gateway:
 _shared_config: &shared-conf
   podAnnotations:
     # The annotation below is `kiam` specific
-    # and means that pods having it can use `loki-s3-access` IAM Role for S3 access
-    iam.amazonaws.com/role: loki-s3-access
+    # and means that pods having it can use this IAM Role for S3 access
+    iam.amazonaws.com/role: gs-loki-storage-m2h60-role
 
 # giantswarm.io/machine-deployment ids (hon60) below reference the node pool ids
 # replace them with your ids of your node pools
 
-compactor:
-  <<: *shared-conf
-  # nodeselector until we can use affinity like for ingester and querier
-  nodeSelector:
-    giantswarm.io/machine-deployment: lonp1
+write: *shared-conf
 
-ruler: *shared-conf
+read: *shared-conf
 
-distributor: *shared-conf
-
-queryFrontend: *shared-conf
-
-ingester:
-  <<: *shared-conf
-  replicas: 3
-  affinity: |
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: giantswarm.io/machine-deployment
-            operator: In
-            values:
-            - lonp1
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchLabels:
-              {{- include "loki.ingesterSelectorLabels" . | nindent 10 }}
-          topologyKey: kubernetes.io/hostname
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchLabels:
-                {{- include "loki.ingesterSelectorLabels" . | nindent 12 }}
-            topologyKey: failure-domain.beta.kubernetes.io/zone
-
-querier:
-  <<: *shared-conf
-  replicas: 2
-  affinity: |
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: giantswarm.io/machine-deployment
-            operator: In
-            values:
-            - lonp1
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchLabels:
-              {{- include "loki.querierSelectorLabels" . | nindent 10 }}
-          topologyKey: kubernetes.io/hostname
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchLabels:
-                {{- include "loki.querierSelectorLabels" . | nindent 12 }}
-            topologyKey: failure-domain.beta.kubernetes.io/zone
+monitoring:
+  dashboards:
+    enabled: false
+  rules:
+    enabled: false
+  alerts:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+  selfMonitoring:
+    enabled: false

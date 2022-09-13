@@ -5,34 +5,15 @@
 ***********************************************************************
 
 Installed components:
+{{- if eq (include "loki.deployment.isSingleBinary" .) "true" }}
+* loki 
+{{- else -}}
 {{- if .Values.gateway.enabled }}
 * gateway
 {{- end }}
-* ingester
-* distributor
-* querier
-* query-frontend
-{{- if .Values.tableManager.enabled }}
-* table-manager
+{{- if .Values.minio.enabled }}
+* minio 
 {{- end }}
-{{- if .Values.compactor.enabled }}
-* compactor
-{{- end }}
-{{- if .Values.ruler.enabled }}
-* ruler
-{{- end }}
-{{- if .Values.indexGateway.enabled }}
-* index-gateway
-{{- end }}
-{{- if .Values.memcachedChunks.enabled }}
-* memcached-chunks
-{{- end }}
-{{- if .Values.memcachedFrontend.enabled }}
-* memcached-frontend
-{{- end }}
-{{- if .Values.memcachedIndexQueries.enabled }}
-* memcached-index-queries
-{{- end }}
-{{- if .Values.memcachedIndexWrites.enabled }}
-* memcached-index-writes
+* read
+* write
 {{- end }}
