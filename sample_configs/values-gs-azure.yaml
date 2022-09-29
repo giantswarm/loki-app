@@ -1,13 +1,7 @@
 global:
   dnsService: "coredns"
 
-rbac:
-  pspEnabled: true
 
-# By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
-# HTTP header to be set to indicate which tenant's logs are these. To enable
-# minimal security, you can configure the gateway to route traffic through loki-multi-tenant-proxy
-# to do HTTP basicAuth and overwriting the tenant id header
 multiTenantAuth:
   enabled: true
   replicas: 3
@@ -20,223 +14,154 @@ multiTenantAuth:
         password: 2tnaneT
         orgid: tenant-2
 
-loki:
-  schemaConfig:
-    configs:
-      - from: "2020-09-07"
-        store: boltdb-shipper
-        object_store: azure
-        schema: v11
-        index:
-          prefix: loki_index_
-          period: 24h
-  storageConfig:
-    boltdb_shipper:
-      shared_store: azure
-    azure:
-      # 'Storage account' name
-      account_name: my-account-name
-      # 'Blob service' 'Container' name
-      container_name: my-container-name
-      # 'Storage account' 'Access key'
-      account_key: my-account-key
-  structuredConfig:
-    compactor:
-      shared_store: azure
+loki-upstream:
+  # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
+  # HTTP header to be set to indicate which tenant's logs are these. To enable
+  # minimal security, you can configure the gateway to route traffic through loki-multi-tenant-proxy
+  # to do HTTP basicAuth and overwriting the tenant id header
+  loki:
+    schemaConfig:
+      configs:
+        - from: "2020-09-07"
+          store: boltdb-shipper
+          object_store: azure
+          schema: v11
+          index:
+            prefix: loki_index_
+            period: 24h
+    storageConfig:
+      boltdb_shipper:
+        shared_store: azure
+      azure:
+        # 'Storage account' name
+        account_name: my-account-name
+        # 'Blob service' 'Container' name
+        container_name: my-container-name
+        # 'Storage account' 'Access key'
+        account_key: my-account-key
+    structuredConfig:
+      compactor:
+        shared_store: azure
 
-# Loki consists of multiple microservices. Gateway is an nginx-based proxy
-# that routes requests to correct microservices. It should be consider the entry point
-# of your Loki deployment.
-gateway:
-  replicas: 3
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    annotations:
-      # this annotation means cert-manager will automatically create a ACME certificate
-      cert-manager.io/cluster-issuer: letsencrypt-giantswarm
-    hosts:
-      # host name assigned to your loki instance (must be registered in DNS)
-      - host: loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-    tls:
-      - hosts:
-          # host name assigned to your loki instance (must be registered in DNS)
-          - loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
-        secretName: loki-ingress-cert
-  nginxConfig:
-    file: |
-      worker_processes  5;  ## Default: 1
-      error_log  /dev/stderr;
-      pid        /tmp/nginx.pid;
-      worker_rlimit_nofile 8192;
+  # Loki consists of multiple microservices. Gateway is an nginx-based proxy
+  # that routes requests to correct microservices. It should be consider the entry point
+  # of your Loki deployment.
+  gateway:
+    replicas: 3
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+        # this annotation means cert-manager will automatically create a ACME certificate
+        cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+      hosts:
+        # host name assigned to your loki instance (must be registered in DNS)
+        - host: loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            # host name assigned to your loki instance (must be registered in DNS)
+            - loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
+          secretName: loki-ingress-cert
+    nginxConfig:
+      file: |
+        worker_processes  5;  ## Default: 1
+        error_log  /dev/stderr;
+        pid        /tmp/nginx.pid;
+        worker_rlimit_nofile 8192;
 
-      events {
-        worker_connections  4096;  ## Default: 1024
-      }
-
-      http {
-        client_body_temp_path /tmp/client_temp;
-        proxy_temp_path       /tmp/proxy_temp_path;
-        fastcgi_temp_path     /tmp/fastcgi_temp;
-        uwsgi_temp_path       /tmp/uwsgi_temp;
-        scgi_temp_path        /tmp/scgi_temp;
-
-        default_type application/octet-stream;
-        log_format   {{ .Values.gateway.nginxConfig.logFormat }}
-
-        {{- if .Values.gateway.verboseLogging }}
-        access_log   /dev/stderr  main;
-        {{- else }}
-
-        map $status $loggable {
-          ~^[23]  0;
-          default 1;
+        events {
+          worker_connections  4096;  ## Default: 1024
         }
-        access_log   /dev/stderr  main  if=$loggable;
-        {{- end }}
 
-        sendfile     on;
-        tcp_nopush   on;
-        resolver {{ .Values.global.dnsService }}.{{ .Values.global.dnsNamespace }}.svc.{{ .Values.global.clusterDomain }};
+        http {
+          client_body_temp_path /tmp/client_temp;
+          proxy_temp_path       /tmp/proxy_temp_path;
+          fastcgi_temp_path     /tmp/fastcgi_temp;
+          uwsgi_temp_path       /tmp/uwsgi_temp;
+          scgi_temp_path        /tmp/scgi_temp;
 
-        {{- with .Values.gateway.nginxConfig.httpSnippet }}
-        {{ . | nindent 2 }}
-        {{- end }}
+          default_type application/octet-stream;
+          log_format   {{ .Values.gateway.nginxConfig.logFormat }}
 
-        server {
-          listen             8080;
+          {{- if .Values.gateway.verboseLogging }}
+          access_log   /dev/stderr  main;
+          {{- else }}
 
-          {{- if .Values.gateway.basicAuth.enabled }}
-          auth_basic           "Loki";
-          auth_basic_user_file /etc/nginx/secrets/.htpasswd;
+          map $status $loggable {
+            ~^[23]  0;
+            default 1;
+          }
+          access_log   /dev/stderr  main  if=$loggable;
           {{- end }}
 
-          location = / {
-            return 200 'OK';
-            auth_basic off;
-          }
+          sendfile     on;
+          tcp_nopush   on;
+          resolver {{ .Values.global.dnsService }}.{{ .Values.global.dnsNamespace }}.svc.{{ .Values.global.clusterDomain }};
 
-          location = /api/prom/push {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3101$request_uri;
-          }
-
-          location = /api/prom/tail {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-          }
-
-          # Ruler
-          location ~ /prometheus/api/v1/alerts.* {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
-          }
-          location ~ /prometheus/api/v1/rules.* {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
-          }
-          location ~ /api/prom/rules.* {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
-          }
-          location ~ /api/prom/alerts.* {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
-          }
-
-          location ~ /api/prom/.* {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
-          }
-
-          location = /loki/api/v1/push {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3101$request_uri;
-          }
-
-          location = /loki/api/v1/tail {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-          }
-
-          location ~ /loki/api/.* {
-            proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3102$request_uri;
-          }
-
-          {{- with .Values.gateway.nginxConfig.serverSnippet }}
-          {{ . | nindent 4 }}
+          {{- with .Values.gateway.nginxConfig.httpSnippet }}
+          {{ . | nindent 2 }}
           {{- end }}
+
+          server {
+            listen             8080;
+
+            {{- if .Values.gateway.basicAuth.enabled }}
+            auth_basic           "Loki";
+            auth_basic_user_file /etc/nginx/secrets/.htpasswd;
+            {{- end }}
+
+            location = / {
+              return 200 'OK';
+              auth_basic off;
+            }
+
+            location = /api/prom/push {
+              proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3101$request_uri;
+            }
+
+            location = /api/prom/tail {
+              proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+            }
+
+            location ~ /api/prom/.* {
+              proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
+            }
+
+            location = /loki/api/v1/push {
+              proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3101$request_uri;
+            }
+
+            location = /loki/api/v1/tail {
+              proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+            }
+
+            location ~ /loki/api/.* {
+              proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
+            }
+
+            {{- with .Values.gateway.nginxConfig.serverSnippet }}
+            {{ . | nindent 4 }}
+            {{- end }}
+          }
         }
-      }
 
-# Shared configuration for all components
-# key _shared_config does not actually exist in the apps values.yaml
-# We're using it in other keys through yaml anchors
-_shared_config: &shared-conf
-  persistence:
-    storageClass: default
+  # Shared configuration for all components
+  # key _shared_config does not actually exist in the apps values.yaml
+  # We're using it in other keys through yaml anchors
+  _shared_config: &shared-conf
+    persistence:
+      storageClass: default
 
-# giantswarm.io/machine-pool ids (hon60) below reference the node pool ids
-# replace them with your ids of your node pools
+  # giantswarm.io/machine-pool ids (hon60) below reference the node pool ids
+  # replace them with your ids of your node pools
 
-compactor:
-  <<: *shared-conf
-  # nodeselector until we can use affinity like for ingester and querier
-  nodeSelector:
-    giantswarm.io/machine-pool: hon60
+  write: *shared-conf
 
-ruler: *shared-conf
-
-distributor: *shared-conf
-
-queryFrontend: *shared-conf
-
-ingester:
-  <<: *shared-conf
-  replicas: 3
-  affinity: |
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: giantswarm.io/machine-pool
-            operator: In
-            values:
-            - hon60
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchLabels:
-              {{- include "loki.ingesterSelectorLabels" . | nindent 10 }}
-          topologyKey: kubernetes.io/hostname
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchLabels:
-                {{- include "loki.ingesterSelectorLabels" . | nindent 12 }}
-            topologyKey: failure-domain.beta.kubernetes.io/zone
-
-querier:
-  <<: *shared-conf
-  replicas: 2
-  affinity: |
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: giantswarm.io/machine-pool
-            operator: In
-            values:
-            - hon60
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchLabels:
-              {{- include "loki.querierSelectorLabels" . | nindent 10 }}
-          topologyKey: kubernetes.io/hostname
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchLabels:
-                {{- include "loki.querierSelectorLabels" . | nindent 12 }}
-            topologyKey: failure-domain.beta.kubernetes.io/zone
+  read: *shared-conf

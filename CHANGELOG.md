@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Changed upstream chart, from loki-distributed to standard loki (former simple-scalable)
+- Upgrade Loki from 2.5.0 to 2.6.1
+- ⚠️  Major upgrade, breaking changes
+  - PVCs change as we switch from distributed (ingester, compactor, distributor...) to simple-scalable (just read and write pods)
+  - values structure changes. We rely on a subchart, meaning most of previous setup goes to a `loki-upstream` section. See example files for extra info.
+
+
 ### Fixed
 
 - Azure sample config file: storage setup
