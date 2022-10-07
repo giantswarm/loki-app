@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ⚠️  Major upgrade, breaking changes
   - PVCs change as we switch from distributed (ingester, compactor, distributor...) to simple-scalable (just read and write pods)
   - values structure changes. We rely on a subchart, meaning most of previous setup goes to a `loki-upstream` section. See example files for extra info.
+  - see UPGRADE_0.5.md for more info on how to upgrade
 
 
 ### Fixed
