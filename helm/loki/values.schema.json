@@ -2,6 +2,19 @@
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
     "properties": {
+        "giantswarm": {
+            "type": "object",
+            "properties": {
+                "labelmonitoring": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
         "global": {
             "type": "object",
             "properties": {
