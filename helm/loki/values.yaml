@@ -29,6 +29,10 @@ multiTenantAuth:
 
 imagePullSecrets: []
 
+giantswarm:
+  labelmonitoring:
+    enabled: true
+
 global:
   image:
     # -- Overrides the Docker registry globally for all images
