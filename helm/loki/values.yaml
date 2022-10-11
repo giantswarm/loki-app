@@ -2,8 +2,8 @@
 multiTenantAuth:
   enabled: false
   image:
-    repository: giantswarm/loki-multi-tenant-proxy
-    tag: v1.0.0
+    repository: giantswarm/loki-multi-tenant-proxy-gs
+    tag: 0.1.0
     pullPolicy: IfNotPresent
   replicas: 2
   credentials: |-
@@ -32,7 +32,7 @@ imagePullSecrets: []
 global:
   image:
     # -- Overrides the Docker registry globally for all images
-    registry: quay.io
+    registry: docker.io
   # -- Overrides the priorityClassName for all pods
   priorityClassName: null
   # -- configures cluster domain ("cluster.local" by default)
@@ -73,6 +73,8 @@ loki-upstream:
       requests:
         memory: 3072Mi
         cpu: 200m
+    extraArgs:
+      - -querier.multi-tenant-queries-enabled
 
   write:
     resources:
