@@ -11,9 +11,7 @@ sources:
 icon: https://s.giantswarm.io/app-icons/grafana-loki/2/dark.svg
 dependencies:
   - name: loki
-    alias: loki-upstream
     version: 3.0.7
-    # repository: file://../loki-upstream/
     repository: https://grafana.github.io/helm-charts
 maintainers:
   - name: Giant Swarm applications team
