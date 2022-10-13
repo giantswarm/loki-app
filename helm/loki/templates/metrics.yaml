@@ -5,7 +5,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    giantswarm.io/monitoring-port: http-metrics
+    giantswarm.io/monitoring-port: "3100"
   labels:
     giantswarm.io/monitoring: "true"
     app: {{ template "loki.name" . }}-read-metrics
@@ -27,7 +27,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    giantswarm.io/monitoring-port: http-metrics
+    giantswarm.io/monitoring-port: "3100"
   labels:
     giantswarm.io/monitoring: "true"
     app: {{ template "loki.name" . }}-write-metrics
