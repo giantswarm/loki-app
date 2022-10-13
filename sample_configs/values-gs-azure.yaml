@@ -1,7 +1,4 @@
-global:
-  dnsService: "coredns"
-
-
+---
 multiTenantAuth:
   enabled: true
   replicas: 3
@@ -14,7 +11,7 @@ multiTenantAuth:
         password: 2tnaneT
         orgid: tenant-2
 
-loki-upstream:
+loki:
   # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
   # HTTP header to be set to indicate which tenant's logs are these. To enable
   # minimal security, you can configure the gateway to route traffic through loki-multi-tenant-proxy

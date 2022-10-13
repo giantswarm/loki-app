@@ -55,7 +55,7 @@ serviceAccount:
   # -- Set this toggle to false to opt out of automounting API credentials for the service account
   automountServiceAccountToken: true
 
-loki-upstream:
+loki:
   gateway:
     replicas: 3
     deploymentStrategy:

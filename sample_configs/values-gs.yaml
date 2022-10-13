@@ -1,9 +1,9 @@
 # /!\ Disclaimer: this example, is not tested at each update, we don't guarantee it works with the latest Loki charts
 #
-# by default, the k8s' DNS is named `kube-dns`; you might override it here
+# if your k8s' DNS is `kube-dns`; you might want to override it here
 # (please consult your cluster configuration for the correct value)
-global:
-  dnsService: "coredns"
+# global:
+#   dnsService: "coredns"
 
 multiTenantAuth:
   enabled: true
@@ -17,7 +17,7 @@ multiTenantAuth:
         password: 2tnaneT
         orgid: tenant-2
 
-loki-upstream:
+loki:
   # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
   # HTTP header to be set to indicate which tenant's logs are these. To enable
   # minimal security, you can configure the gateway to route traffic through loki-multi-tenant-proxy

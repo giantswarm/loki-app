@@ -30,7 +30,7 @@
         "imagePullSecrets": {
             "type": "array"
         },
-        "loki-upstream": {
+        "loki": {
             "type": "object",
             "properties": {
                 "gateway": {
