@@ -113,3 +113,5 @@ loki:
       enabled: false
       grafanaAgent:
         installOperator: false
+      lokiCanary:
+        enabled: false
