@@ -130,6 +130,14 @@ loki:
               proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
             }
 
+            location ~ /prometheus/api/v1/alerts.* {
+              proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
+            }
+
+            location ~ /prometheus/api/v1/rules.* {
+              proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;
+            }
+
             location = /loki/api/v1/push {
               proxy_pass       http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3101$request_uri;
             }

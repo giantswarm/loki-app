@@ -151,6 +151,14 @@
                                             "type": "boolean"
                                         }
                                     }
+                                },
+                                "lokiCanary": {
+                                    "type": "object",
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean"
+                                        }
+                                    }
                                 }
                             }
                         },
