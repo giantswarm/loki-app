@@ -14,9 +14,8 @@ icon: https://s.giantswarm.io/app-icons/loki-stack/1/dark.svg
 upstreamChartURL: https://github.com/grafana/helm-charts/
 upstreamChartVersion: loki-distributed-0.49.0
 maintainers:
-  - name: unguiculus
-  - name: Giant Swarm applications team
-    url: https://github.com/giantswarm/loki-app
+  - name: giantswarm/team-atlas
+    email: team-atlas@giantswarm.io
 restrictions:
   namespaceSingleton: true
 annotations:
