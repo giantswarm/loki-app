@@ -8,11 +8,12 @@ workflows:
       - architect/push-to-app-catalog:
           context: "architect"
           # app-build-suite breaks on "application.giantswarm.io/team" in _helpers test
-          # executor: "app-build-suite"
+          executor: "app-build-suite"
           name: "package and push loki chart"
           app_catalog: "giantswarm-playground-catalog"
           app_catalog_test: "giantswarm-playground-test-catalog"
           chart: "loki"
+          ct_config: ".circleci/ct-config.yaml"
           # Trigger job on git tag.
           filters:
             tags:
