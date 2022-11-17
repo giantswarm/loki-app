@@ -2,6 +2,4 @@ chart-dir: helm/loki
 replace-chart-version-with-git: true
 replace-app-version-with-git: false
 generate-metadata: true
-destination: ./build
 catalog-base-url: https://giantswarm.github.io/giantswarm-catalog/
-skip-steps: validate
