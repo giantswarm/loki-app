@@ -14,8 +14,8 @@ dependencies:
     version: 3.2.1
     repository: https://grafana.github.io/helm-charts
 maintainers:
-  - name: Giant Swarm applications team
-    url: https://github.com/giantswarm/loki-app
+  - name: giantswarm/team-atlas
+    email: team-atlas@giantswarm.io
 restrictions:
   namespaceSingleton: true
 annotations:
