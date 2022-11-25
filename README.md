@@ -11,6 +11,8 @@ storage must be ensured for the chart to work.
 * Check [below](#deploying-on-aws) to see what configuration you need on the AWS side.
 * or [below](#deploying-on-azure) to see what configuration you need on the Azure side.
 
+⚠️ Make sure to read (upgrade guide)[https://github.com/giantswarm/loki-app/blob/master/UPGRADE.md] to check breaking changes before performing an upgrade
+
 
 ## Requirements
 
@@ -339,7 +341,7 @@ The source code in `helm/loki` is a git-subtree coming from the
 <https://github.com/giantswarm/grafana-helm-charts-upstream>. Giant Swarm uses that
 repository to track and adjust or charts maintained by Grafana Labs.
 
-Notes specific to upstream upgrade can be found in UPSTREAM_UPGRADE.md
+Notes specific to upstream upgrade can be found in (UPGRADE.md)[https://github.com/giantswarm/loki-app/blob/master/UPGRADE.md]
 
 ## Links
 

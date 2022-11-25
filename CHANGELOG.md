@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Chart info: maintainers
 - Chart info: icon
+- Improve upgrade path from 0.4 to 0.5
 
 ## [0.5.1] - 2022-10-25
 
@@ -31,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ⚠️  Major upgrade, breaking changes
   - PVCs change as we switch from distributed (ingester, compactor, distributor...) to simple-scalable (just read and write pods)
   - values structure changes. We rely on a subchart, meaning most of previous setup goes to a `loki` section. See example files for extra info.
-  - see UPGRADE.md for more info on how to upgrade
+  - see (UPGRADE.md)[https://github.com/giantswarm/loki-app/blob/release-v0.5.x/UPGRADE.md#procedure-to-upgrade-from-loki-app-v04x-to-v05x] for more info on how to upgrade
 
 
 ### Fixed
