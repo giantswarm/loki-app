@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed:
 
 - CI: use app-build-suite again
+- Push Loki SSD (new chart) to public catalogs
 
 ### Fixed
 
