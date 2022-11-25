@@ -7,9 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed:
+
+- CI: use app-build-suite again
+
+### Fixed
+
+- Chart info: maintainers
+- Chart info: icon
+- Improve upgrade path from 0.4 to 0.5
+
+## [0.5.1] - 2022-10-25
+
 ### Changed
 
-- Update maintainers in Chart.yaml
+* Upgraded upstream chart from 3.0.7 to 3.2.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.5.0] - 2022-10-13
+
+### Changed
+
+- Changed upstream chart, from loki-distributed to standard loki (former simple-scalable)
+- Upgrade Loki from 2.5.0 to 2.6.1
+- ⚠️  Major upgrade, breaking changes
+  - PVCs change as we switch from distributed (ingester, compactor, distributor...) to simple-scalable (just read and write pods)
+  - values structure changes. We rely on a subchart, meaning most of previous setup goes to a `loki` section. See example files for extra info.
+  - see (UPGRADE.md)[https://github.com/giantswarm/loki-app/blob/release-v0.5.x/UPGRADE.md#procedure-to-upgrade-from-loki-app-v04x-to-v05x] for more info on how to upgrade
+
 
 ### Fixed
 
@@ -154,7 +178,9 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/giantswarm/loki-app/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/giantswarm/loki-app/compare/v0.4.3...v0.5.0
 [0.4.3]: https://github.com/giantswarm/loki-app/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/giantswarm/loki-app/compare/v0.4.2...v0.4.2
 [0.4.2]: https://github.com/giantswarm/loki-app/compare/v0.4.1...v0.4.2
