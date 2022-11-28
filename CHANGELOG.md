@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.3] - 2022-11-28
 
+### Changed
+
+- nothing, the only goal of this release is to actually release to public catalogs
+
 ## [0.5.2] - 2022-11-28
 
 ### Changed:
