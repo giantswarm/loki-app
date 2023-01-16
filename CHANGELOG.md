@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed upstream chart, from loki-distributed to standard loki (former simple-scalable)
+- Changed upstream chart, from loki-distributed to standard loki (former simple-scalable) - Switching from unsupported community chart to loki-supported official chart.
 - Upgrade Loki from 2.5.0 to 2.6.1
 - ⚠️  Major upgrade, breaking changes
   - PVCs change as we switch from distributed (ingester, compactor, distributor...) to simple-scalable (just read and write pods)
