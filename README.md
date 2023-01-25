@@ -1,9 +1,9 @@
-# loki-app chart
+# Loki App
 
 [![CircleCI](https://circleci.com/gh/giantswarm/loki-app.svg?style=shield)](https://circleci.com/gh/giantswarm/loki-app)
 
 Giant Swarm offers Loki as a [managed app](https://docs.giantswarm.io/changes/managed-apps/). This chart provides a distributed loki setup based on this
-[upstream chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed).
+[upstream chart](https://github.com/grafana/loki/tree/main/production/helm/loki).
 It tunes some options from upstream to make the chart easier to deploy.
 
 This chart is meant to be used with S3 compatible storage only. Access to the S3
@@ -11,8 +11,16 @@ storage must be ensured for the chart to work.
 * Check [below](#deploying-on-aws) to see what configuration you need on the AWS side.
 * or [below](#deploying-on-azure) to see what configuration you need on the Azure side.
 
-⚠️ Make sure to read (upgrade guide)[https://github.com/giantswarm/loki-app/blob/master/UPGRADE.md] to check breaking changes before performing an upgrade
+**Table of Contents:**
 
+- [Loki App](#loki-app)
+- [Requirements](#requirements)
+- [Install](#install)
+- [Upgrading](#upgrading)
+- [Configuration](#configuration)
+- [Limitations](#limitations)
+- [Links](#links)
+- [Credit](#credits)
 
 ## Requirements
 
@@ -23,12 +31,96 @@ storage must be ensured for the chart to work.
   * v12.5.1 for AWS
   * v12.3.1 for KVM.
 
-## General recommendations
+## Install
+
+There are several ways to install this app onto a workload cluster.
+
+- [Using GitOps to instantiate the App](https://docs.giantswarm.io/advanced/gitops/#installing-managed-apps)
+- [Using our web interface](https://docs.giantswarm.io/ui-api/web/app-platform/#installing-an-app).
+- By creating an [App resource](https://docs.giantswarm.io/ui-api/management-api/crd/apps.application.giantswarm.io/) in the management cluster as explained in [Getting started with App Platform](https://docs.giantswarm.io/app-platform/getting-started/).
+
+## Upgrading
+
+### Upgrading an existing Release to a new major version
+
+A major chart version change (like v0.5.0 -> v1.0.0) indicates that there is an incompatible breaking change needing manual actions.
+
+⚠️ Upgrading to 0.5.x from any older version is a breaking change as described below
+
+### From 0.4.x to 0.5.x
+
+The chart used as a base moved from a [community chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed) to the [officially maintained chart](https://github.com/grafana/loki/tree/main/production/helm/loki).
+
+The structure of the values changed in 0.5.0 as we now rely on helm chart dependency mechanism to manage the application.
+
+#### Basic upgrade procedure
+
+1. Retrieve current `values.yaml`
+   * for manual/happa deployments you could do it with a command like `k get cm -n [mycluster] loki-user-values -oyaml | yq '.data.values'` on the management cluster
+   * for gitops deployments, you should have it in git
+1. keep a backup: `cp values.yaml values.yaml_0.4`
+1. prepare your new values file (see "Most notable changes" section hereafter for details on what to change)
+1. open grafana, check that you can access your logs
+1. uninstall loki
+1. install newer loki version, with new values
+1. check in grafana that you can still access old and new logs
+
+__Note:__
+
+Uninstalling before re-installing is not mandatory. You can also change config and app version at the same time. Works well with Flux for instance.
+
+#### Details
+
+##### Your `values.yaml` file need some adjustments.
+
+Most notable changes:
+* We changed the base chart from [loki-distributed](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed) to [loki (ex simple-scalable)](https://github.com/grafana/loki/tree/main/production/helm/loki)
+* The change of chart leads to a change of achitecture. The component's names are not the same, and the persistent volumes change. A bit of recent data may be lost in the migration.
+* We switched to using a subchart. This changes the layout of your `values.yaml`:
+  * most of the settings are moving under a `loki` section. Actually that's all the upstream-specific chart configuration.
+  * except what is not specific to upstream chart, like `global`, `multiTenantAuth`, `imagePullSecrets` and `giantswarm` settings
+  * note that you will probably have a `loki` section inside another `loki` section
+* You can look at the default and sample `values` files to understand the changes:
+  * with `loki-app` v0.4.x:
+    * [upstream values (loki-distributed 0.48.5)](https://github.com/grafana/helm-charts/blob/loki-distributed-0.48.5/charts/loki-distributed/values.yaml)
+    * [default giantswarm values](https://github.com/giantswarm/loki-app/blob/3d777f261a7f820721c6732295aab56c809f4281/helm/loki/values.yaml)
+    * [giantswarm sample configs](https://github.com/giantswarm/loki-app/blob/3d777f261a7f820721c6732295aab56c809f4281/sample_configs/values-gs.yaml)
+  * with `loki-app` v0.5.x:
+    * [upstream values (official loki 3.2.1)](https://github.com/grafana/loki/blob/helm-loki-3.2.1/production/helm/loki/values.yaml)
+    * [giantswarm default values](https://github.com/giantswarm/loki-app/blob/release-v0.5.x/helm/loki/values.yaml)
+    * [giantswarm sample configs](https://github.com/giantswarm/loki-app/tree/release-v0.5.x/sample_configs)
+
+##### New Loki defaults to multi-tenant mode.
+
+If you set an orgid when sending logs, you now have to make sure you set it also when reading logs.
+You can read multiple tenants with orgid built like this: `tenant1|tenant2`
+Logs sent with no tenant are stored as tenant `fake`.
+You can see all your tenants by listing your object storage. Here, I have `fake`, `tenant1` and `tenant2` tenants:
+```
+fake/
+tenant1/
+tenant2/
+index/
+loki_cluster_seed.json
+```
+
+#### Rollback
+
+You can rollback to your previous Loki version, and see your old logs.
+However, because of multi-tenancy, seeing logs that were stored with the new version may require some config tweaking.
+
+## Configuration
+
+As this application is build upon the Grafana loki upstream chart as a dependency, most of the values to override can be found [here](https://github.com/grafana/loki/blob/helm-loki-3.2.1/production/helm/loki/values.yaml).
+
+Some samples can be found [here](./sample_configs/)
+
+### General recommendations
 
 The number of `replicas` in the [default values file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml) are generally considered safe.
 If you reduce the number of `replicas` below the default recommended values, expect undefined behaviour and problems.
 
-## Prepare config file
+### Prepare config file
 
 1. Create app config file
 Grab the included [sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs.yaml)
@@ -78,8 +170,7 @@ kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
 ```
 Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
 
-
-## Deploying on AWS
+### Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
 has `kiam` (https://github.com/uswitch/kiam), `cert-manager` and `external-dns` included, you should be good to use
@@ -193,7 +284,7 @@ kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_ROLE_ARN"
 * Install the app using your values.
   Don't forget to use the same namespace as you prepared above for the installation.
 
-## Deploying on Azure
+### Deploying on Azure
 
 #### Gather data
 Find the 'Subscription name' (usually named after your installation) name and the 'Resource group' of your cluster (usually named after cluster id) inside your 'Azure subscription'
@@ -260,11 +351,9 @@ az storage account keys list \
 
 * Install the app using your values.
 
+### Testing your deployment
 
-
-## Testing your deployment
-
-### Reading data with logcli
+#### Reading data with logcli
 
 1. Install latest logcli from https://github.com/grafana/loki/releases
 
@@ -294,7 +383,7 @@ $ logcli --org-id="tenant-1" --addr="http://localhost:3100" series '{}'
 http://localhost:3100/loki/api/v1/series?end=1654091687961363182&match=%7B%7D&start=1654088087961363182
 ```
 
-### Ingesting data with promtail
+#### Ingesting data with promtail
 
 * Get promtail from https://github.com/grafana/loki/releases
 * Create basic promtail config file `promtail-test.yml`:
@@ -335,13 +424,10 @@ promtail --config.file=promtail-test.yml --inspect
 ```
 * Query loki with `logcli` and see your data
 
-## Source code origin
+## Limitations
 
-The source code in `helm/loki` is a git-subtree coming from the
-<https://github.com/giantswarm/grafana-helm-charts-upstream>. Giant Swarm uses that
-repository to track and adjust or charts maintained by Grafana Labs.
-
-Notes specific to upstream upgrade can be found in (UPGRADE.md)[https://github.com/giantswarm/loki-app/blob/master/UPGRADE.md]
+The application and its default values have been tailored to work inside Giant Swarm clusters.
+If you want to use it for any other scenario, know that you might need to adjust some values.
 
 ## Links
 
@@ -352,4 +438,6 @@ Notes specific to upstream upgrade can be found in (UPGRADE.md)[https://github.c
 
 ## Credit
 
-* <https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed>
+This application is installating the upstream chart below with defaults to ensure it runs smoothly in Giant Swarm clusters.
+
+* <https://github.com/grafana/loki/tree/main/production/helm/loki>

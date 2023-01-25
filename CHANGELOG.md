@@ -36,13 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed upstream chart, from loki-distributed to standard loki (former simple-scalable) - Switching from unsupported community chart to loki-supported official chart.
+- Changed upstream chart, from loki-distributed to standard loki (former simple-scalable) - Switching from unsupported community chart to loki-supported *official chart*.
 - Upgrade Loki from 2.5.0 to 2.6.1
-- ⚠️  Major upgrade, breaking changes
+- ⚠️  Major upgrade, [breaking changes](https://github.com/giantswarm/loki-app/blob/master/README.md#from-0.4x-to-0.5x)
   - PVCs change as we switch from distributed (ingester, compactor, distributor...) to simple-scalable (just read and write pods)
   - values structure changes. We rely on a subchart, meaning most of previous setup goes to a `loki` section. See example files for extra info.
-  - see (UPGRADE.md)[https://github.com/giantswarm/loki-app/blob/release-v0.5.x/UPGRADE.md#procedure-to-upgrade-from-loki-app-v04x-to-v05x] for more info on how to upgrade
-
 
 ### Fixed
 
