@@ -11,7 +11,7 @@ sources:
 icon: https://s.giantswarm.io/app-icons/loki-stack/1/dark.svg
 dependencies:
   - name: loki
-    version: 3.2.1
+    version: 3.10.0
     repository: https://grafana.github.io/helm-charts
 maintainers:
   - name: giantswarm/team-atlas
