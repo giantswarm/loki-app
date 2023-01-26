@@ -13,7 +13,6 @@ storage must be ensured for the chart to work.
 
 **Table of Contents:**
 
-- [Loki App](#loki-app)
 - [Requirements](#requirements)
 - [Install](#install)
 - [Upgrading](#upgrading)
@@ -438,6 +437,6 @@ If you want to use it for any other scenario, know that you might need to adjust
 
 ## Credit
 
-This application is installating the upstream chart below with defaults to ensure it runs smoothly in Giant Swarm clusters.
+This application is installing the upstream chart below with defaults to ensure it runs smoothly in Giant Swarm clusters.
 
 * <https://github.com/grafana/loki/tree/main/production/helm/loki>
