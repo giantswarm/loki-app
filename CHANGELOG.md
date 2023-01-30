@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - upgraded upstream chart from 3.2.1 to 3.10.0
 - upgraded Loki from 2.6.1 to 2.7.0
+- ⚠️  Breaking changes:
+  - nginx file definition for loki-multi-tenant has moved to a helper template. If you had defined it in your `values`, you should:
+    - remove `.loki.gateway.nginxConfig.file` from your `values`
+    - set `.loki.gateway.nginxConfig.genMultiTenant: true` in your `values`
+    - => now we manage maintenance for this template, so you can keep a cleaner `values` config.
 
 ## [0.5.3] - 2022-11-28
 
