@@ -115,3 +115,6 @@ loki:
         installOperator: false
       lokiCanary:
         enabled: false
+
+  test:
+    enabled: false
