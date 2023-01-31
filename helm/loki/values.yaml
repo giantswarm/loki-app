@@ -61,6 +61,8 @@ serviceAccount:
 
 loki:
   gateway:
+    nginxConfig:
+      genMultiTenant: false
     replicas: 3
     deploymentStrategy:
       type: RollingUpdate
@@ -115,3 +117,6 @@ loki:
         installOperator: false
       lokiCanary:
         enabled: false
+
+  test:
+    enabled: false

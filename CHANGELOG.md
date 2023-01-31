@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgraded upstream chart from 3.2.1 to 3.10.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- upgraded Loki from 2.6.1 to 2.7.0 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+- ⚠️  [breaking changes](https://github.com/giantswarm/loki-app/blob/master/README.md#from-05x-to-06x)
+  - nginx file definition for loki-multi-tenant has moved to a helper template.
+
 ## [0.5.3] - 2022-11-28
 
 ### Changed
@@ -30,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Upgraded upstream chart from 3.0.7 to 3.2.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 3.0.7 to 3.2.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
 
 ## [0.5.0] - 2022-10-13
 
@@ -38,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changed upstream chart, from loki-distributed to standard loki (former simple-scalable) - Switching from unsupported community chart to loki-supported *official chart*.
 - Upgrade Loki from 2.5.0 to 2.6.1
-- ⚠️  Major upgrade, [breaking changes](https://github.com/giantswarm/loki-app/blob/master/README.md#from-0.4x-to-0.5x)
+- ⚠️  Major upgrade, [breaking changes](https://github.com/giantswarm/loki-app/blob/master/README.md#from-04x-to-05x)
   - PVCs change as we switch from distributed (ingester, compactor, distributor...) to simple-scalable (just read and write pods)
   - values structure changes. We rely on a subchart, meaning most of previous setup goes to a `loki` section. See example files for extra info.
 
