@@ -28,7 +28,7 @@ loki:
         - from: "2020-09-07"
           store: boltdb-shipper
           object_store: s3
-          schema: v11
+          schema: v12
           index:
             prefix: loki_index_
             period: 24h
