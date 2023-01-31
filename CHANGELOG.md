@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Upgraded upstream chart from 3.2.1 to 3.10.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
-- upgraded Loki from 2.6.1 to 2.7.0 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 3.2.1 to 4.4.2 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- upgraded Loki from 2.6.1 to 2.7.2 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
 - ⚠️  [breaking changes](https://github.com/giantswarm/loki-app/blob/master/README.md#from-05x-to-06x)
   - nginx file definition for loki-multi-tenant has moved to a helper template.
 
