@@ -286,3 +286,153 @@ http {
   }
 }
 {{- end }}
+
+{{/*
+/!\ Giantswarm override to work around a bug in azure where `use_federated_token` fails.
+/!\ Added on chart 4.10.0 / Loki 2.7.2
+Generated storage config for loki common config
+*/}}
+{{- define "loki.commonStorageConfig" -}}
+{{- if .Values.minio.enabled -}}
+s3:
+  endpoint: {{ include "loki.minio" $ }}
+  bucketnames: {{ $.Values.loki.storage.bucketNames.chunks }}
+  secret_access_key: {{ $.Values.minio.rootPassword }}
+  access_key_id: {{ $.Values.minio.rootUser }}
+  s3forcepathstyle: true
+  insecure: true
+{{- else if eq .Values.loki.storage.type "s3" -}}
+{{- with .Values.loki.storage.s3 }}
+s3:
+  {{- with .s3 }}
+  s3: {{ . }}
+  {{- end }}
+  {{- with .endpoint }}
+  endpoint: {{ . }}
+  {{- end }}
+  {{- with .region }}
+  region: {{ . }}
+  {{- end}}
+  bucketnames: {{ $.Values.loki.storage.bucketNames.chunks }}
+  {{- with .secretAccessKey }}
+  secret_access_key: {{ . }}
+  {{- end }}
+  {{- with .accessKeyId }}
+  access_key_id: {{ . }}
+  {{- end }}
+  s3forcepathstyle: {{ .s3ForcePathStyle }}
+  insecure: {{ .insecure }}
+  {{- with .http_config}}
+  http_config:
+    {{- with .idle_conn_timeout }}
+    idle_conn_timeout: {{ . }}
+    {{- end}}
+    {{- with .response_header_timeout }}
+    response_header_timeout: {{ . }}
+    {{- end}}
+    {{- with .insecure_skip_verify }}
+    insecure_skip_verify: {{ . }}
+    {{- end}}
+    {{- with .ca_file}}
+    ca_file: {{ . }}
+    {{- end}}
+  {{- end }}
+{{- end -}}
+{{- else if eq .Values.loki.storage.type "gcs" -}}
+{{- with .Values.loki.storage.gcs }}
+gcs:
+  bucket_name: {{ $.Values.loki.storage.bucketNames.chunks }}
+  chunk_buffer_size: {{ .chunkBufferSize }}
+  request_timeout: {{ .requestTimeout }}
+  enable_http2: {{ .enableHttp2 }}
+{{- end -}}
+{{- else if eq .Values.loki.storage.type "azure" -}}
+{{- with .Values.loki.storage.azure }}
+azure:
+  account_name: {{ .accountName }}
+  {{- with .accountKey }}
+  account_key: {{ . }}
+  {{- end }}
+  container_name: {{ $.Values.loki.storage.bucketNames.chunks }}
+  use_managed_identity: {{ .useManagedIdentity }}
+  {{- with .userAssignedId }}
+  user_assigned_id: {{ . }}
+  {{- end }}
+  {{- with .requestTimeout }}
+  request_timeout: {{ . }}
+  {{- end }}
+{{- end -}}
+{{- else -}}
+{{- with .Values.loki.storage.filesystem }}
+filesystem:
+  chunks_directory: {{ .chunks_directory }}
+  rules_directory: {{ .rules_directory }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+/!\ Giantswarm override to work around a bug in azure where `use_federated_token` fails.
+/!\ Added on chart 4.10.0 / Loki 2.7.2
+Storage config for ruler
+*/}}
+{{- define "loki.rulerStorageConfig" -}}
+{{- if .Values.minio.enabled -}}
+type: "s3"
+s3:
+  bucketnames: {{ $.Values.loki.storage.bucketNames.ruler }}
+{{- else if eq .Values.loki.storage.type "s3" -}}
+{{- with .Values.loki.storage.s3 }}
+type: "s3"
+s3:
+  {{- with .s3 }}
+  s3: {{ . }}
+  {{- end }}
+  {{- with .endpoint }}
+  endpoint: {{ . }}
+  {{- end }}
+  {{- with .region }}
+  region: {{ . }}
+  {{- end}}
+  bucketnames: {{ $.Values.loki.storage.bucketNames.ruler }}
+  {{- with .secretAccessKey }}
+  secret_access_key: {{ . }}
+  {{- end }}
+  {{- with .accessKeyId }}
+  access_key_id: {{ . }}
+  {{- end }}
+  s3forcepathstyle: {{ .s3ForcePathStyle }}
+  insecure: {{ .insecure }}
+{{- end -}}
+{{- else if eq .Values.loki.storage.type "gcs" -}}
+{{- with .Values.loki.storage.gcs }}
+type: "gcs"
+gcs:
+  bucket_name: {{ $.Values.loki.storage.bucketNames.ruler }}
+  chunk_buffer_size: {{ .chunkBufferSize }}
+  request_timeout: {{ .requestTimeout }}
+  enable_http2: {{ .enableHttp2 }}
+{{- end -}}
+{{- else if eq .Values.loki.storage.type "azure" -}}
+{{- with .Values.loki.storage.azure }}
+type: "azure"
+azure:
+  account_name: {{ .accountName }}
+  {{- with .accountKey }}
+  account_key: {{ . }}
+  {{- end }}
+  container_name: {{ $.Values.loki.storage.bucketNames.ruler }}
+  use_managed_identity: {{ .useManagedIdentity }}
+  {{- with .userAssignedId }}
+  user_assigned_id: {{ . }}
+  {{- end }}
+  {{- with .requestTimeout }}
+  request_timeout: {{ . }}
+  {{- end }}
+{{- end -}}
+{{- else }}
+type: "local"
+{{- end -}}
+{{- end -}}
+
