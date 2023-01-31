@@ -93,6 +93,7 @@ loki:
   loki:
     image:
       repository: giantswarm/loki
+      tag: ""
     limits_config:
       enforce_metric_name: true
       ingestion_rate_mb: 10
