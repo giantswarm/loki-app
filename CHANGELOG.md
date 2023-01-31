@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - upgraded Loki from 2.6.1 to 2.7.0 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
 - ⚠️  [breaking changes](https://github.com/giantswarm/loki-app/blob/master/README.md#from-05x-to-06x)
   - nginx file definition for loki-multi-tenant has moved to a helper template.
+- azure sample values fixed
+- doc improvements
 
 ## [0.5.3] - 2022-11-28
 
