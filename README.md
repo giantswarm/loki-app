@@ -44,9 +44,20 @@ There are several ways to install this app onto a workload cluster.
 
 A major chart version change (like v0.5.0 -> v1.0.0) indicates that there is an incompatible breaking change needing manual actions.
 
-⚠️ Upgrading to 0.5.x from any older version is a breaking change as described below
+Versions before v1.0.0 are not stable, and can even have breaking changes between "minor" versions. (like v0.5.0 -> v0.6.0)
+
+### From 0.5.x to 0.6.x
+
+⚠️ Upgrading to 0.6.x from any older version is a breaking change as described below
+
+- nginx file definition for loki-multi-tenant has moved to a helper template. If you had defined it in your `values`, you should:
+  - remove `.loki.gateway.nginxConfig.file` from your `values`
+  - set `.loki.gateway.nginxConfig.genMultiTenant: true` in your `values`
+  - => now we manage maintenance for this template, so you can keep a cleaner `values` config.
 
 ### From 0.4.x to 0.5.x
+
+⚠️ Upgrading to 0.5.x from any older version is a breaking change as described below
 
 The chart used as a base moved from a [community chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed) to the [officially maintained chart](https://github.com/grafana/loki/tree/main/production/helm/loki).
 
