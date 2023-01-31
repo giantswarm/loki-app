@@ -60,8 +60,9 @@ serviceAccount:
   automountServiceAccountToken: true
 
 loki:
-  genMultiTenantNginx: false
   gateway:
+    nginxConfig:
+      genMultiTenant: false
     replicas: 3
     deploymentStrategy:
       type: RollingUpdate
