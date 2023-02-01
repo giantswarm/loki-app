@@ -381,10 +381,10 @@ k port-forward -n loki svc/loki-gateway 8080:80
 logcli --username=Tenant1 --password=1tnaneT --addr="http://localhost:8080" series '{}'
 ```
 
-  * You can also test direct access to querier
+  * You can also test direct access to loki-write
 ```
-# port-forward querier to local port 3100
-k port-forward -n loki svc/loki-querier 3100:3100
+# port-forward loki-write to local port 3100
+k port-forward -n loki svc/loki-write 3100:3100
 # or loki-query-frontend-xxxx port 3100 accepts the same queries
 
 # List all streams
@@ -409,6 +409,7 @@ clients:
     basic_auth:
       username: Tenant1
       password: 1tnaneT
+    tenant_id: tenant-1
 scrape_configs:
   - job_name: logfile
     static_configs:
