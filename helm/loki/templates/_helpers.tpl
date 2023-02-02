@@ -2,7 +2,8 @@
 Expand the name of the chart.
 */}}
 {{- define "loki.name" -}}
-loki
+{{- $default := "loki" }}
+{{- coalesce .Values.nameOverride .Values.loki.nameOverride $default | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
