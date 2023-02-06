@@ -24,11 +24,14 @@ loki:
   # to do HTTP basicAuth and overwriting the tenant id header
   loki:
     schemaConfig:
+      # Beware when Changing this config on an existing Loki
+      # Doc is here: https://grafana.com/docs/loki/latest/storage/#upgrading-schemas
+      # Info about schema v12: https://grafana.com/blog/2022/04/11/new-in-grafana-loki-2.5-faster-queries-more-log-sources-so-long-s3-rate-limits-and-more/
       configs:
         - from: "2020-09-07"
           store: boltdb-shipper
           object_store: s3
-          schema: v11
+          schema: v12
           index:
             prefix: loki_index_
             period: 24h

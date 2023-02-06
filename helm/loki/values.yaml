@@ -73,6 +73,8 @@ loki:
       repository: giantswarm/nginx-unprivileged
 
   read:
+    # 2023-01-31: disable new "backend" read mode as it's not yet part of official images
+    legacyReadTarget: true
     resources:
       limits:
         memory: 4096Mi
@@ -93,6 +95,8 @@ loki:
   loki:
     image:
       repository: giantswarm/loki
+      # If no value given here, will use upstream chart's "appVersion"
+      tag: ""
     limits_config:
       enforce_metric_name: true
       ingestion_rate_mb: 10
@@ -115,8 +119,8 @@ loki:
       enabled: false
       grafanaAgent:
         installOperator: false
-      lokiCanary:
-        enabled: false
+    lokiCanary:
+      enabled: false
 
   test:
     enabled: false
