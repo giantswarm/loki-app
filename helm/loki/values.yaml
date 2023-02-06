@@ -95,6 +95,7 @@ loki:
   loki:
     image:
       repository: giantswarm/loki
+      # If no value given here, will use upstream chart's "appVersion"
       tag: ""
     limits_config:
       enforce_metric_name: true

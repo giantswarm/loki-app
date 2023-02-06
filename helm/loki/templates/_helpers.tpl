@@ -21,6 +21,7 @@ application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantsw
 {{- end }}
 
 {{/* Snippet for the nginx file used by gateway */}}
+{{/* duplicated from sub-chart, but with a specific config when using multi-tenant-gateway */}}
 {{- define "loki.nginxFile" }}
 worker_processes  5;  ## Default: 1
 error_log  /dev/stderr;
@@ -290,7 +291,8 @@ http {
 
 {{/*
 /!\ Giantswarm override to work around a bug in azure where `use_federated_token` fails.
-/!\ Added on chart 4.10.0 / Loki 2.7.2
+/!\ This was copied from upstream and ˋuse_federated_token` was removed for azure`
+/!\ Added on chart 4.10.0 / Loki 2.7.2 - to be removed when loki supports this (probably 2.8.0)
 Generated storage config for loki common config
 */}}
 {{- define "loki.commonStorageConfig" -}}
@@ -375,7 +377,8 @@ filesystem:
 
 {{/*
 /!\ Giantswarm override to work around a bug in azure where `use_federated_token` fails.
-/!\ Added on chart 4.10.0 / Loki 2.7.2
+/!\ This was copied from upstream and ˋuse_federated_token` was removed for azure`
+/!\ Added on chart 4.10.0 / Loki 2.7.2 - to be removed when loki supports this (probably 2.8.0)
 Storage config for ruler
 */}}
 {{- define "loki.rulerStorageConfig" -}}
