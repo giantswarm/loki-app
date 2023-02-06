@@ -29,16 +29,18 @@ loki:
           index:
             prefix: loki_index_
             period: 24h
-    storageConfig:
-      boltdb_shipper:
-        shared_store: azure
-      azure:
-        # 'Storage account' name
-        account_name: my-account-name
+    storage:
+      type: azure
+      bucketNames:
         # 'Blob service' 'Container' name
-        container_name: my-container-name
+        chunks: my-container-name
+        ruler: my-container-name
+        admin: my-container-name
+      azure:
+        # 'Storage acccunt' name
+        accountName: my-account-name
         # 'Storage account' 'Access key'
-        account_key: my-account-key
+        accountKey: my-account-key
     structuredConfig:
       compactor:
         shared_store: azure

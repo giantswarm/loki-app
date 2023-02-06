@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ⚠️  [breaking changes](https://github.com/giantswarm/loki-app/blob/master/README.md#from-05x-to-06x)
   - nginx file definition for loki-multi-tenant has moved to a helper template.
 - sample configs: updated schema version to v12 (brings performance improvements for S3 - see https://grafana.com/blog/2022/04/11/new-in-grafana-loki-2.5-faster-queries-more-log-sources-so-long-s3-rate-limits-and-more/)
+- azure sample values fixed
+- doc improvements
 
 ## [0.5.3] - 2022-11-28
 
