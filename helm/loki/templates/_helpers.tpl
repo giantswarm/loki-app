@@ -291,7 +291,7 @@ http {
 
 {{/*
 /!\ Giantswarm override to work around a bug in azure where `use_federated_token` fails.
-/!\ This was copied from upstream and ˋuse_federated_token` was removed for azure`
+/!\ This was copied from upstream (https://github.com/grafana/loki/blob/helm-loki-4.4.2/production/helm/loki/templates/_helpers.tpl#L179) and ˋuse_federated_token` was removed for azure`
 /!\ Added on chart 4.10.0 / Loki 2.7.2 - to be removed when loki supports this (probably 2.8.0)
 Generated storage config for loki common config
 */}}
@@ -377,7 +377,7 @@ filesystem:
 
 {{/*
 /!\ Giantswarm override to work around a bug in azure where `use_federated_token` fails.
-/!\ This was copied from upstream and ˋuse_federated_token` was removed for azure`
+/!\ This was copied from upstream (https://github.com/grafana/loki/blob/helm-loki-4.4.2/production/helm/loki/templates/_helpers.tpl#L262) and ˋuse_federated_token` was removed for azure`
 /!\ Added on chart 4.10.0 / Loki 2.7.2 - to be removed when loki supports this (probably 2.8.0)
 Storage config for ruler
 */}}
