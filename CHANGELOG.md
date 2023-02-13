@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgraded upstream chart from 4.4.2 to 4.6.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- upgraded Loki from 2.7.2 to 2.7.3 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+
 ## [0.6.0] - 2023-02-06
 
 ### Changed
