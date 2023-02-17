@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgraded upstream chart from 4.6.0 to 4.6.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- changed the way to setup multi-tenant-proxy
+    [insert instructions here]
+
 ## [0.6.1] - 2023-02-13
 
 ### Changed
