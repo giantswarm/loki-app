@@ -63,6 +63,10 @@ loki:
   gateway:
     nginxConfig:
       genMultiTenant: false
+      # To be set when using MultiTenant with GiantSwarm multi-tenant-proxy
+      #customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
+      #customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
+      #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
     replicas: 3
     deploymentStrategy:
       type: RollingUpdate
