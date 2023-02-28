@@ -69,6 +69,9 @@ loki:
           secretName: loki-ingress-cert
     nginxConfig:
       genMultiTenant: true
+      customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
+      customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
+      customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
 
   # Shared configuration for all components
   # key _shared_config does not actually exist in the apps values.yaml
