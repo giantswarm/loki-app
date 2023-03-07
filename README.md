@@ -46,6 +46,20 @@ A major chart version change (like v0.5.0 -> v1.0.0) indicates that there is an 
 
 Versions before v1.0.0 are not stable, and can even have breaking changes between "minor" versions. (like v0.5.0 -> v0.6.0)
 
+### From 0.6.x to 0.7.x
+
+⚠️ Upgrading to 0.6.x from any older version can be a breaking change as described below
+
+- nginx file definition has been changed for easier maintenance. But there is a drawback: if you had defined it in your `values`, you should add these values:
+    ```
+    loki:
+      gateway:
+        nginxConfig:
+          customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
+          customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
+          customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
+    ```
+
 ### From 0.5.x to 0.6.x
 
 ⚠️ Upgrading to 0.6.x from any older version is a breaking change as described below
