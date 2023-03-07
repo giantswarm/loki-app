@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- [BREAKING] changed the way to setup multi-tenant-proxy:
-  - set `gateway.nginxConfig.customReadUrl`, `gateway.nginxConfig.customWriteUrl` and `gateway.nginxConfig.customBackendUrl` if you use the multiTenantProxy. See default values and sample configs to have the right values.
+-⚠️ [BREAKING] changed the way to setup multi-tenant-proxy:
+  - set `loki.gateway.nginxConfig.customReadUrl`, `loki.gateway.nginxConfig.customWriteUrl` and `loki.gateway.nginxConfig.customBackendUrl` if you use the multiTenantProxy. See default values and sample configs to have the right values.
+  - For more detailed info, see [upgrade notes](https://github.com/giantswarm/loki-app/blob/master/README.md#from-06x-to-07x)
 - Upgraded upstream chart from 4.6.0 to 4.8.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
 
 ## [0.6.1] - 2023-02-13
