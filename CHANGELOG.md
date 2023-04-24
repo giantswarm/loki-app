@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Upgraded upstrem chart from 5.0.0 to 5.2.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
 - Loss of compability with Kubernetes <= 1.21
+- Switched to 3-targets mode - see [comment in upstream values](https://github.com/grafana/loki/blob/helm-loki-5.1.0/production/helm/loki/values.yaml#L769) for more information
 
 ## [0.8.0] - 2023-04-06
 
