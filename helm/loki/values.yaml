@@ -1,11 +1,33 @@
 ---
 multiTenantAuth:
+  # -- Specifies whether the multi-tenant proxy should be enabled
   enabled: false
+  # -- Number of replicas for the multi-tenant proxy
+  replicas: 3
+  autoscaling:
+    # -- Enable autoscaling for the multi-tenant proxy
+    enabled: true
+    # -- Minimum autoscaling replicas for the multi-tenant proxy
+    minReplicas: 1
+    # -- Maximum autoscaling replicas for the multi-tenant proxy
+    maxReplicas: 3
+    # -- Target CPU utilisation percentage for the multi-tenant proxy
+    targetCPUUtilizationPercentage: 60
+    # -- Target memory utilisation percentage for the multi-tenant proxy
+    targetMemoryUtilizationPercentage:
+  # -- See `kubectl explain deployment.spec.strategy` for more
+  # -- ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   image:
     repository: giantswarm/loki-multi-tenant-proxy-gs
     tag: 0.1.0
     pullPolicy: IfNotPresent
-  replicas: 2
+  # -- Resource requests and limits for the write
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 200Mi
+      cpu: 50m
   credentials: |-
     users:
       - username: Tenant1
@@ -66,8 +88,9 @@ loki:
       # To be set when using MultiTenant with GiantSwarm multi-tenant-proxy
       #customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
       #customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
-      #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
-    replicas: 3
+      #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3102
+    autoscaling:
+      enabled: true
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -79,20 +102,20 @@ loki:
   read:
     resources:
       limits:
-        memory: 4096Mi
+        memory: 3Gi
       requests:
-        memory: 3072Mi
-        cpu: 200m
+        memory: 2Gi
+        cpu: 50m
     extraArgs:
       - -querier.multi-tenant-queries-enabled
 
   write:
     resources:
       limits:
-        memory: 4096Mi
+        memory: 4Gi
       requests:
-        memory: 3072Mi
-        cpu: 200m
+        memory: 3Gi
+        cpu: 500m
 
   loki:
     image:
