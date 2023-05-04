@@ -299,7 +299,7 @@ kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_ROLE_ARN"
 
 #### Notes on specific configuration for clusters using Giant Swarm release >= v19.0.0 (i.e moving from KIAM to IRSA)
 
-From release v19.0.0, Giant Swarm clusters will use IRSA (Iam Roles for Service Accounts) to allow pods to access S3 buckets' resources. For more details concerning IRSA, you can refer to the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
+From release v19.0.0, Giant Swarm clusters will use IRSA (Iam Roles for Service Accounts) to allow pods to access S3 buckets' resources. For more details concerning IRSA, you can refer to the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) as well as to the [giant swarm one](https://docs.giantswarm.io/advanced/iam-roles-for-service-accounts).
 
 This means that if you already have Loki running on your cluster and plan to upgrade your cluster to v19.0.0 or higher you will have to make some changes to your config as clusters with version <= v18.X.X use KIAM for authentication.
 
