@@ -297,6 +297,47 @@ LOKI_ROLE_ARN="${PRINCIPAL_ARN%:role/*}:role/$LOKI_ROLE"
 kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_ROLE_ARN"
 ```
 
+#### Notes on specific configuration for clusters using Giant Swarm release >= v19.0.0 (i.e moving from KIAM to IRSA)
+
+From release v19.0.0, Giant Swarm clusters will use IRSA (Iam Roles for Service Accounts) to allow pods to access S3 buckets' resources. For more details concerning IRSA, you can refer to the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
+
+This means that if you already have Loki running on your cluster and plan to upgrade your cluster to v19.0.0 or higher you will have to make some changes to your config as clusters with version <= v18.X.X use KIAM for authentication.
+
+To make Loki use IRSA you will first have to create or edit an IAM role. You can use the same policy presented [before](#prepare-aws-role). However the difference will be with the `Trust relationship`:
+
+```bash
+ROLE_DOC='{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::<principal-arn>:oidc-provider/irsa.<cluster-name>.k8s.<installation>.<region>.aws.gigantic.io"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "irsa.<cluster-name>.k8s.<installation>.<region>.aws.gigantic.io:sub": "system:serviceaccount:loki:loki"
+                }
+            }
+        }
+    ]
+}'
+```
+Replace `<principal-arn>` with the value from `$PRINCIPAL_ARN` (the command to retrieve this variable's value is described above) as well as `<cluster-name>`, `<installation>` and `<region>` with the appropriate values.
+
+Once the role is created on aws side this is where you'll have to add some configuration in the Chart's values under the `loki` section :
+```yaml
+serviceAccount:
+  create: true
+  name: loki
+  annotations:
+    eks.amazonaws.com/role-arn: "your-role-arn"
+```
+You can retrieve your role's arn as described [before](#prepare-the-namespace)
+
+Note that in this scenario you don't have to manually create the `loki` namespace.
+
 #### Install the app
 
 * Fill in the values from previous step in your config (`values.yaml`) file:
