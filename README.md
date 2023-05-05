@@ -48,6 +48,12 @@ Versions before v1.0.0 are not stable, and can even have breaking changes betwee
 
 ### From 0.6.x to 0.7.x
 
+⚠️ Upgrading to 0.9.x from any older version can be a breaking change as described below
+
+- switch to 3-targets mode (see [comment in upstream values](https://github.com/grafana/loki/blob/helm-loki-5.1.0/production/helm/loki/values.yaml#L769)) may leave unused "loki-read-x" pods, PVCs and PVs.
+
+### From 0.6.x to 0.7.x
+
 ⚠️ Upgrading to 0.6.x from any older version can be a breaking change as described below
 
 - nginx file definition has been changed for easier maintenance. But there is a drawback: if you had defined it in your `values`, you should add these values:
