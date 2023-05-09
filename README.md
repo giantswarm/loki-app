@@ -219,6 +219,7 @@ as your instances. Ex. `gs-loki-storage`.
 export CLUSTER_NAME=zj88t
 export NODEPOOL_ID=oy9v0
 export REGION=eu-central-1
+export INSTALLATION=gorilla
 export BUCKET_NAME=gs-loki-storage-"$CLUSTER_NAME" # must be globally unique
 export AWS_PROFILE=gorilla-atlas # your AWS CLI profile
 export LOKI_POLICY="$BUCKET_NAME"-policy
@@ -281,30 +282,11 @@ ROLE_DOC='{
         }
     ]
 }'
-aws --profile="$AWS_PROFILE" iam create-role --role-name "$LOKI_ROLE" --assume-role-policy-document "$ROLE_DOC"
-# Attach the policy to the role
-LOKI_POLICY_ARN="${PRINCIPAL_ARN%:role/*}:policy/$LOKI_POLICY"
-aws --profile="$AWS_PROFILE" iam attach-role-policy --policy-arn "$LOKI_POLICY_ARN" --role-name "$LOKI_ROLE"
 ```
-
-#### Prepare the namespace
-Currently, you have to manually pre-create the namespace and annotate it with
-IAM Roles required for pods running in the namespace:
-
-```bash
-kubectl create ns loki
-LOKI_ROLE_ARN="${PRINCIPAL_ARN%:role/*}:role/$LOKI_ROLE"
-kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_ROLE_ARN"
-```
-
-#### Notes on specific configuration for clusters using Giant Swarm release >= v19.0.0 (i.e moving from KIAM to IRSA)
 
 From release v19.0.0, Giant Swarm clusters will use IRSA (Iam Roles for Service Accounts) to allow pods to access S3 buckets' resources. For more details concerning IRSA, you can refer to the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) as well as to the [giant swarm one](https://docs.giantswarm.io/advanced/iam-roles-for-service-accounts).
 
-This means that if you already have Loki running on your cluster and plan to upgrade your cluster to v19.0.0 or higher you will have to make some changes to your config as clusters with version <= v18.X.X use KIAM for authentication.
-
-To make Loki use IRSA you will first have to create or edit an IAM role. You can use the same policy presented [before](#prepare-aws-role). However the difference will be with the `Trust relationship`:
-
+This means that the role's `Trust Relationship` will be different that the one used for KIAM (cf above) :
 ```bash
 ROLE_DOC='{
     "Version": "2012-10-17",
@@ -312,31 +294,54 @@ ROLE_DOC='{
         {
             "Effect": "Allow",
             "Principal": {
-                "Federated": "arn:aws:iam::<principal-arn>:oidc-provider/irsa.<cluster-name>.k8s.<installation>.<region>.aws.gigantic.io"
+                "Federated": "arn:aws:iam::'$PRINCIPAL_ARN':oidc-provider/irsa.'$CLUSTER_NAME'.k8s.'$INSTALLATION'.'$REGION'.aws.gigantic.io"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
                 "StringEquals": {
-                    "irsa.<cluster-name>.k8s.<installation>.<region>.aws.gigantic.io:sub": "system:serviceaccount:loki:loki"
+                    "irsa.'$CLUSTER_NAME'.k8s.'$INSTALLATION'.'$REGION'.aws.gigantic.io:sub": "system:serviceaccount:loki:loki"
                 }
             }
         }
     ]
 }'
 ```
-Replace `<principal-arn>` with the value from `$PRINCIPAL_ARN` (the command to retrieve this variable's value is described above) as well as `<cluster-name>`, `<installation>` and `<region>` with the appropriate values.
 
-Once the role is created on aws side this is where you'll have to add some configuration in the Chart's values under the `loki` section :
-```yaml
+Everything is now set to create the role :
+```bash
+aws --profile="$AWS_PROFILE" iam create-role --role-name "$LOKI_ROLE" --assume-role-policy-document "$ROLE_DOC"
+# Attach the policy to the role
+LOKI_POLICY_ARN="${PRINCIPAL_ARN%:role/*}:policy/$LOKI_POLICY"
+aws --profile="$AWS_PROFILE" iam attach-role-policy --policy-arn "$LOKI_POLICY_ARN" --role-name "$LOKI_ROLE"
+```
+
+* Store the role's arn in a variable for the next step :
+```bash
+LOKI_ROLE_ARN="${PRINCIPAL_ARN%:role/*}:role/$LOKI_ROLE"
+```
+
+#### Up to giantswarm v18 : Prepare the namespace
+
+Currently, you have to manually pre-create the namespace and annotate it with
+IAM Roles required for pods running in the namespace:
+
+```bash
+kubectl create ns loki
+kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_ROLE_ARN"
+```
+
+#### From giantswarm v19 : Edit service account configuration
+
+Since IRSA is relying on the use of service accounts to grant access rights to the pods, you don't have to manually create the `loki` namespace as you won't have to annotate it. Instead, you'll have to edit the Chart's values under the `loki` section with the following :
+```bash
 serviceAccount:
   create: true
   name: loki
   annotations:
-    eks.amazonaws.com/role-arn: "your-role-arn"
+    eks.amazonaws.com/role-arn: "$LOKI_ROLE_ARN"
 ```
-You can retrieve your role's arn as described [before](#prepare-the-namespace)
 
-Note that in this scenario you don't have to manually create the `loki` namespace.
+This way, all pods using the `loki` service account will be able to access to the S3 bucket created earlier.
 
 #### Install the app
 
