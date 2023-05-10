@@ -284,7 +284,7 @@ ROLE_DOC='{
 }'
 ```
 
-From release v19.0.0, Giant Swarm clusters will use IRSA (Iam Roles for Service Accounts) to allow pods to access S3 buckets' resources. For more details concerning IRSA, you can refer to the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) as well as to the [giant swarm one](https://docs.giantswarm.io/advanced/iam-roles-for-service-accounts).
+Starting with release v19.0.0, Giant Swarm clusters will use IRSA (Iam Roles for Service Accounts) to allow pods to access S3 buckets' resources. For more details concerning IRSA, you can refer to the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) as well as to the [giant swarm one](https://docs.giantswarm.io/advanced/iam-roles-for-service-accounts).
 
 This means that the role's `Trust Relationship` will be different that the one used for KIAM (cf above) :
 ```bash
