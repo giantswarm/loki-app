@@ -37,7 +37,9 @@ metadata:
     {{- include "loki.labels" . | nindent 4 }}
   name: loki-multi-tenant-proxy
 spec:
+{{- if not .Values.multiTenantAuth.autoscaling.enabled }}
   replicas: {{ .Values.multiTenantAuth.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: loki-multi-tenant-proxy
@@ -69,7 +71,8 @@ spec:
               protocol: TCP
           securityContext:
             {{- toYaml .Values.multiTenantAuth.containerSecurityContext | nindent 12 }}
-          resources: {}
+          resources:
+            {{- toYaml .Values.multiTenantAuth.resources | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
