@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2023-05-15
+
+- tuned requests/limits
+- enabled HPA for gateway and loki-multi-tenant proxy
+
 ## [0.8.1] - 2023-05-15
 
 ### Changed
@@ -15,8 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - upgraded Loki from 2.8.0 to 2.8.2 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
 - Loss of compability with Kubernetes <= 1.21
 - Switched to 3-targets mode - see [comment in upstream values](https://github.com/grafana/loki/blob/helm-loki-5.1.0/production/helm/loki/values.yaml#L769) for more information
-- tuned requests/limits
-- enabled HPA for gateway and loki-multi-tenant proxy
 
 ## [0.8.0] - 2023-04-06
 
@@ -242,7 +245,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/giantswarm/loki-app/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/giantswarm/loki-app/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/giantswarm/loki-app/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/giantswarm/loki-app/compare/v0.7.0...v0.7.1
