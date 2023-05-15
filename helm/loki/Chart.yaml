@@ -3,15 +3,15 @@ apiVersion: v2
 name: loki
 description: Helm chart for Grafana Loki in simple, scalable mode
 type: application
-appVersion: 2.8.0
-version: 0.8.0
+appVersion: 2.8.2
+version: 0.9.0
 home: https://github.com/giantswarm/loki-app
 sources:
   - https://github.com/giantswarm/loki-app
 icon: https://s.giantswarm.io/app-icons/loki-stack/1/dark.svg
 dependencies:
   - name: loki
-    version: 5.2.0
+    version: 5.5.0
     repository: https://grafana.github.io/helm-charts
 maintainers:
   - name: giantswarm/team-atlas
