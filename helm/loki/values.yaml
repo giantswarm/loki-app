@@ -8,9 +8,9 @@ multiTenantAuth:
     # -- Enable autoscaling for the multi-tenant proxy
     enabled: true
     # -- Minimum autoscaling replicas for the multi-tenant proxy
-    minReplicas: 1
+    minReplicas: 2
     # -- Maximum autoscaling replicas for the multi-tenant proxy
-    maxReplicas: 3
+    maxReplicas: 4
     # -- Target CPU utilisation percentage for the multi-tenant proxy
     targetCPUUtilizationPercentage: 60
     # -- Target memory utilisation percentage for the multi-tenant proxy
