@@ -274,7 +274,7 @@ aws --profile="$AWS_PROFILE" iam create-policy --policy-name "$LOKI_POLICY" --po
 
 **Up to giantswarm v18**
 
-create a new IAM Role that allows the necessary instances (k8s masters in the case of using `kiam`) to access resources from the policy. Set trust to allow the Role used by `kiam` to claim the S3 access role. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
+Create a new IAM Role that allows the necessary instances (k8s masters in the case of using `kiam`) to access resources from the policy. Set trust to allow the Role used by `kiam` to claim the S3 access role. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
 ```bash
 # Create role
 PRINCIPAL_ARN="$(aws --profile="$AWS_PROFILE" iam get-role --role-name "$CLUSTER_NAME"-IAMManager-Role | sed -n 's/.*Arn.*"\(arn:.*\)".*/\1/p')"
