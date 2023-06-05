@@ -13,6 +13,7 @@ dependencies:
   - name: loki
     version: 5.5.0
     repository: https://grafana.github.io/helm-charts
+    condition: loki.enabled
 maintainers:
   - name: giantswarm/team-atlas
     email: team-atlas@giantswarm.io

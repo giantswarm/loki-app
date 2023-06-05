@@ -1,3 +1,4 @@
+{{- if .Values.loki.enabled }}
 {{- if .Values.multiTenantAuth.enabled }}
 {{- $autoscalingv2 := .Capabilities.APIVersions.Has "autoscaling/v2" -}}
 {{- if .Values.multiTenantAuth.autoscaling.enabled }}
@@ -44,5 +45,6 @@ spec:
         targetAverageUtilization: {{ . }}
         {{- end }}
   {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
