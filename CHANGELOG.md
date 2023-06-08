@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Added `.loki.enabled` in values so we can disable Loki by changing the values
 - Added documentation concerning the use of IRSA in README.
 
 ## [0.9.0] - 2023-05-15

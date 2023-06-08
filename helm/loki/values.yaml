@@ -82,6 +82,8 @@ serviceAccount:
   automountServiceAccountToken: true
 
 loki:
+  # You can make the whole chart ineffective by setting this one to "false"
+  enabled: true
   gateway:
     nginxConfig:
       genMultiTenant: false

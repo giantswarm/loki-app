@@ -46,9 +46,20 @@
         "loki": {
             "type": "object",
             "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
                 "gateway": {
                     "type": "object",
                     "properties": {
+                        "autoscaling": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        },
                         "deploymentStrategy": {
                             "type": "object",
                             "properties": {
@@ -78,6 +89,14 @@
                         },
                         "replicas": {
                             "type": "integer"
+                        },
+                        "nginxConfig": {
+                            "type": "object",
+                            "properties": {
+                                "genMultiTenant": {
+                                    "type": "boolean"
+                                }
+                            }
                         }
                     }
                 },
@@ -123,6 +142,14 @@
                             }
                         },
                         "dashboards": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        },
+                        "lokiCanary": {
                             "type": "object",
                             "properties": {
                                 "enabled": {
@@ -215,6 +242,14 @@
                         }
                     }
                 },
+                "test": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        }
+                    }
+                },
                 "write": {
                     "type": "object",
                     "properties": {
@@ -249,6 +284,26 @@
         "multiTenantAuth": {
             "type": "object",
             "properties": {
+                "autoscaling": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "maxReplicas": {
+                            "type": "integer"
+                        },
+                        "minReplicas": {
+                            "type": "integer"
+                        },
+                        "targetCPUUtilizationPercentage": {
+                            "type": "integer"
+                        },
+                        "targetMemoryUtilizationPercentage": {
+                            "type": ["string", "null"]
+                        }
+                    }
+                },
                 "containerSecurityContext": {
                     "type": "object",
                     "properties": {
@@ -310,6 +365,30 @@
                 },
                 "replicas": {
                     "type": "integer"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "cpu": {
+                                    "type": "string"
+                                },
+                                "memory": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },

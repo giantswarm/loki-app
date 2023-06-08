@@ -1,3 +1,4 @@
+{{- if .Values.loki.enabled }}
 {{- if .Values.multiTenantAuth.enabled }}
 apiVersion: v1
 kind: Secret
@@ -117,4 +118,5 @@ spec:
         - name: config
           secret:
             secretName: loki-multi-tenant-proxy-auth-config
+{{- end }}
 {{- end }}
