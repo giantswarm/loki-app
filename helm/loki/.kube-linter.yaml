@@ -22,3 +22,4 @@ checks:
   - "dnsconfig-options"
   - "latest-tag"
   - "hpa-minimum-three-replicas"
+  - "non-existent-service-account"
