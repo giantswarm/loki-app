@@ -6,6 +6,7 @@ metadata:
   name: loki-multi-tenant-proxy-auth-config
   labels:
     app: loki-multi-tenant-proxy
+    app.kubernetes.io/component: loki-multi-tenant-proxy
     {{- include "loki.labels" . | nindent 4 }}
 data:
   authn.yaml: {{ .Values.multiTenantAuth.credentials | b64enc }}

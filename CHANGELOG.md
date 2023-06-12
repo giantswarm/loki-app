@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `.loki.enabled` in values so we can disable Loki by changing the values
 - Adjusted resources requests/limits for `read`, `backend` and `gateway` components
 - enabled HPA for read, write and backend
+- multi-tenant-proxy: homogeneization of deployment labels
 
 ## [0.9.1] - 2023-05-17
 
