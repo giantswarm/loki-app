@@ -17,3 +17,17 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: "architect"
+          name: aws-app-collection
+          app_name: "loki"
+          app_namespace: "loki"
+          app_collection_repo: "aws-app-collection"
+          requires:
+            - "package and push loki chart"
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
