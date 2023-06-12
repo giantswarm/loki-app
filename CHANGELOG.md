@@ -7,15 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changes
+## Changed
 
 - Upgraded upstream chart from 5.5.0 to 5.6.4 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Gateway HPA defaults to minimum 2 replicas
+- Added `.loki.enabled` in values so we can disable Loki by changing the values
 
 ## [0.9.1] - 2023-05-17
 
 ### Changed
 
-- Added `.loki.enabled` in values so we can disable Loki by changing the values
 - Added documentation concerning the use of IRSA in README.
 
 ## [0.9.0] - 2023-05-15
