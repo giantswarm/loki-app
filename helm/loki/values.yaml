@@ -93,6 +93,7 @@ loki:
       #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3102
     autoscaling:
       enabled: true
+      minReplicas: 2
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
