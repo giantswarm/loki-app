@@ -102,7 +102,21 @@ loki:
     image:
       repository: giantswarm/nginx-unprivileged
 
+  backend:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+    resources:
+      limits:
+        memory: 3Gi
+      requests:
+        memory: 2Gi
+        cpu: 50m
+
   read:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
     resources:
       limits:
         memory: 3Gi
@@ -113,6 +127,9 @@ loki:
       - -querier.multi-tenant-queries-enabled
 
   write:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
     resources:
       limits:
         memory: 4Gi
