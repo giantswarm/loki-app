@@ -101,18 +101,41 @@ loki:
         maxUnavailable: 1
     image:
       repository: giantswarm/nginx-unprivileged
+    resources:
+      limits:
+        memory: 500Mi
+      requests:
+        memory: 200Mi
+        cpu: 50m
 
-  read:
+  backend:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
     resources:
       limits:
         memory: 3Gi
       requests:
-        memory: 2Gi
+        memory: 1Gi
+        cpu: 50m
+
+  read:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+    resources:
+      limits:
+        memory: 3Gi
+      requests:
+        memory: 1Gi
         cpu: 50m
     extraArgs:
       - -querier.multi-tenant-queries-enabled
 
   write:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
     resources:
       limits:
         memory: 4Gi
