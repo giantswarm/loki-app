@@ -41,13 +41,17 @@ multiTenantAuth:
     runAsGroup: 10001
     runAsNonRoot: true
     runAsUser: 10001
+    seccompProfile:
+      type: RuntimeDefault
   # -- The SecurityContext for Loki containers
   containerSecurityContext:
-    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
     capabilities:
       drop:
         - ALL
-    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
 
 imagePullSecrets: []
 
@@ -107,6 +111,23 @@ loki:
       requests:
         memory: 200Mi
         cpu: 50m
+    # -- The SecurityContext for gateway containers
+    podSecurityContext:
+      fsGroup: 101
+      runAsGroup: 101
+      runAsNonRoot: true
+      runAsUser: 101
+      seccompProfile:
+        type: RuntimeDefault
+    # -- The SecurityContext for gateway containers
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
 
   backend:
     autoscaling:
@@ -151,6 +172,23 @@ loki:
       ingestion_rate_mb: 10
       ingestion_burst_size_mb: 20
       max_concurrent_tail_requests: 20
+    # -- The SecurityContext for Loki pods
+    podSecurityContext:
+      fsGroup: 10001
+      runAsGroup: 10001
+      runAsNonRoot: true
+      runAsUser: 10001
+      seccompProfile:
+        type: RuntimeDefault
+    # -- The SecurityContext for Loki containers
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
 
   rbac:
     pspEnabled: true
