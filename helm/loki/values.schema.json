@@ -36,7 +36,7 @@
                     }
                 },
                 "priorityClassName": {
-                    "type": ["string", "null"]
+                    "type": "null"
                 }
             }
         },
@@ -103,6 +103,36 @@
                                 }
                             }
                         },
+                        "containerSecurityContext": {
+                            "type": "object",
+                            "properties": {
+                                "allowPrivilegeEscalation": {
+                                    "type": "boolean"
+                                },
+                                "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                        "drop": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "readOnlyRootFilesystem": {
+                                    "type": "boolean"
+                                },
+                                "seccompProfile": {
+                                    "type": "object",
+                                    "properties": {
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
                         "deploymentStrategy": {
                             "type": "object",
                             "properties": {
@@ -130,14 +160,36 @@
                                 }
                             }
                         },
-                        "replicas": {
-                            "type": "integer"
-                        },
                         "nginxConfig": {
                             "type": "object",
                             "properties": {
                                 "genMultiTenant": {
                                     "type": "boolean"
+                                }
+                            }
+                        },
+                        "podSecurityContext": {
+                            "type": "object",
+                            "properties": {
+                                "fsGroup": {
+                                    "type": "integer"
+                                },
+                                "runAsGroup": {
+                                    "type": "integer"
+                                },
+                                "runAsNonRoot": {
+                                    "type": "boolean"
+                                },
+                                "runAsUser": {
+                                    "type": "integer"
+                                },
+                                "seccompProfile": {
+                                    "type": "object",
+                                    "properties": {
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -170,6 +222,36 @@
                 "loki": {
                     "type": "object",
                     "properties": {
+                        "containerSecurityContext": {
+                            "type": "object",
+                            "properties": {
+                                "allowPrivilegeEscalation": {
+                                    "type": "boolean"
+                                },
+                                "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                        "drop": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "readOnlyRootFilesystem": {
+                                    "type": "boolean"
+                                },
+                                "seccompProfile": {
+                                    "type": "object",
+                                    "properties": {
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
                         "image": {
                             "type": "object",
                             "properties": {
@@ -192,6 +274,31 @@
                                 },
                                 "max_concurrent_tail_requests": {
                                     "type": "integer"
+                                }
+                            }
+                        },
+                        "podSecurityContext": {
+                            "type": "object",
+                            "properties": {
+                                "fsGroup": {
+                                    "type": "integer"
+                                },
+                                "runAsGroup": {
+                                    "type": "integer"
+                                },
+                                "runAsNonRoot": {
+                                    "type": "boolean"
+                                },
+                                "runAsUser": {
+                                    "type": "integer"
+                                },
+                                "seccompProfile": {
+                                    "type": "object",
+                                    "properties": {
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -242,14 +349,6 @@
                                     "type": "object",
                                     "properties": {
                                         "installOperator": {
-                                            "type": "boolean"
-                                        }
-                                    }
-                                },
-                                "lokiCanary": {
-                                    "type": "object",
-                                    "properties": {
-                                        "enabled": {
                                             "type": "boolean"
                                         }
                                     }
@@ -389,7 +488,7 @@
                             "type": "integer"
                         },
                         "targetMemoryUtilizationPercentage": {
-                            "type": ["string", "null"]
+                            "type": "null"
                         }
                     }
                 },
@@ -412,6 +511,14 @@
                         },
                         "readOnlyRootFilesystem": {
                             "type": "boolean"
+                        },
+                        "seccompProfile": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 },
@@ -449,6 +556,14 @@
                         },
                         "runAsUser": {
                             "type": "integer"
+                        },
+                        "seccompProfile": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 },
