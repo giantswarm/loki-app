@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgraded upstream chart from 5.14.1 to 5.15.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Add PSP annotation to allow all seccomp profiles.
+
 ## [0.11.0] - 2023-08-21
 
 ### Changed

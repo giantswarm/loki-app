@@ -192,6 +192,8 @@ loki:
 
   rbac:
     pspEnabled: true
+    pspAnnotations:
+      seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
 
   monitoring:
     dashboards:
