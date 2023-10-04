@@ -211,5 +211,17 @@ loki:
     lokiCanary:
       enabled: false
 
+  sidecar:
+    image:
+      repository: giantswarm/k8s-sidecar
+    securityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+
   test:
     enabled: false
