@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove custom `giantswarm` service for monitoring in favor of upstream `servicemonitor`
+- Moved `imagePullSecrets` to `multiTenantAuth.image.pullSecrets`
+
 ### Fixed
 
 - Fix loki-backend sidecar pod security standard violations.
