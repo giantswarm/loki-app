@@ -26,13 +26,11 @@ Helm chart for Grafana Loki in simple, scalable mode
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| giantswarm.labelmonitoring.enabled | bool | `true` |  |
 | global.clusterDomain | string | `"cluster.local"` | configures cluster domain ("cluster.local" by default) |
 | global.dnsNamespace | string | `"kube-system"` | configures DNS service namespace |
 | global.dnsService | string | `"coredns"` | configures DNS service name |
 | global.image.registry | string | `"docker.io"` | Overrides the Docker registry globally for all images |
 | global.priorityClassName | string | `nil` | Overrides the priorityClassName for all pods |
-| imagePullSecrets | list | `[]` |  |
 | loki.gateway.deploymentStrategy.rollingUpdate.maxSurge | int | `0` |  |
 | loki.gateway.deploymentStrategy.rollingUpdate.maxUnavailable | int | `1` |  |
 | loki.gateway.deploymentStrategy.type | string | `"RollingUpdate"` |  |
@@ -64,6 +62,7 @@ Helm chart for Grafana Loki in simple, scalable mode
 | multiTenantAuth.image.pullPolicy | string | `"IfNotPresent"` |  |
 | multiTenantAuth.image.repository | string | `"giantswarm/loki-multi-tenant-proxy-gs"` |  |
 | multiTenantAuth.image.tag | string | `"0.1.0"` |  |
+| multiTenantAuth.image.pullSecrets | list | `[]` |  |
 | multiTenantAuth.podSecurityContext.fsGroup | int | `10001` |  |
 | multiTenantAuth.podSecurityContext.runAsGroup | int | `10001` |  |
 | multiTenantAuth.podSecurityContext.runAsNonRoot | bool | `true` |  |
