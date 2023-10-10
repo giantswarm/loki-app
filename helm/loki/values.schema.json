@@ -288,6 +288,51 @@
                         }
                     }
                 },
+                "memcached": {
+                    "type": "object",
+                    "properties": {
+                        "chunk_cache": {
+                            "type": "object",
+                            "properties": {
+                                "batch_size": {
+                                    "type": "integer"
+                                },
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "host": {
+                                    "type": "string"
+                                },
+                                "parallelism": {
+                                    "type": "integer"
+                                },
+                                "service": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "results_cache": {
+                            "type": "object",
+                            "properties": {
+                                "default_validity": {
+                                    "type": "string"
+                                },
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "host": {
+                                    "type": "string"
+                                },
+                                "service": {
+                                    "type": "string"
+                                },
+                                "timeout": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
                 "monitoring": {
                     "type": "object",
                     "properties": {
