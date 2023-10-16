@@ -171,13 +171,13 @@ loki:
         batch_size: 256
         parallelism: 10
       results_cache:
-        enabled: true
+        enabled: false
         host: "memcached-app.loki.svc"
         service: "memcache"
         timeout: "500ms"
         default_validity: "24h"
     limits_config:
-      enforce_metric_name: false
+      enforce_metric_name: true
       ingestion_rate_mb: 10
       ingestion_burst_size_mb: 20
       max_concurrent_tail_requests: 20
