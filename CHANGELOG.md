@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Added caching with `memcached` in default values (disabled).
+- Added documentation for using cache.
+
 ## [0.12.4] - 2023-10-16
 
 ### Changed

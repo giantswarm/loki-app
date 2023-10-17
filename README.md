@@ -200,6 +200,22 @@ kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
 ```
 Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
 
+### Caching
+
+When ingesting logs from workload clusters, Loki may have a hard time processing a user's query because of the huge amount of data. This can lead to read pods being overwhelmed and result in a timeout output for the user.
+
+To avoid this, Loki is able to use a `memcached` cluster which will operate - obviously - caching operations to ease the read pods' job. To enable caching, one will have to deploy the `memcached-app` and set up the `loki.loki.memcached` field in the Loki config.
+
+This field is composed of 2 subfields :
+
+* `chunk_cache`, in which one may define the batch size for the chunks stored.
+* `results_cache`, in which one may define the validity period for a cached result as well as the timeout for the query requesting it.
+
+Both subfields also need to have their `host` and `service` specified. If you deployed `memcached-app` with its default values :
+
+* `host` should be `memcached-app.loki.svc`. Otherwise, with custom values for `memcached-app`, the `host` value will be memcached's service DNS name.
+* `service` should be `memcache`. With custom values for `memcached-app`, the `service` value will be memcached's service port name.
+
 ### Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
