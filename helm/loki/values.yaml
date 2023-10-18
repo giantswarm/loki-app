@@ -12,7 +12,7 @@ multiTenantAuth:
     # -- Maximum autoscaling replicas for the multi-tenant proxy
     maxReplicas: 4
     # -- Target CPU utilisation percentage for the multi-tenant proxy
-    targetCPUUtilizationPercentage: 60
+    targetCPUUtilizationPercentage: 90
     # -- Target memory utilisation percentage for the multi-tenant proxy
     targetMemoryUtilizationPercentage:
   # -- See `kubectl explain deployment.spec.strategy` for more
@@ -27,7 +27,7 @@ multiTenantAuth:
     limits:
       memory: 500Mi
     requests:
-      memory: 200Mi
+      memory: 50Mi
       cpu: 50m
   credentials: |-
     users:
@@ -94,6 +94,7 @@ loki:
     autoscaling:
       enabled: true
       minReplicas: 2
+      targetCPUUtilizationPercentage: 90
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -105,7 +106,7 @@ loki:
       limits:
         memory: 500Mi
       requests:
-        memory: 200Mi
+        memory: 50Mi
         cpu: 50m
     # -- The SecurityContext for gateway containers
     podSecurityContext:
@@ -129,23 +130,25 @@ loki:
     autoscaling:
       enabled: true
       minReplicas: 2
+      targetCPUUtilizationPercentage: 90
     resources:
       limits:
         memory: 3Gi
       requests:
         memory: 1Gi
-        cpu: 50m
+        cpu: 200m
 
   read:
     autoscaling:
       enabled: true
       minReplicas: 2
+      targetCPUUtilizationPercentage: 90
     resources:
       limits:
         memory: 3Gi
       requests:
         memory: 1Gi
-        cpu: 50m
+        cpu: 200m
     extraArgs:
       - -querier.multi-tenant-queries-enabled
 
@@ -153,12 +156,23 @@ loki:
     autoscaling:
       enabled: true
       minReplicas: 2
+      maxReplicas: 10
     resources:
       limits:
         memory: 4Gi
       requests:
         memory: 3Gi
         cpu: 500m
+
+  # Rules sidecar for backend
+  sidecar:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi
+      requests:
+        cpu: 50m
+        memory: 50Mi
 
   loki:
     image:
