@@ -29,6 +29,8 @@ multiTenantAuth:
     requests:
       memory: 50Mi
       cpu: 50m
+  # disable if credentials are provided externally
+  deployCredentials: true
   credentials: |-
     users:
       - username: Tenant1

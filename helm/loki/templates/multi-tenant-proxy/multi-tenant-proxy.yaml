@@ -1,5 +1,6 @@
 {{- if .Values.loki.enabled }}
 {{- if .Values.multiTenantAuth.enabled }}
+{{- if .Values.multiTenantAuth.deployCredentials }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -10,6 +11,7 @@ metadata:
     {{- include "loki.labels" . | nindent 4 }}
 data:
   authn.yaml: {{ .Values.multiTenantAuth.credentials | b64enc }}
+{{- end }}
 ---
 apiVersion: v1
 kind: Service
