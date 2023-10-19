@@ -53,6 +53,9 @@ multiTenantAuth:
     readOnlyRootFilesystem: true
     seccompProfile:
       type: RuntimeDefault
+  write:
+    # -- disabling this allows write requests to set whatever orgid they want
+    enforceOrgId: true
 
 global:
   image:

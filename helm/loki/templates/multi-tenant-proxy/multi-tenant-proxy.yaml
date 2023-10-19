@@ -86,7 +86,9 @@ spec:
             - "--port=3101"
             - '--loki-server=http://loki-write.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
+            {{- if not .Values.multiTenantAuth.write.enforceOrgId }}
             - "--keep-orgid"
+            {{- end }}
           ports:
             - name: http-write
               containerPort: 3101
