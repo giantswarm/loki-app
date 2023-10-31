@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2023-10-31
+
 ### Changed
 
 - Deploy to CAPA app collection.
@@ -362,7 +364,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.14.1...HEAD
+[0.14.1]: https://github.com/giantswarm/loki-app/compare/v0.14.0...v0.14.1
 [0.14.0]: https://github.com/giantswarm/loki-app/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/giantswarm/loki-app/compare/v0.12.4...v0.13.0
 [0.12.4]: https://github.com/giantswarm/loki-app/compare/v0.12.3...v0.12.4
