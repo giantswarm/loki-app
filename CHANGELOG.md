@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Add dnsmasq as extraContainer to loki-gateway.
+
 ## [0.14.1] - 2023-10-31
 
 ### Changed
