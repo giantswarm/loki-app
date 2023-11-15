@@ -92,7 +92,7 @@ loki:
   gateway:
     extraContainers:
       - name: dnsmasq
-        image: "janeczku/go-dnsmasq:release-1.0.7"
+        image: "giantswarm/go-dnsmasq:release-1.0.7"
         imagePullPolicy: IfNotPresent
         args:
           - --listen
