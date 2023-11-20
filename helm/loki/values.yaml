@@ -72,6 +72,10 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
+# Only for minio for now
+ciliumNetworkPolicy:
+  enabled: false
+
 serviceAccount:
   # -- Specifies whether a ServiceAccount should be created
   create: true

@@ -2,6 +2,14 @@
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
     "properties": {
+        "ciliumNetworkPolicy": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
         "global": {
             "type": "object",
             "properties": {
@@ -40,6 +48,9 @@
                                     "type": "boolean"
                                 },
                                 "minReplicas": {
+                                    "type": "integer"
+                                },
+                                "targetCPUUtilizationPercentage": {
                                     "type": "integer"
                                 }
                             }
@@ -83,6 +94,9 @@
                                     "type": "boolean"
                                 },
                                 "minReplicas": {
+                                    "type": "integer"
+                                },
+                                "targetCPUUtilizationPercentage": {
                                     "type": "integer"
                                 }
                             }
@@ -136,6 +150,29 @@
                                 }
                             }
                         },
+                        "extraContainers": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "args": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "image": {
+                                        "type": "string"
+                                    },
+                                    "imagePullPolicy": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
                         "image": {
                             "type": "object",
                             "properties": {
@@ -149,6 +186,9 @@
                             "properties": {
                                 "genMultiTenant": {
                                     "type": "boolean"
+                                },
+                                "resolver": {
+                                    "type": "string"
                                 }
                             }
                         },
@@ -261,6 +301,51 @@
                                 }
                             }
                         },
+                        "memcached": {
+                            "type": "object",
+                            "properties": {
+                                "chunk_cache": {
+                                    "type": "object",
+                                    "properties": {
+                                        "batch_size": {
+                                            "type": "integer"
+                                        },
+                                        "enabled": {
+                                            "type": "boolean"
+                                        },
+                                        "host": {
+                                            "type": "string"
+                                        },
+                                        "parallelism": {
+                                            "type": "integer"
+                                        },
+                                        "service": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "results_cache": {
+                                    "type": "object",
+                                    "properties": {
+                                        "default_validity": {
+                                            "type": "string"
+                                        },
+                                        "enabled": {
+                                            "type": "boolean"
+                                        },
+                                        "host": {
+                                            "type": "string"
+                                        },
+                                        "service": {
+                                            "type": "string"
+                                        },
+                                        "timeout": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
                         "podSecurityContext": {
                             "type": "object",
                             "properties": {
@@ -283,51 +368,6 @@
                                             "type": "string"
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                },
-                "memcached": {
-                    "type": "object",
-                    "properties": {
-                        "chunk_cache": {
-                            "type": "object",
-                            "properties": {
-                                "batch_size": {
-                                    "type": "integer"
-                                },
-                                "enabled": {
-                                    "type": "boolean"
-                                },
-                                "host": {
-                                    "type": "string"
-                                },
-                                "parallelism": {
-                                    "type": "integer"
-                                },
-                                "service": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "results_cache": {
-                            "type": "object",
-                            "properties": {
-                                "default_validity": {
-                                    "type": "string"
-                                },
-                                "enabled": {
-                                    "type": "boolean"
-                                },
-                                "host": {
-                                    "type": "string"
-                                },
-                                "service": {
-                                    "type": "string"
-                                },
-                                "timeout": {
-                                    "type": "string"
                                 }
                             }
                         }
@@ -420,6 +460,9 @@
                                     "type": "boolean"
                                 },
                                 "minReplicas": {
+                                    "type": "integer"
+                                },
+                                "targetCPUUtilizationPercentage": {
                                     "type": "integer"
                                 }
                             }
@@ -516,6 +559,9 @@
                                 "enabled": {
                                     "type": "boolean"
                                 },
+                                "maxReplicas": {
+                                    "type": "integer"
+                                },
                                 "minReplicas": {
                                     "type": "integer"
                                 }
@@ -605,6 +651,9 @@
                 "credentials": {
                     "type": "string"
                 },
+                "deployCredentials": {
+                    "type": "boolean"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -674,6 +723,14 @@
                                     "type": "string"
                                 }
                             }
+                        }
+                    }
+                },
+                "write": {
+                    "type": "object",
+                    "properties": {
+                        "enforceOrgId": {
+                            "type": "boolean"
                         }
                     }
                 }

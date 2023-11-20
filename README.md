@@ -451,6 +451,28 @@ az storage account keys list \
 
 * Install the app using your values.
 
+### Deploying on a new cluster for testing purposes
+
+You might find yourself in a situation where you want to deploy loki on a new cluster for testing purposes only. Depending on the testing requirements, you might need or want to avoid to create object storage with a cloud-provider and manage its access permissions for your loki pods.
+
+Then you should consider deploying Loki with [minIO](https://min.io/) as an object storage solution. To put it in a nutshell, `minIO` is an object storage solution with a S3-like API which uses the nodes' volumes to store its data. Thus, when used for testing purposes, one can mock an S3 bucket behavior to have quick and simple object storage access for loki without the need for complex access permissions.
+
+The good news is that the loki chart directly provides a `minio` field where one can configure a `minio` deployment to serve as object storage for the loki pods. Such a configuration is displayed in the `sample_configs/values-eks-testing.yaml` file.
+
+#### Creating access keys for minio access
+
+Once Loki is deployed alongside a minio deployment, one will have to create a key pair in the minio console to grant access to the buckets to the loki pods. To achieve this, one will first have to port-forward the adequate service :
+```
+kubectl port-forward -n loki service/loki-minio-console 8080:9001
+```
+Change the namespace according to the one in which your loki pods and services are deployed.
+
+Then one will have to access to the minio console at `127.0.0.1:8080`. Go to `identity` --> `user` and create a new user with whatever name and password one wants and attach the correct permissions needed (most likely the `readwrite` one). Then, one will have to click on the newly created, go to `service accounts` and click on `create service account`. This is where one needs to pay attention because both the `Access Key` and the `secret Key` are present in the values mentioned earlier as `loki.loki.storage.s3.accessKeyId` and `loki.loki.storage.s3.secretAccessKey`.
+
+Set the `Access Key` and `secret Key` in the console so that they have the same value as the corresponding fields in the loki values file and voilà ! 
+
+Everything is now set for testing.
+
 ### Testing your deployment
 
 #### Reading data with logcli
