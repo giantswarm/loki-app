@@ -4,7 +4,7 @@ name: loki
 description: Helm chart for Grafana Loki in simple, scalable mode
 type: application
 appVersion: 2.9.3
-version: 0.14.1
+version: 0.14.2
 home: https://github.com/giantswarm/loki-app
 sources:
   - https://github.com/giantswarm/loki-app
