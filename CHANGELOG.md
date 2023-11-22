@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Add securityContext to dnsmasq container in loki-gateway.
+
 ## [0.14.2] - 2023-11-21
 
 ### Fixed

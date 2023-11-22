@@ -100,6 +100,14 @@ loki:
           - --hostsfile=/etc/hosts
           - --enable-search
           - --verbose
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
     nginxConfig:
       resolver: "127.0.0.1:8053 valid=60s"
       genMultiTenant: false
