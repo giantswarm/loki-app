@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add sample values for EKS testing.
 - Add doc in README on deploying Loki for testing only on a new cluster.
 
+## [0.14.4] - 2023-11-22
+
+### Changed
+
+- Upgraded upstream chart from 5.36.3 to 5.37.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+  
+## [0.14.3] - 2023-11-22
+
+### Fixed
+
+- Add securityContext to dnsmasq container in loki-gateway.
+
 ## [0.14.2] - 2023-11-21
 
 ### Fixed
@@ -378,7 +390,9 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.14.2...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.14.4...HEAD
+[0.14.4]: https://github.com/giantswarm/loki-app/compare/v0.14.3...v0.14.4
+[0.14.3]: https://github.com/giantswarm/loki-app/compare/v0.14.2...v0.14.3
 [0.14.2]: https://github.com/giantswarm/loki-app/compare/v0.14.1...v0.14.2
 [0.14.1]: https://github.com/giantswarm/loki-app/compare/v0.14.0...v0.14.1
 [0.14.0]: https://github.com/giantswarm/loki-app/compare/v0.13.0...v0.14.0
