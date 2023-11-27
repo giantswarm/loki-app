@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add sample values for EKS testing.
 - Add doc in README on deploying Loki for testing only on a new cluster.
 
+### Changed
+
+- Upgraded upstream chart from 5.37.0 to 5.38.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
 ## [0.14.4] - 2023-11-22
 
 ### Changed
