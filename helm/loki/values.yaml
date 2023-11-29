@@ -72,22 +72,24 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
-serviceAccount:
-  # -- Specifies whether a ServiceAccount should be created
-  create: true
-  # -- The name of the ServiceAccount to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: loki
-  # -- Image pull secrets for the service account
-  imagePullSecrets: []
-  # -- Annotations for the service account
-  annotations: {}
-  # -- Set this toggle to false to opt out of automounting API credentials for the service account
-  automountServiceAccountToken: true
-
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
+
+  serviceAccount:
+    # -- Specifies whether a ServiceAccount should be created
+    create: true
+    # -- The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: loki
+    # -- Image pull secrets for the service account
+    imagePullSecrets: []
+    # -- Annotations for the service account
+    annotations: {}
+    # -- Labels for the service account
+    labels: {}
+    # -- Set this toggle to false to opt out of automounting API credentials for the service account
+    automountServiceAccountToken: true
 
   gateway:
     extraContainers:
