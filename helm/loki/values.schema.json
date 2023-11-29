@@ -41,6 +41,9 @@
                                 },
                                 "minReplicas": {
                                     "type": "integer"
+                                },
+                                "targetCPUUtilizationPercentage": {
+                                    "type": "integer"
                                 }
                             }
                         },
@@ -83,6 +86,9 @@
                                     "type": "boolean"
                                 },
                                 "minReplicas": {
+                                    "type": "integer"
+                                },
+                                "targetCPUUtilizationPercentage": {
                                     "type": "integer"
                                 }
                             }
@@ -136,6 +142,59 @@
                                 }
                             }
                         },
+                        "extraContainers": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "args": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "image": {
+                                        "type": "string"
+                                    },
+                                    "imagePullPolicy": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "securityContext": {
+                                        "type": "object",
+                                        "properties": {
+                                            "allowPrivilegeEscalation": {
+                                                "type": "boolean"
+                                            },
+                                            "capabilities": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "drop": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "readOnlyRootFilesystem": {
+                                                "type": "boolean"
+                                            },
+                                            "seccompProfile": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
                         "image": {
                             "type": "object",
                             "properties": {
@@ -149,6 +208,9 @@
                             "properties": {
                                 "genMultiTenant": {
                                     "type": "boolean"
+                                },
+                                "resolver": {
+                                    "type": "string"
                                 }
                             }
                         },
@@ -261,6 +323,51 @@
                                 }
                             }
                         },
+                        "memcached": {
+                            "type": "object",
+                            "properties": {
+                                "chunk_cache": {
+                                    "type": "object",
+                                    "properties": {
+                                        "batch_size": {
+                                            "type": "integer"
+                                        },
+                                        "enabled": {
+                                            "type": "boolean"
+                                        },
+                                        "host": {
+                                            "type": "string"
+                                        },
+                                        "parallelism": {
+                                            "type": "integer"
+                                        },
+                                        "service": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "results_cache": {
+                                    "type": "object",
+                                    "properties": {
+                                        "default_validity": {
+                                            "type": "string"
+                                        },
+                                        "enabled": {
+                                            "type": "boolean"
+                                        },
+                                        "host": {
+                                            "type": "string"
+                                        },
+                                        "service": {
+                                            "type": "string"
+                                        },
+                                        "timeout": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
                         "podSecurityContext": {
                             "type": "object",
                             "properties": {
@@ -283,51 +390,6 @@
                                             "type": "string"
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                },
-                "memcached": {
-                    "type": "object",
-                    "properties": {
-                        "chunk_cache": {
-                            "type": "object",
-                            "properties": {
-                                "batch_size": {
-                                    "type": "integer"
-                                },
-                                "enabled": {
-                                    "type": "boolean"
-                                },
-                                "host": {
-                                    "type": "string"
-                                },
-                                "parallelism": {
-                                    "type": "integer"
-                                },
-                                "service": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "results_cache": {
-                            "type": "object",
-                            "properties": {
-                                "default_validity": {
-                                    "type": "string"
-                                },
-                                "enabled": {
-                                    "type": "boolean"
-                                },
-                                "host": {
-                                    "type": "string"
-                                },
-                                "service": {
-                                    "type": "string"
-                                },
-                                "timeout": {
-                                    "type": "string"
                                 }
                             }
                         }
@@ -421,6 +483,9 @@
                                 },
                                 "minReplicas": {
                                     "type": "integer"
+                                },
+                                "targetCPUUtilizationPercentage": {
+                                    "type": "integer"
                                 }
                             }
                         },
@@ -453,6 +518,29 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "serviceAccount": {
+                    "type": "object",
+                    "properties": {
+                        "annotations": {
+                            "type": "object"
+                        },
+                        "automountServiceAccountToken": {
+                            "type": "boolean"
+                        },
+                        "create": {
+                            "type": "boolean"
+                        },
+                        "imagePullSecrets": {
+                            "type": "array"
+                        },
+                        "labels": {
+                            "type": "object"
+                        },
+                        "name": {
+                            "type": "string"
                         }
                     }
                 },
@@ -515,6 +603,9 @@
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
+                                },
+                                "maxReplicas": {
+                                    "type": "integer"
                                 },
                                 "minReplicas": {
                                     "type": "integer"
@@ -605,6 +696,9 @@
                 "credentials": {
                     "type": "string"
                 },
+                "deployCredentials": {
+                    "type": "boolean"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -676,26 +770,14 @@
                             }
                         }
                     }
-                }
-            }
-        },
-        "serviceAccount": {
-            "type": "object",
-            "properties": {
-                "annotations": {
-                    "type": "object"
                 },
-                "automountServiceAccountToken": {
-                    "type": "boolean"
-                },
-                "create": {
-                    "type": "boolean"
-                },
-                "imagePullSecrets": {
-                    "type": "array"
-                },
-                "name": {
-                    "type": "string"
+                "write": {
+                    "type": "object",
+                    "properties": {
+                        "enforceOrgId": {
+                            "type": "boolean"
+                        }
+                    }
                 }
             }
         }

@@ -53,7 +53,7 @@ spec:
       labels:
         app: loki-multi-tenant-proxy
     spec:
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccountName: {{ .Values.loki.serviceAccount.name }}
       {{- with .Values.multiTenantAuth.image.pullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
