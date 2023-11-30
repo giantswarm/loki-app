@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Upgraded upstream chart from 5.37.0 to 5.38.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 5.37.0 to 5.39.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
 - Moved `serviceAccount` field in the `loki` section in the values.
 
 ## [0.14.4] - 2023-11-22
