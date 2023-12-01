@@ -58,3 +58,17 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: "architect"
+          name: capz-app-collection
+          app_name: "loki"
+          app_namespace: "loki"
+          app_collection_repo: "capz-app-collection"
+          requires:
+            - "package and push loki chart to control-plane-catalogs"
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
