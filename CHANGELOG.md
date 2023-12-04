@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- rules sidecar resources fixed (fixes backend HPA)
+- resources set for dnsmasq sidecar (fixes gateway HPA)
+
 ## [0.14.5] - 2023-12-04
 
 ### Changed

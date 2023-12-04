@@ -110,6 +110,12 @@ loki:
           allowPrivilegeEscalation: false
           seccompProfile:
             type: RuntimeDefault
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 10Mi
     nginxConfig:
       resolver: "127.0.0.1:8053 valid=60s"
       genMultiTenant: false
@@ -190,16 +196,6 @@ loki:
         memory: 3Gi
         cpu: 500m
 
-  # Rules sidecar for backend
-  sidecar:
-    resources:
-      limits:
-        cpu: 100m
-        memory: 100Mi
-      requests:
-        cpu: 50m
-        memory: 50Mi
-
   loki:
     image:
       repository: giantswarm/loki
@@ -271,6 +267,13 @@ loki:
       allowPrivilegeEscalation: false
       seccompProfile:
         type: RuntimeDefault
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi
+      requests:
+        cpu: 50m
+        memory: 50Mi
 
   test:
     enabled: false
