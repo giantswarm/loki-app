@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- rules sidecar resources fixed (fixes backend HPA)
-- resources set for dnsmasq sidecar (fixes gateway HPA)
+- Fix requests/limits for sidecar container (fixes backend HPA)
+- Add requests/limits for dnsmasq container (fixes gateway HPA)
 
 ## [0.14.5] - 2023-12-04
 
