@@ -52,6 +52,9 @@
                                 },
                                 "targetCPUUtilizationPercentage": {
                                     "type": "integer"
+                                },
+                                "targetCPUUtilizationPercentage": {
+                                    "type": "integer"
                                 }
                             }
                         },
@@ -147,29 +150,6 @@
                                 },
                                 "type": {
                                     "type": "string"
-                                }
-                            }
-                        },
-                        "extraContainers": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "args": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "image": {
-                                        "type": "string"
-                                    },
-                                    "imagePullPolicy": {
-                                        "type": "string"
-                                    },
-                                    "name": {
-                                        "type": "string"
-                                    }
                                 }
                             }
                         },
@@ -499,6 +479,29 @@
                         }
                     }
                 },
+                "serviceAccount": {
+                    "type": "object",
+                    "properties": {
+                        "annotations": {
+                            "type": "object"
+                        },
+                        "automountServiceAccountToken": {
+                            "type": "boolean"
+                        },
+                        "create": {
+                            "type": "boolean"
+                        },
+                        "imagePullSecrets": {
+                            "type": "array"
+                        },
+                        "labels": {
+                            "type": "object"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "sidecar": {
                     "type": "object",
                     "properties": {
@@ -723,14 +726,6 @@
                                     "type": "string"
                                 }
                             }
-                        }
-                    }
-                },
-                "write": {
-                    "type": "object",
-                    "properties": {
-                        "enforceOrgId": {
-                            "type": "boolean"
                         }
                     }
                 }
