@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix requests/limits for sidecar container (fixes backend HPA)
+- Add requests/limits for dnsmasq container (fixes gateway HPA)
+
 ### Changed
 
 - Upgrade multi-tenant-proxy to use a structured logger and make it a WARN logger by default to only log errors.
