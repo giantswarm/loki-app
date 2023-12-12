@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade multi-tenant-proxy to use a structured logger and make it a WARN logger by default to only log errors.
+
 ## [0.14.6] - 2023-12-11
 
 ### Changed
