@@ -251,6 +251,34 @@ export LOKI_ROLE="$BUCKET_NAME"-role
 aws --profile="$AWS_PROFILE" s3 mb s3://"$BUCKET_NAME" --region "$REGION"
 ```
 
+Create bucket policy to enforce tls in-transit:
+
+```bash
+# Create policy
+BUCKET_POLICY_DOC='{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "EnforceSSLOnly",
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::'"$BUCKET_NAME"'",
+                "arn:aws:s3:::'"$BUCKET_NAME"'/*"
+            ],
+            "Condition": {
+                "Bool": {
+                    "aws:SecureTransport": "false"
+                }
+            }
+        }
+    ]
+}'
+
+aws --profile="$AWS_PROFILE" s3 put-bucket-policy --bucket $BUCKET_NAME --policy "$BUCKET_POLICY_DOC"
+```
+
 #### Prepare AWS IAM policy.
 Create an IAM Policy in IAM. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
 ```bash
