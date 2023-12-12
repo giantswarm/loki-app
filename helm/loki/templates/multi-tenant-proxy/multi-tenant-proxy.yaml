@@ -69,6 +69,7 @@ spec:
             - "--port=3100"
             - '--loki-server=http://loki-read.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
+            - "--log-level=WARN"
           ports:
             - name: http-read
               containerPort: 3100
@@ -111,6 +112,7 @@ spec:
             - "--port=3102"
             - '--loki-server=http://loki-backend.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
+            - "--log-level=WARN"
           ports:
             - name: http-backend
               containerPort: 3102
