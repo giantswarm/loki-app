@@ -19,7 +19,7 @@ multiTenantAuth:
   # -- ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   image:
     repository: giantswarm/loki-multi-tenant-proxy-gs
-    tag: 0.1.0
+    tag: 0.2.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   # -- Resource requests and limits for the write
