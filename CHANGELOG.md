@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Configure `gsoci.azurecr.io` as the default container image registry.
+
 ## [0.14.7] - 2023-12-12
 
 ### Fixed
@@ -38,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Upgraded upstream chart from 5.36.3 to 5.37.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
-  
+
 ## [0.14.3] - 2023-11-22
 
 ### Fixed
@@ -317,42 +321,15 @@ Notes:
 * during upgrade, log histogram can be inconsistent. This only impacts log histogram, and only during upgrade.
 * In case of rollback, logs times may be wrong because latest loki version adjusts timestamps.
 
-## [0.3.2] - 2022-06-20
-
-### Fixed
-
-- startup crashloop due to incorrect initialDelay settings.
-- Compatibility with Ingress v1 API
-- Links in documentation
-
-### Changed
-
-- Documentation minor updates and fixes
-- Documentation: how to test your Loki deployment
-
-## [0.3.2] - 2022-03-09
-
-### Fixed
-
-- Increase ingester probe initialDelay to 300 seconds
-
-## [0.3.3] - 2021-11-04
-
-- Update app metadata
-
-## [0.3.2] - 2021-10-22
-
-- Update app metadata
-
-## [0.3.3] - 2021-10-15
-
-- Same as v0.3.2, repeated because of CI issues
-
 ## [0.3.2] - 2021-10-15
 
 ### Changed
 
 - Update icon
+
+## [0.3.3] - 2021-10-15
+
+- Same as v0.3.2, repeated because of CI issues
 
 ## [0.3.1] - 2021-07-26
 
@@ -385,24 +362,11 @@ Notes:
 
 - Optionally install [loki-multi-tenant-proxy](https://github.com/k8spin/loki-multi-tenant-proxy) to ease multi tenant authentication and authorizaton.
 
-## [0.1.1-alpha2] - 2021-03-15
-
-### Changed
-
-- Change values.yaml to support azure storage
-- Upgrade to loki 2.2.0
-
 ## [0.1.1-alpha] - 2021-03-04
 
 ### Added
 
 - Annotation for routing alerts to team halo
-
-## [0.1.0-alpha] - 2021-01-21
-
-### Changed
-
-- Re-released the App as alpha.
 
 ## [0.1.0] - 2021-01-21
 
