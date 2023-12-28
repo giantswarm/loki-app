@@ -321,15 +321,21 @@ Notes:
 * during upgrade, log histogram can be inconsistent. This only impacts log histogram, and only during upgrade.
 * In case of rollback, logs times may be wrong because latest loki version adjusts timestamps.
 
-## [0.3.2] - 2021-10-15
+
+## [0.3.2] - 2022-06-20
+
+### Fixed
+
+- startup crashloop due to incorrect initialDelay settings.
+- Compatibility with Ingress v1 API
+- Links in documentation
+- Increase ingester probe initialDelay to 300 seconds
 
 ### Changed
 
+- Documentation minor updates and fixes
+- Documentation: how to test your Loki deployment
 - Update icon
-
-## [0.3.3] - 2021-10-15
-
-- Same as v0.3.2, repeated because of CI issues
 
 ## [0.3.1] - 2021-07-26
 
@@ -413,11 +419,6 @@ Notes:
 [0.4.1]: https://github.com/giantswarm/loki-app/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.2
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
-[0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
-[0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/giantswarm/loki-app/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/giantswarm/loki-app/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/giantswarm/loki-app/compare/v0.1.2-beta...v0.2.0
