@@ -38,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Upgraded upstream chart from 5.36.3 to 5.37.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
-  
+ 
 ## [0.14.3] - 2023-11-22
 
 ### Fixed
@@ -324,34 +324,12 @@ Notes:
 - startup crashloop due to incorrect initialDelay settings.
 - Compatibility with Ingress v1 API
 - Links in documentation
+- Increase ingester probe initialDelay to 300 seconds
 
 ### Changed
 
 - Documentation minor updates and fixes
 - Documentation: how to test your Loki deployment
-
-## [0.3.2] - 2022-03-09
-
-### Fixed
-
-- Increase ingester probe initialDelay to 300 seconds
-
-## [0.3.3] - 2021-11-04
-
-- Update app metadata
-
-## [0.3.2] - 2021-10-22
-
-- Update app metadata
-
-## [0.3.3] - 2021-10-15
-
-- Same as v0.3.2, repeated because of CI issues
-
-## [0.3.2] - 2021-10-15
-
-### Changed
-
 - Update icon
 
 ## [0.3.1] - 2021-07-26
@@ -449,11 +427,6 @@ Notes:
 [0.4.1]: https://github.com/giantswarm/loki-app/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.2
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
-[0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
-[0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/giantswarm/loki-app/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/giantswarm/loki-app/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/giantswarm/loki-app/compare/v0.1.2-beta...v0.2.0
