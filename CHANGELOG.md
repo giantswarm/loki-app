@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Configure `gsoci.azurecr.io` as the default container image registry.
+- Upgraded loki from 2.9.2 to 2.9.3 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 5.40.0 to 5.41.4 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
 
 ## [0.14.7] - 2023-12-12
 
@@ -368,11 +370,24 @@ Notes:
 
 - Optionally install [loki-multi-tenant-proxy](https://github.com/k8spin/loki-multi-tenant-proxy) to ease multi tenant authentication and authorizaton.
 
+## [0.1.1-alpha2] - 2021-03-15
+
+### Changed
+
+- Change values.yaml to support azure storage
+- Upgrade to loki 2.2.0
+
 ## [0.1.1-alpha] - 2021-03-04
 
 ### Added
 
 - Annotation for routing alerts to team halo
+
+## [0.1.0-alpha] - 2021-01-21
+
+### Changed
+
+- Re-released the App as alpha.
 
 ## [0.1.0] - 2021-01-21
 
