@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+
+- Configure `gsoci.azurecr.io` as the default container image registry.
 - Upgraded loki from 2.9.2 to 2.9.3 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
 - Upgraded upstream chart from 5.40.0 to 5.41.4 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
 
@@ -42,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Upgraded upstream chart from 5.36.3 to 5.37.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
- 
+
 ## [0.14.3] - 2023-11-22
 
 ### Fixed
@@ -320,6 +322,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Notes:
 * during upgrade, log histogram can be inconsistent. This only impacts log histogram, and only during upgrade.
 * In case of rollback, logs times may be wrong because latest loki version adjusts timestamps.
+
 
 ## [0.3.2] - 2022-06-20
 
