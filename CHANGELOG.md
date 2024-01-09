@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.8] - 2024-01-09
+
 ### Changed
 
 - Configure `gsoci.azurecr.io` as the default container image registry.
@@ -395,7 +397,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.14.7...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.14.8...HEAD
+[0.14.8]: https://github.com/giantswarm/loki-app/compare/v0.14.7...v0.14.8
 [0.14.7]: https://github.com/giantswarm/loki-app/compare/v0.14.6...v0.14.7
 [0.14.6]: https://github.com/giantswarm/loki-app/compare/v0.14.5...v0.14.6
 [0.14.5]: https://github.com/giantswarm/loki-app/compare/v0.14.4...v0.14.5
