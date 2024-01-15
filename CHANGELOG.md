@@ -13,6 +13,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add sample values for EKS testing.
 - Add doc in README on deploying Loki for testing only on a new cluster.
 
+## [0.14.8] - 2024-01-09
+
+### Changed
+
+- Configure `gsoci.azurecr.io` as the default container image registry.
+- Upgraded loki from 2.9.2 to 2.9.3 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 5.40.0 to 5.41.4 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.14.7] - 2023-12-12
+
+### Fixed
+
+- Fix requests/limits for sidecar container (fixes backend HPA)
+- Add requests/limits for dnsmasq container (fixes gateway HPA)
+
+### Changed
+
+- Upgrade multi-tenant-proxy to use a structured logger and make it a WARN logger by default to only log errors.
+
 ## [0.14.6] - 2023-12-11
 
 ### Changed
@@ -33,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Upgraded upstream chart from 5.36.3 to 5.37.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
-  
+
 ## [0.14.3] - 2023-11-22
 
 ### Fixed
@@ -312,6 +331,7 @@ Notes:
 * during upgrade, log histogram can be inconsistent. This only impacts log histogram, and only during upgrade.
 * In case of rollback, logs times may be wrong because latest loki version adjusts timestamps.
 
+
 ## [0.3.2] - 2022-06-20
 
 ### Fixed
@@ -319,34 +339,12 @@ Notes:
 - startup crashloop due to incorrect initialDelay settings.
 - Compatibility with Ingress v1 API
 - Links in documentation
+- Increase ingester probe initialDelay to 300 seconds
 
 ### Changed
 
 - Documentation minor updates and fixes
 - Documentation: how to test your Loki deployment
-
-## [0.3.2] - 2022-03-09
-
-### Fixed
-
-- Increase ingester probe initialDelay to 300 seconds
-
-## [0.3.3] - 2021-11-04
-
-- Update app metadata
-
-## [0.3.2] - 2021-10-22
-
-- Update app metadata
-
-## [0.3.3] - 2021-10-15
-
-- Same as v0.3.2, repeated because of CI issues
-
-## [0.3.2] - 2021-10-15
-
-### Changed
-
 - Update icon
 
 ## [0.3.1] - 2021-07-26
@@ -405,7 +403,9 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.14.6...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.14.8...HEAD
+[0.14.8]: https://github.com/giantswarm/loki-app/compare/v0.14.7...v0.14.8
+[0.14.7]: https://github.com/giantswarm/loki-app/compare/v0.14.6...v0.14.7
 [0.14.6]: https://github.com/giantswarm/loki-app/compare/v0.14.5...v0.14.6
 [0.14.5]: https://github.com/giantswarm/loki-app/compare/v0.14.4...v0.14.5
 [0.14.4]: https://github.com/giantswarm/loki-app/compare/v0.14.3...v0.14.4
@@ -443,11 +443,6 @@ Notes:
 [0.4.1]: https://github.com/giantswarm/loki-app/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.2
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
-[0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
-[0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/giantswarm/loki-app/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/giantswarm/loki-app/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/giantswarm/loki-app/compare/v0.1.2-beta...v0.2.0
