@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix loki installation app installation failing when loki is disabled.
+
 ## [0.14.9] - 2024-01-15
 
 ### Added
