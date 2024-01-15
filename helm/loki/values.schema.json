@@ -162,6 +162,30 @@
                                     "name": {
                                         "type": "string"
                                     },
+                                    "resources": {
+                                        "type": "object",
+                                        "properties": {
+                                            "limits": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "memory": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "requests": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "cpu": {
+                                                        "type": "string"
+                                                    },
+                                                    "memory": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
                                     "securityContext": {
                                         "type": "object",
                                         "properties": {
@@ -552,6 +576,33 @@
                             "properties": {
                                 "repository": {
                                     "type": "string"
+                                }
+                            }
+                        },
+                        "resources": {
+                            "type": "object",
+                            "properties": {
+                                "limits": {
+                                    "type": "object",
+                                    "properties": {
+                                        "cpu": {
+                                            "type": "string"
+                                        },
+                                        "memory": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "requests": {
+                                    "type": "object",
+                                    "properties": {
+                                        "cpu": {
+                                            "type": "string"
+                                        },
+                                        "memory": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         },

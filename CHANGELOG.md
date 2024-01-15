@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add MinIO's `ciliumnetworkpolicy` and `networkpolicy` templates.
+- Add sample values for EKS testing.
+- Add doc in README on deploying Loki for testing only on a new cluster.
+
 ## [0.14.8] - 2024-01-09
 
 ### Changed

@@ -1,0 +1,72 @@
+multiTenantAuth:
+  enabled: false
+  deployCredentials: false
+
+global:
+  # For imported eks clusters only. Remove this field for CAPI EKS clusters.
+  dnsService: "kube-dns"
+
+ciliumNetworkPolicy:
+  # For imported eks clusters : false. For capi eks clusters : true.
+  enabled: false
+  
+loki:
+  ruler:
+    enabled: false
+  networkPolicy:
+    enabled: true
+    # Loki pods need to be able to access the loki-memberlist service which acts as 
+    # as the service discovery.
+    discovery:
+      port: 7946
+      namespaceSelector:
+        name: kube-system
+  loki:
+    storage:
+      bucketNames:
+        chunks: chunks
+        ruler: ruler
+        admin: admin
+      type: s3
+      s3:
+        s3: null
+        endpoint: http://loki-minio.kube-system.svc.cluster.local:9000
+        region: null
+        # The key pair needed to access minio storage needs to be created directly on the minio console.
+        secretAccessKey: adminSecretKey
+        accessKeyId: adminKey
+        s3ForcePathStyle: true
+        insecure: true
+  # Object storage mocking
+  minio:
+    enabled: true
+    buckets:
+      - name: chunks
+        policy: none
+        purge: false
+      - name: ruler
+        policy: none
+        purge: false
+      - name: admin
+        policy: none
+        purge: false
+  rbac:
+    # psp are disabled for most recent kubernetes clusters.
+    pspEnabled: false
+
+  gateway:
+    replicas: 3
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+      hosts:
+        - host: loki.loki.sample-customer.gaws.gigantic.io
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            - loki.loki.sample-customer.gaws.gigantic.io
+          secretName: loki-ingress-cert
