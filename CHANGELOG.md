@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Deploy on CAPV.
+
 ## [0.14.10] - 2024-01-15
 
 ### Fixed
