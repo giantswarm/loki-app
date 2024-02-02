@@ -70,6 +70,10 @@ spec:
             - '--loki-server=http://loki-read.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
             - "--log-level=WARN"
+          {{- with .Values.multiTenantAuth.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: http-read
               containerPort: 3100
@@ -93,6 +97,10 @@ spec:
             {{- if not .Values.multiTenantAuth.write.enforceOrgId }}
             - "--keep-orgid"
             {{- end }}
+          {{- with .Values.multiTenantAuth.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: http-write
               containerPort: 3101
@@ -113,6 +121,10 @@ spec:
             - '--loki-server=http://loki-backend.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
             - "--log-level=WARN"
+          {{- with .Values.multiTenantAuth.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: http-backend
               containerPort: 3102

@@ -21,6 +21,8 @@ multiTenantAuth:
     tag: 0.2.0
     pullPolicy: IfNotPresent
     pullSecrets: []
+  # Environment variables for the multi-tenant proxy
+  # env: []
   # -- Resource requests and limits for the write
   resources:
     limits:
