@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Upgraded upstream chart from 5.41.4 to 5.41.8 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
 - Add environment variables to loki-multi-tenant-proxy (OAUTH_URL).
+- Bump loki-multi-tenant-proxy to 0.3.0.
 
 ## [0.14.11] - 2024-01-22
 
