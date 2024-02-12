@@ -276,7 +276,7 @@ BUCKET_POLICY_DOC='{
     ]
 }'
 
-aws --profile="$AWS_PROFILE" s3 put-bucket-policy --bucket $BUCKET_NAME --policy "$BUCKET_POLICY_DOC"
+aws --profile="$AWS_PROFILE" s3api put-bucket-policy --bucket $BUCKET_NAME --policy "$BUCKET_POLICY_DOC"
 ```
 
 #### Prepare AWS IAM policy.
