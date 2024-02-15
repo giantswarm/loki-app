@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add coredns egress networkpolicy.
+- Upgraded upstream chart from 5.42.3 to 5.43.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
 ## [0.15.2] - 2024-02-14
 
 ### Changed

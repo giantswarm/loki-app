@@ -73,6 +73,10 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
+ciliumNetworkPolicy:
+  coredns:
+    enabled: false
+
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
