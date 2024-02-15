@@ -1,57 +1,23 @@
 {{- if .Values.loki.enabled }}
 {{- if .Values.multiTenantAuth.enabled }}
-{{- if .Values.multiTenantAuth.deployCredentials }}
-apiVersion: v1
-kind: Secret
-metadata:
-  name: loki-multi-tenant-proxy-auth-config
-  labels:
-    app: loki-multi-tenant-proxy
-    app.kubernetes.io/component: loki-multi-tenant-proxy
-    {{- include "loki.labels" . | nindent 4 }}
-data:
-  authn.yaml: {{ .Values.multiTenantAuth.credentials | b64enc }}
-{{- end }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: loki-multi-tenant-proxy
-spec:
-  ports:
-  - port: 3100
-    protocol: TCP
-    name: http-read
-  - port: 3101
-    protocol: TCP
-    name: http-write
-  - port: 3102
-    protocol: TCP
-    name: http-backend
-  selector:
-    app: loki-multi-tenant-proxy
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: loki-multi-tenant-proxy
-    giantswarm.io/service-type: "managed"
-    giantswarm.io/monitoring_basic_sli: "true"
-    {{- include "loki.labels" . | nindent 4 }}
   name: loki-multi-tenant-proxy
+  labels:
+    {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
 spec:
 {{- if not .Values.multiTenantAuth.autoscaling.enabled }}
   replicas: {{ .Values.multiTenantAuth.replicas }}
 {{- end }}
   selector:
     matchLabels:
-      app: loki-multi-tenant-proxy
+      {{- include "loki.multiTenantProxySelectorLabels" . | nindent 6 }}
   strategy: {}
   template:
     metadata:
       labels:
-        app: loki-multi-tenant-proxy
+        {{- include "loki.multiTenantProxyLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ .Values.loki.serviceAccount.name }}
       {{- with .Values.multiTenantAuth.image.pullSecrets }}

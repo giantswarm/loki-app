@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Auto reload multi-tenant-proxy config when it changes.
 - Upgraded upstream chart from 5.43.1 to 5.43.2 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
 
+### Fixed
+
+- Fix multi-tenant-proxy labels to be able to use the ciliumnetworkpolicies and to align with the other components.
+
 ## [0.15.3] - 2024-02-15
 
 ### Added

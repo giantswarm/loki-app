@@ -1,0 +1,24 @@
+{{- if .Values.loki.enabled }}
+{{- if .Values.multiTenantAuth.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-multi-tenant-proxy
+  labels:
+    {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
+spec:
+  ports:
+  - port: 3100
+    protocol: TCP
+    name: http-read
+  - port: 3101
+    protocol: TCP
+    name: http-write
+  - port: 3102
+    protocol: TCP
+    name: http-backend
+  selector:
+    {{- include "loki.multiTenantProxySelectorLabels" . | nindent 4 }}
+{{- end }}
+{{- end }}
