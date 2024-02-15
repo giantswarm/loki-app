@@ -19,7 +19,7 @@ multiTenantAuth:
   image:
     # -- Repository to get multi-tenant proxy image from.
     repository: giantswarm/loki-multi-tenant-proxy-gs
-    tag: 0.3.0-3503130aaab95bdb8c876289dbe5715b9f28fb72
+    tag: 0.4.0
     pullPolicy: IfNotPresent
     pullSecrets: []
 
@@ -85,7 +85,7 @@ multiTenantAuth:
 global:
   image:
     # -- Overrides the Docker registry globally for all images
-    registry: giantswarm
+    registry: gsoci.azurecr.io
   # -- Overrides the priorityClassName for all pods
   priorityClassName:
   # -- configures cluster domain ("cluster.local" by default)
