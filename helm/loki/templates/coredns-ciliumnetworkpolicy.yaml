@@ -1,4 +1,4 @@
-{{- if .Values.networkPolicy.coredns.enabled }}
+{{- if .Values.ciliumNetworkPolicy.coredns.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
