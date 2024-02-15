@@ -17,10 +17,32 @@ multiTenantAuth:
   # -- See `kubectl explain deployment.spec.strategy` for more
   # -- ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   image:
+    # -- Repository to get multi-tenant proxy image from.
     repository: giantswarm/loki-multi-tenant-proxy-gs
-    tag: 0.3.0
+    tag: 0.3.0-3503130aaab95bdb8c876289dbe5715b9f28fb72
     pullPolicy: IfNotPresent
     pullSecrets: []
+
+  configReloader:
+    image:
+      # -- Repository to get config reloader image from.
+      repository: giantswarm/configmap-reload
+      # -- Tag of image to use for config reloading.
+      tag: v0.9.0
+    # -- Resource requests and limits to apply to the config reloader containers.
+    resources:
+      requests:
+        cpu: "1m"
+        memory: "5Mi"
+    # -- Security context to apply to the config reloader containers.
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      seccompProfile:
+        type: RuntimeDefault
   # Environment variables for the multi-tenant proxy
   # env: []
   # -- Resource requests and limits for the write
@@ -63,7 +85,7 @@ multiTenantAuth:
 global:
   image:
     # -- Overrides the Docker registry globally for all images
-    registry: gsoci.azurecr.io
+    registry: giantswarm
   # -- Overrides the priorityClassName for all pods
   priorityClassName:
   # -- configures cluster domain ("cluster.local" by default)
