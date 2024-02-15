@@ -1,0 +1,28 @@
+{{- if .Values.networkPolicy.coredns.enabled }}
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "loki.name" . }}-egress-coredns
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      {{- include "loki.selectorLabels" . | nindent 6 }}
+  egress:
+  - toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "1053"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+      - port: "1053"
+        protocol: TCP
+    toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: coredns
+{{- end }}
