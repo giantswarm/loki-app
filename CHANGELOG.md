@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Auto reload multi-tenant-proxy config when it changes.
 
+## [0.15.3] - 2024-02-15
+
+### Added
+
+- Add coredns egress networkpolicy.
+- Upgraded upstream chart from 5.42.3 to 5.43.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
 ## [0.15.2] - 2024-02-14
 
 ### Changed
@@ -442,7 +449,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.15.2...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.15.3...HEAD
+[0.15.3]: https://github.com/giantswarm/loki-app/compare/v0.15.2...v0.15.3
 [0.15.2]: https://github.com/giantswarm/loki-app/compare/v0.15.1...v0.15.2
 [0.15.1]: https://github.com/giantswarm/loki-app/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/giantswarm/loki-app/compare/v0.14.11...v0.15.0
