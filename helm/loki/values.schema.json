@@ -831,6 +831,19 @@
                     }
                 }
             }
+        },
+        "networkPolicy": {
+            "type": "object",
+            "properties": {
+                "coredns": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
         }
     }
 }
