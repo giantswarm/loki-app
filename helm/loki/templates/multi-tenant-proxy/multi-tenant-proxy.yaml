@@ -91,6 +91,10 @@ spec:
             - "--volume-dir=/etc/loki-multi-tenant-proxy"
             - "--webhook-url=http://localhost:3100/-/reload"
             - "--web.listen-address=:9533"
+          ports: 
+          - name: reloader-web
+            containerPort: 9533
+            protocol: TCP
           volumeMounts:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
@@ -135,6 +139,10 @@ spec:
             - "--volume-dir=/etc/loki-multi-tenant-proxy"
             - "--webhook-url=http://localhost:3101/-/reload"
             - "--web.listen-address=:9534"
+          ports: 
+          - name: reloader-web
+            containerPort: 9534
+            protocol: TCP
           volumeMounts:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
@@ -176,6 +184,10 @@ spec:
             - "--volume-dir=/etc/loki-multi-tenant-proxy"
             - "--webhook-url=http://localhost:3102/-/reload"
             - "--web.listen-address=:9535"
+          ports: 
+          - name: reloader-web
+            containerPort: 9535
+            protocol: TCP
           volumeMounts:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
