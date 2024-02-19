@@ -85,6 +85,27 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
+        - name: loki-multi-tenant-proxy-read-config-reloader
+          image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.configReloader.image.repository }}:{{ .Values.multiTenantAuth.configReloader.image.tag }}"
+          args:
+            - "--volume-dir=/etc/loki-multi-tenant-proxy"
+            - "--webhook-url=http://localhost:3100/-/reload"
+            - "--web.listen-address=:9533"
+          ports: 
+          - name: reloader-web
+            containerPort: 9533
+            protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki-multi-tenant-proxy
+          {{- with .Values.multiTenantAuth.configReloader.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.multiTenantAuth.configReloader.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         - name: loki-multi-tenant-proxy-write
           image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.image.repository }}:{{ .Values.multiTenantAuth.image.tag }}"
           imagePullPolicy: {{ .Values.multiTenantAuth.image.pullPolicy }}
@@ -112,6 +133,27 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
+        - name: loki-multi-tenant-proxy-write-config-reloader
+          image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.configReloader.image.repository }}:{{ .Values.multiTenantAuth.configReloader.image.tag }}"
+          args:
+            - "--volume-dir=/etc/loki-multi-tenant-proxy"
+            - "--webhook-url=http://localhost:3101/-/reload"
+            - "--web.listen-address=:9534"
+          ports: 
+          - name: reloader-web
+            containerPort: 9534
+            protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki-multi-tenant-proxy
+          {{- with .Values.multiTenantAuth.configReloader.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.multiTenantAuth.configReloader.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         - name: loki-multi-tenant-proxy-backend
           image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.image.repository }}:{{ .Values.multiTenantAuth.image.tag }}"
           imagePullPolicy: {{ .Values.multiTenantAuth.image.pullPolicy }}
@@ -136,6 +178,27 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
+        - name: loki-multi-tenant-proxy-backend-config-reloader
+          image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.configReloader.image.repository }}:{{ .Values.multiTenantAuth.configReloader.image.tag }}"
+          args:
+            - "--volume-dir=/etc/loki-multi-tenant-proxy"
+            - "--webhook-url=http://localhost:3102/-/reload"
+            - "--web.listen-address=:9535"
+          ports: 
+          - name: reloader-web
+            containerPort: 9535
+            protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki-multi-tenant-proxy
+          {{- with .Values.multiTenantAuth.configReloader.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.multiTenantAuth.configReloader.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       volumes:
         - name: config
           secret:

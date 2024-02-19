@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Auto reload multi-tenant-proxy config when it changes.
+
 ## [0.15.3] - 2024-02-15
 
 ### Added
