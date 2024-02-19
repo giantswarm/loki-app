@@ -48,6 +48,12 @@ Versions before v1.0.0 are not stable, and can even have breaking changes betwee
 
 ### From 0.6.x to 0.7.x
 
+⚠️ Upgrading to 0.9.x from any older version can be a breaking change as described below
+
+- switch to 3-targets mode (see [comment in upstream values](https://github.com/grafana/loki/blob/helm-loki-5.1.0/production/helm/loki/values.yaml#L769)) may leave unused "loki-read-x" pods, PVCs and PVs.
+
+### From 0.6.x to 0.7.x
+
 ⚠️ Upgrading to 0.6.x from any older version can be a breaking change as described below
 
 - nginx file definition has been changed for easier maintenance. But there is a drawback: if you had defined it in your `values`, you should add these values:
@@ -194,6 +200,22 @@ kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
 ```
 Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
 
+### Caching
+
+When ingesting logs from workload clusters, Loki may have a hard time processing a user's query because of the huge amount of data. This can lead to read pods being overwhelmed and result in a timeout output for the user.
+
+To avoid this, Loki is able to use a `memcached` cluster which will operate - obviously - caching operations to ease the read pods' job. To enable caching, one will have to deploy the `memcached-app` and set up the `loki.loki.memcached` field in the Loki config.
+
+This field is composed of 2 subfields :
+
+* `chunk_cache`, in which one may define the batch size for the chunks stored.
+* `results_cache`, in which one may define the validity period for a cached result as well as the timeout for the query requesting it.
+
+Both subfields also need to have their `host` and `service` specified. If you deployed `memcached-app` with its default values :
+
+* `host` should be `memcached-app.loki.svc`. Otherwise, with custom values for `memcached-app`, the `host` value will be memcached's service DNS name.
+* `service` should be `memcache`. With custom values for `memcached-app`, the `service` value will be memcached's service port name.
+
 ### Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
@@ -219,6 +241,7 @@ as your instances. Ex. `gs-loki-storage`.
 export CLUSTER_NAME=zj88t
 export NODEPOOL_ID=oy9v0
 export REGION=eu-central-1
+export INSTALLATION=gorilla
 export BUCKET_NAME=gs-loki-storage-"$CLUSTER_NAME" # must be globally unique
 export AWS_PROFILE=gorilla-atlas # your AWS CLI profile
 export LOKI_POLICY="$BUCKET_NAME"-policy
@@ -228,8 +251,36 @@ export LOKI_ROLE="$BUCKET_NAME"-role
 aws --profile="$AWS_PROFILE" s3 mb s3://"$BUCKET_NAME" --region "$REGION"
 ```
 
-#### Prepare AWS role.
-* Create an IAM Policy in IAM. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
+Create bucket policy to enforce tls in-transit:
+
+```bash
+# Create policy
+BUCKET_POLICY_DOC='{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "EnforceSSLOnly",
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::'"$BUCKET_NAME"'",
+                "arn:aws:s3:::'"$BUCKET_NAME"'/*"
+            ],
+            "Condition": {
+                "Bool": {
+                    "aws:SecureTransport": "false"
+                }
+            }
+        }
+    ]
+}'
+
+aws --profile="$AWS_PROFILE" s3api put-bucket-policy --bucket $BUCKET_NAME --policy "$BUCKET_POLICY_DOC"
+```
+
+#### Prepare AWS IAM policy.
+Create an IAM Policy in IAM. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
 ```bash
 # Create policy
 POLICY_DOC='{
@@ -262,10 +313,12 @@ POLICY_DOC='{
 }'
 aws --profile="$AWS_PROFILE" iam create-policy --policy-name "$LOKI_POLICY" --policy-document "$POLICY_DOC"
 ```
-* create a new IAM Role that allows the necessary instances (k8s masters in the
-  case of using `kiam`) to access resources from the policy. Set trust to allow
-  the Role used by `kiam` to claim the S3 access role.
-  If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
+
+#### Prepare AWS IAM role
+
+**Up to giantswarm v18**
+
+Create a new IAM Role that allows the necessary instances (k8s masters in the case of using `kiam`) to access resources from the policy. Set trust to allow the Role used by `kiam` to claim the S3 access role. If you want to use AWS WebUI, copy/paste the contents of `POLICY_DOC` variable.
 ```bash
 # Create role
 PRINCIPAL_ARN="$(aws --profile="$AWS_PROFILE" iam get-role --role-name "$CLUSTER_NAME"-IAMManager-Role | sed -n 's/.*Arn.*"\(arn:.*\)".*/\1/p')"
@@ -281,21 +334,72 @@ ROLE_DOC='{
         }
     ]
 }'
+```
+
+**From giantswarm v19**
+
+Giant Swarm clusters will use IRSA (Iam Roles for Service Accounts) to allow pods to access S3 buckets' resources. For more details concerning IRSA, you can refer to the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) as well as to the [giant swarm one](https://docs.giantswarm.io/advanced/iam-roles-for-service-accounts).
+
+This means that the role's `Trust Relationship` will be different that the one used for KIAM (cf above) :
+```bash
+ROLE_DOC='{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::'$PRINCIPAL_ARN':oidc-provider/irsa.'$CLUSTER_NAME'.k8s.'$INSTALLATION'.'$REGION'.aws.gigantic.io"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "irsa.'$CLUSTER_NAME'.k8s.'$INSTALLATION'.'$REGION'.aws.gigantic.io:sub": "system:serviceaccount:loki:loki"
+                }
+            }
+        }
+    ]
+}'
+```
+
+#### Create role
+
+Everything is now set to create the role :
+```bash
 aws --profile="$AWS_PROFILE" iam create-role --role-name "$LOKI_ROLE" --assume-role-policy-document "$ROLE_DOC"
 # Attach the policy to the role
 LOKI_POLICY_ARN="${PRINCIPAL_ARN%:role/*}:policy/$LOKI_POLICY"
 aws --profile="$AWS_PROFILE" iam attach-role-policy --policy-arn "$LOKI_POLICY_ARN" --role-name "$LOKI_ROLE"
 ```
 
-#### Prepare the namespace
+* Store the role's arn in a variable for the next step :
+```bash
+LOKI_ROLE_ARN="${PRINCIPAL_ARN%:role/*}:role/$LOKI_ROLE"
+```
+
+#### Link IAM role to Kubernetes
+
+**Up to giantswarm v18**
+
 Currently, you have to manually pre-create the namespace and annotate it with
 IAM Roles required for pods running in the namespace:
 
 ```bash
 kubectl create ns loki
-LOKI_ROLE_ARN="${PRINCIPAL_ARN%:role/*}:role/$LOKI_ROLE"
 kubectl annotate ns loki iam.amazonaws.com/permitted="$LOKI_ROLE_ARN"
 ```
+
+**From giantswarm v19**
+
+Since IRSA is relying on the use of service accounts to grant access rights to the pods, you don't have to manually create the `loki` namespace as you won't have to annotate it. Instead, you'll have to edit the Chart's values under the `loki` section with the following :
+```bash
+serviceAccount:
+  create: true
+  name: loki
+  annotations:
+    eks.amazonaws.com/role-arn: "$LOKI_ROLE_ARN"
+```
+
+This way, all pods using the `loki` service account will be able to access to the S3 bucket created earlier.
 
 #### Install the app
 
@@ -374,6 +478,28 @@ az storage account keys list \
   * and your custom setup
 
 * Install the app using your values.
+
+### Deploying on a new cluster for testing purposes
+
+You might find yourself in a situation where you want to deploy Loki on a new cluster for testing purposes only. Depending on the testing requirements, you might need to avoid creating an object storage with a cloud-provider and manage its access permissions for your Loki pods.
+
+Then you should consider deploying Loki with [MinIO](https://min.io/) as an object storage solution. To put it in a nutshell, `MinIO` is an object storage solution with a S3-like API which uses the nodes' volumes to store its data. Thus, when used for testing purposes, one can mock an S3 bucket behavior to have quick and simple object storage access for Loki without the need for complex access permissions.
+
+The good news is that the Loki chart directly provides a `minio` field where one can configure a `minio` deployment to serve as object storage for the Loki pods. Such a configuration is displayed in the `sample_configs/values-eks-testing.yaml` file.
+
+#### Creating access keys for MinIO access
+
+Once Loki is deployed with MinIO, one will have to create a key pair in the MinIO console to grant Loki pods access to the buckets. To achieve this, one will first have to port-forward the adequate service :
+```
+kubectl port-forward -n loki service/loki-minio-console 8080:9001
+```
+Change the namespace according to the one in which your loki pods and services are deployed.
+
+Then one will have to access to the minio console at `127.0.0.1:8080`. Go to `identity` --> `user` and create a new user with whatever name and password one wants and attach the correct permissions needed (most likely the `readwrite` one). Then, one will have to click on the newly created, go to `service accounts` and click on `create service account`. This is where one needs to pay attention because both the `Access Key` and the `secret Key` are present in the values mentioned earlier as `loki.loki.storage.s3.accessKeyId` and `loki.loki.storage.s3.secretAccessKey`.
+
+Set the `Access Key` and `secret Key` in the console so that they have the same value as the corresponding fields in the loki values file and voilà ! 
+
+Everything is now set for testing.
 
 ### Testing your deployment
 

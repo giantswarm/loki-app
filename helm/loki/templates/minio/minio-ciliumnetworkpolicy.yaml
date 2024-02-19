@@ -1,0 +1,23 @@
+{{- if .Values.loki.enabled }}
+{{- if .Values.loki.minio.enabled -}}
+{{- if .Values.ciliumNetworkPolicy.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: minio-cilium-netpol
+  namespace: kube-system
+spec:
+  egress:
+  - toEntities:
+    - kube-apiserver
+  endpointSelector:
+    matchLabels:
+      app: minio
+  ingress:
+  - toPorts:
+    - ports:
+      - port: "9000"
+        protocol: TCP
+{{- end -}}
+{{- end -}}
+{{- end -}}

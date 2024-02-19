@@ -78,9 +78,11 @@ loki:
       # and means that pods having it can use this IAM Role for S3 access
       iam.amazonaws.com/role: gs-loki-storage-m2h60-role
 
-  # giantswarm.io/machine-deployment ids (hon60) below reference the node pool ids
-  # replace them with your ids of your node pools
-
+  # propagate KIAM annotations
   write: *shared-conf
 
+  # propagate KIAM annotations
   read: *shared-conf
+
+  # propagate KIAM annotations
+  backend: *shared-conf

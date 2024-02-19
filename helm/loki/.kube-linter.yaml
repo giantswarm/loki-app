@@ -21,3 +21,5 @@ checks:
   - "no-node-affinity"
   - "dnsconfig-options"
   - "latest-tag"
+  - "hpa-minimum-three-replicas"
+  - "non-existent-service-account"

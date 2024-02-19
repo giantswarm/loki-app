@@ -7,10 +7,245 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Auto reload multi-tenant-proxy config when it changes.
+- Upgraded upstream chart from 5.43.1 to 5.43.2 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.15.3] - 2024-02-15
+
+### Added
+
+- Add coredns egress networkpolicy.
+- Upgraded upstream chart from 5.42.3 to 5.43.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.15.2] - 2024-02-14
+
 ### Changed
 
-- Upgraded upstrem chart from 5.0.0 to 5.10.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 5.42.2 to 5.42.3 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information to fix an issue with network policies.
+
+## [0.15.1] - 2024-02-12
+
+### Changed
+
+- Upgraded loki from 2.9.3 to 2.9.4 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 5.41.8 to 5.42.2 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.15.0] - 2024-02-08
+
+### Changed
+
+- Upgraded upstream chart from 5.41.4 to 5.41.8 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Add environment variables to loki-multi-tenant-proxy (OAUTH_URL).
+- Bump loki-multi-tenant-proxy to 0.3.0.
+
+## [0.14.11] - 2024-01-22
+
+### Added
+
+- Deploy on CAPV.
+
+## [0.14.10] - 2024-01-15
+
+### Fixed
+
+- Fix loki installation app installation failing when loki is disabled.
+
+## [0.14.9] - 2024-01-15
+
+### Added
+
+- Add MinIO's `ciliumnetworkpolicy` and `networkpolicy` templates.
+- Add sample values for EKS testing.
+- Add doc in README on deploying Loki for testing only on a new cluster.
+
+## [0.14.8] - 2024-01-09
+
+### Changed
+
+- Configure `gsoci.azurecr.io` as the default container image registry.
+- Upgraded loki from 2.9.2 to 2.9.3 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 5.40.0 to 5.41.4 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.14.7] - 2023-12-12
+
+### Fixed
+
+- Fix requests/limits for sidecar container (fixes backend HPA)
+- Add requests/limits for dnsmasq container (fixes gateway HPA)
+
+### Changed
+
+- Upgrade multi-tenant-proxy to use a structured logger and make it a WARN logger by default to only log errors.
+
+## [0.14.6] - 2023-12-11
+
+### Changed
+
+- Upgraded upstream chart from 5.39.0 to 5.40.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.14.5] - 2023-12-04
+
+### Changed
+
+- Upgraded upstream chart from 5.37.0 to 5.39.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Moved `serviceAccount` field in the `loki` section in the values.
+- push to capz collection
+- push to CAPVCD collection
+
+## [0.14.4] - 2023-11-22
+
+### Changed
+
+- Upgraded upstream chart from 5.36.3 to 5.37.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.14.3] - 2023-11-22
+
+### Fixed
+
+- Add securityContext to dnsmasq container in loki-gateway.
+
+## [0.14.2] - 2023-11-21
+
+### Fixed
+
+- Add dnsmasq as extraContainer to loki-gateway.
+- Upgraded loki from 2.9.2 to 2.9.3 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+- Upgraded upstream chart from 5.34.0 to 5.36.3 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.14.1] - 2023-10-31
+
+### Changed
+
+- Deploy to CAPA app collection.
+
+## [0.14.0] - 2023-10-19
+
+### Changed
+
+- Upgraded upstream chart from 5.29.0 to 5.34.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Upgraded loki from 2.9.1 to 2.9.2 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+- Resource usage improvements (requests and limits, and HPA tuning)
+- multi-tenant-proxy: toggle for credentials provisioning
+- multi-tenant-proxy: enforce org-id according to the user - can be changed back with `.Values.multiTenantAuth.write.enforceOrgId`
+
+## [0.13.0] - 2023-10-17
+
+### Changed
+
+- Added caching with `memcached` in default values (disabled).
+- Added documentation for using cache.
+
+## [0.12.4] - 2023-10-16
+
+### Changed
+
+- Upgraded upstream chart from 5.26.0 to 5.29.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.12.3] - 2023-10-05
+
+### Changed
+
+- Remove custom `giantswarm` service for monitoring in favor of upstream `servicemonitor`
+- Moved `imagePullSecrets` to `multiTenantAuth.image.pullSecrets`
+
+### Fixed
+
+- Fix loki-backend sidecar pod security standard violations.
+
+### Changed
+
+- Upgraded upstream chart from 5.23.0 to 5.26.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.12.2] - 2023-09-26
+
+### Changed
+
+- Upgraded upstream chart from 5.22.0 to 5.23.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.12.1] - 2023-09-15
+
+### Changed
+
+- Upgraded upstream chart from 5.20.0 to 5.22.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Upgraded loki from 2.9.0 to 2.9.1 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+
+## [0.12.0] - 2023-09-12
+
+### Changed
+
+- Upgraded upstream chart from 5.15.0 to 5.20.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Upgraded loki from 2.8.4 to 2.9.0 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+
+### Fixed
+
+- Fix multi-tenant-proxy HPA by setting resources settings in all of the 3 mtproxy containers.
+
+## [0.11.1] - 2023-08-25
+
+### Changed
+
+- Upgraded upstream chart from 5.14.1 to 5.15.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Add PSP annotation to allow all seccomp profiles.
+
+## [0.11.0] - 2023-08-21
+
+### Changed
+
+- Upgraded upstream chart from 5.10.0 to 5.14.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Upgraded loki from 2.8.3 to 2.8.4 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+
+## [0.10.0] - 2023-08-10
+
+### Changed
+
+- Upgraded upstream chart from 5.6.4 to 5.10.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Upgraded loki from 2.8.2 to 2.8.3 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
+
+## [0.9.4] - 2023-06-28
+
+### Added
+
+- Add restricted seccomp profile.
+
+## [0.9.3] - 2023-06-13
+
+### Fixed
+
+- Push to control-plane-catalog to fix deployment via collections
+
+## [0.9.2] - 2023-06-13
+
+### Changed
+
+- Upgraded upstream chart from 5.5.0 to 5.6.4 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- Gateway HPA defaults to minimum 2 replicas
+- Added `.loki.enabled` in values so we can disable Loki by changing the values
+- Adjusted resources requests/limits for `read`, `backend` and `gateway` components
+- enabled HPA for read, write and backend
+- multi-tenant-proxy: homogeneization of deployment labels
+- Pushing to AWS collection
+
+## [0.9.1] - 2023-05-17
+
+### Changed
+
+- Added documentation concerning the use of IRSA in README.
+
+## [0.9.0] - 2023-05-15
+
+- tuned requests/limits
+- enabled HPA for gateway and loki-multi-tenant proxy
+
+## [0.8.1] - 2023-05-15
+
+### Changed
+
+- Upgraded upstream chart from 5.0.0 to 5.5.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+- upgraded Loki from 2.8.0 to 2.8.2 - see [changelog](https://github.com/grafana/loki/blob/main/CHANGELOG.md) for more information.
 - Loss of compability with Kubernetes <= 1.21
+- Switched to 3-targets mode - see [comment in upstream values](https://github.com/grafana/loki/blob/helm-loki-5.1.0/production/helm/loki/values.yaml#L769) for more information
 
 ## [0.8.0] - 2023-04-06
 
@@ -143,6 +378,7 @@ Notes:
 * during upgrade, log histogram can be inconsistent. This only impacts log histogram, and only during upgrade.
 * In case of rollback, logs times may be wrong because latest loki version adjusts timestamps.
 
+
 ## [0.3.2] - 2022-06-20
 
 ### Fixed
@@ -150,34 +386,12 @@ Notes:
 - startup crashloop due to incorrect initialDelay settings.
 - Compatibility with Ingress v1 API
 - Links in documentation
+- Increase ingester probe initialDelay to 300 seconds
 
 ### Changed
 
 - Documentation minor updates and fixes
 - Documentation: how to test your Loki deployment
-
-## [0.3.2] - 2022-03-09
-
-### Fixed
-
-- Increase ingester probe initialDelay to 300 seconds
-
-## [0.3.3] - 2021-11-04
-
-- Update app metadata
-
-## [0.3.2] - 2021-10-22
-
-- Update app metadata
-
-## [0.3.3] - 2021-10-15
-
-- Same as v0.3.2, repeated because of CI issues
-
-## [0.3.2] - 2021-10-15
-
-### Changed
-
 - Update icon
 
 ## [0.3.1] - 2021-07-26
@@ -236,7 +450,38 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.15.3...HEAD
+[0.15.3]: https://github.com/giantswarm/loki-app/compare/v0.15.2...v0.15.3
+[0.15.2]: https://github.com/giantswarm/loki-app/compare/v0.15.1...v0.15.2
+[0.15.1]: https://github.com/giantswarm/loki-app/compare/v0.15.0...v0.15.1
+[0.15.0]: https://github.com/giantswarm/loki-app/compare/v0.14.11...v0.15.0
+[0.14.11]: https://github.com/giantswarm/loki-app/compare/v0.14.10...v0.14.11
+[0.14.10]: https://github.com/giantswarm/loki-app/compare/v0.14.9...v0.14.10
+[0.14.9]: https://github.com/giantswarm/loki-app/compare/v0.14.8...v0.14.9
+[0.14.8]: https://github.com/giantswarm/loki-app/compare/v0.14.7...v0.14.8
+[0.14.7]: https://github.com/giantswarm/loki-app/compare/v0.14.6...v0.14.7
+[0.14.6]: https://github.com/giantswarm/loki-app/compare/v0.14.5...v0.14.6
+[0.14.5]: https://github.com/giantswarm/loki-app/compare/v0.14.4...v0.14.5
+[0.14.4]: https://github.com/giantswarm/loki-app/compare/v0.14.3...v0.14.4
+[0.14.3]: https://github.com/giantswarm/loki-app/compare/v0.14.2...v0.14.3
+[0.14.2]: https://github.com/giantswarm/loki-app/compare/v0.14.1...v0.14.2
+[0.14.1]: https://github.com/giantswarm/loki-app/compare/v0.14.0...v0.14.1
+[0.14.0]: https://github.com/giantswarm/loki-app/compare/v0.13.0...v0.14.0
+[0.13.0]: https://github.com/giantswarm/loki-app/compare/v0.12.4...v0.13.0
+[0.12.4]: https://github.com/giantswarm/loki-app/compare/v0.12.3...v0.12.4
+[0.12.3]: https://github.com/giantswarm/loki-app/compare/v0.12.2...v0.12.3
+[0.12.2]: https://github.com/giantswarm/loki-app/compare/v0.12.1...v0.12.2
+[0.12.1]: https://github.com/giantswarm/loki-app/compare/v0.12.0...v0.12.1
+[0.12.0]: https://github.com/giantswarm/loki-app/compare/v0.11.1...v0.12.0
+[0.11.1]: https://github.com/giantswarm/loki-app/compare/v0.11.0...v0.11.1
+[0.11.0]: https://github.com/giantswarm/loki-app/compare/v0.10.0...v0.11.0
+[0.10.0]: https://github.com/giantswarm/loki-app/compare/v0.9.4...v0.10.0
+[0.9.4]: https://github.com/giantswarm/loki-app/compare/v0.9.3...v0.9.4
+[0.9.3]: https://github.com/giantswarm/loki-app/compare/v0.9.2...v0.9.3
+[0.9.2]: https://github.com/giantswarm/loki-app/compare/v0.9.1...v0.9.2
+[0.9.1]: https://github.com/giantswarm/loki-app/compare/v0.9.0...v0.9.1
+[0.9.0]: https://github.com/giantswarm/loki-app/compare/v0.8.1...v0.9.0
+[0.8.1]: https://github.com/giantswarm/loki-app/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/giantswarm/loki-app/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/giantswarm/loki-app/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/giantswarm/loki-app/compare/v0.6.1...v0.7.0
@@ -252,11 +497,6 @@ Notes:
 [0.4.1]: https://github.com/giantswarm/loki-app/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.2
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
-[0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.3...v0.3.2
-[0.3.3]: https://github.com/giantswarm/loki-app/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/giantswarm/loki-app/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/giantswarm/loki-app/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/giantswarm/loki-app/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/giantswarm/loki-app/compare/v0.1.2-beta...v0.2.0

@@ -1,11 +1,59 @@
----
 multiTenantAuth:
+  # -- Specifies whether the multi-tenant proxy should be enabled
   enabled: false
+  # -- Number of replicas for the multi-tenant proxy
+  replicas: 3
+  autoscaling:
+    # -- Enable autoscaling for the multi-tenant proxy
+    enabled: true
+    # -- Minimum autoscaling replicas for the multi-tenant proxy
+    minReplicas: 2
+    # -- Maximum autoscaling replicas for the multi-tenant proxy
+    maxReplicas: 4
+    # -- Target CPU utilisation percentage for the multi-tenant proxy
+    targetCPUUtilizationPercentage: 90
+    # -- Target memory utilisation percentage for the multi-tenant proxy
+    targetMemoryUtilizationPercentage:
+  # -- See `kubectl explain deployment.spec.strategy` for more
+  # -- ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   image:
+    # -- Repository to get multi-tenant proxy image from.
     repository: giantswarm/loki-multi-tenant-proxy-gs
-    tag: 0.1.0
+    tag: 0.4.0
     pullPolicy: IfNotPresent
-  replicas: 2
+    pullSecrets: []
+
+  configReloader:
+    image:
+      # -- Repository to get config reloader image from.
+      repository: giantswarm/configmap-reload
+      # -- Tag of image to use for config reloading.
+      tag: v0.9.0
+    # -- Resource requests and limits to apply to the config reloader containers.
+    resources:
+      requests:
+        cpu: "1m"
+        memory: "5Mi"
+    # -- Security context to apply to the config reloader containers.
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      seccompProfile:
+        type: RuntimeDefault
+  # Environment variables for the multi-tenant proxy
+  # env: []
+  # -- Resource requests and limits for the write
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 50Mi
+      cpu: 50m
+  # disable if credentials are provided externally
+  deployCredentials: true
   credentials: |-
     users:
       - username: Tenant1
@@ -19,26 +67,27 @@ multiTenantAuth:
     runAsGroup: 10001
     runAsNonRoot: true
     runAsUser: 10001
+    seccompProfile:
+      type: RuntimeDefault
   # -- The SecurityContext for Loki containers
   containerSecurityContext:
-    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
     capabilities:
       drop:
         - ALL
-    allowPrivilegeEscalation: false
-
-imagePullSecrets: []
-
-giantswarm:
-  labelmonitoring:
-    enabled: true
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+  write:
+    # -- disabling this allows write requests to set whatever orgid they want
+    enforceOrgId: true
 
 global:
   image:
     # -- Overrides the Docker registry globally for all images
-    registry: docker.io
+    registry: gsoci.azurecr.io
   # -- Overrides the priorityClassName for all pods
-  priorityClassName: null
+  priorityClassName:
   # -- configures cluster domain ("cluster.local" by default)
   clusterDomain: "cluster.local"
   # -- configures DNS service name
@@ -46,28 +95,65 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
-serviceAccount:
-  # -- Specifies whether a ServiceAccount should be created
-  create: true
-  # -- The name of the ServiceAccount to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: loki
-  # -- Image pull secrets for the service account
-  imagePullSecrets: []
-  # -- Annotations for the service account
-  annotations: {}
-  # -- Set this toggle to false to opt out of automounting API credentials for the service account
-  automountServiceAccountToken: true
+ciliumNetworkPolicy:
+  coredns:
+    enabled: false
 
 loki:
+  # You can make the whole chart ineffective by setting this one to "false"
+  enabled: true
+
+  serviceAccount:
+    # -- Specifies whether a ServiceAccount should be created
+    create: true
+    # -- The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: loki
+    # -- Image pull secrets for the service account
+    imagePullSecrets: []
+    # -- Annotations for the service account
+    annotations: {}
+    # -- Labels for the service account
+    labels: {}
+    # -- Set this toggle to false to opt out of automounting API credentials for the service account
+    automountServiceAccountToken: true
+
   gateway:
+    extraContainers:
+      - name: dnsmasq
+        image: "giantswarm/go-dnsmasq:release-1.0.7"
+        imagePullPolicy: IfNotPresent
+        args:
+          - --listen
+          - "127.0.0.1:8053"
+          - --hostsfile=/etc/hosts
+          - --enable-search
+          - --verbose
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 10Mi
     nginxConfig:
+      resolver: "127.0.0.1:8053 valid=60s"
       genMultiTenant: false
       # To be set when using MultiTenant with GiantSwarm multi-tenant-proxy
       #customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
       #customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
-      #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
-    replicas: 3
+      #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3102
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -75,36 +161,111 @@ loki:
         maxUnavailable: 1
     image:
       repository: giantswarm/nginx-unprivileged
-
-  read:
     resources:
       limits:
-        memory: 4096Mi
+        memory: 500Mi
       requests:
-        memory: 3072Mi
+        memory: 50Mi
+        cpu: 50m
+    # -- The SecurityContext for gateway containers
+    podSecurityContext:
+      fsGroup: 101
+      runAsGroup: 101
+      runAsNonRoot: true
+      runAsUser: 101
+      seccompProfile:
+        type: RuntimeDefault
+    # -- The SecurityContext for gateway containers
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+
+  backend:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+    resources:
+      limits:
+        memory: 3Gi
+      requests:
+        memory: 1Gi
+        cpu: 200m
+
+  read:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+    resources:
+      limits:
+        memory: 3Gi
+      requests:
+        memory: 1Gi
         cpu: 200m
     extraArgs:
       - -querier.multi-tenant-queries-enabled
 
   write:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
     resources:
       limits:
-        memory: 4096Mi
+        memory: 4Gi
       requests:
-        memory: 3072Mi
-        cpu: 200m
+        memory: 3Gi
+        cpu: 500m
 
   loki:
     image:
       repository: giantswarm/loki
+    memcached:
+      chunk_cache:
+        enabled: false
+        host: "memcached-app.loki.svc"
+        service: "memcache"
+        batch_size: 256
+        parallelism: 10
+      results_cache:
+        enabled: false
+        host: "memcached-app.loki.svc"
+        service: "memcache"
+        timeout: "500ms"
+        default_validity: "24h"
     limits_config:
       enforce_metric_name: true
       ingestion_rate_mb: 10
       ingestion_burst_size_mb: 20
       max_concurrent_tail_requests: 20
+    # -- The SecurityContext for Loki pods
+    podSecurityContext:
+      fsGroup: 10001
+      runAsGroup: 10001
+      runAsNonRoot: true
+      runAsUser: 10001
+      seccompProfile:
+        type: RuntimeDefault
+    # -- The SecurityContext for Loki containers
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
 
   rbac:
     pspEnabled: true
+    pspAnnotations:
+      seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
 
   monitoring:
     dashboards:
@@ -114,13 +275,32 @@ loki:
     alerts:
       enabled: false
     serviceMonitor:
-      enabled: false
+      enabled: true
     selfMonitoring:
       enabled: false
       grafanaAgent:
         installOperator: false
     lokiCanary:
       enabled: false
+
+  sidecar:
+    image:
+      repository: giantswarm/k8s-sidecar
+    securityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi
+      requests:
+        cpu: 50m
+        memory: 50Mi
 
   test:
     enabled: false
