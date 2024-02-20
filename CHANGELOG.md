@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add additional ciliumNetworkPolicies for backend and write pods.
+
 ## [0.16.0] - 2024-02-19
 
 ### Added
 
 - Auto reload multi-tenant-proxy config when it changes.
 - Upgraded upstream chart from 5.43.1 to 5.43.2 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
-- Add additional ciliumNetworkPolicies for backend and write pods.
 
 ### Fixed
 
