@@ -96,6 +96,7 @@ global:
   dnsNamespace: "kube-system"
 
 ciliumNetworkPolicy:
+  enabled: false
   coredns:
     enabled: false
 
