@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix read pods by adding another CNP to allow those egress access to world.
+
 ## [0.16.1] - 2024-02-21
 
 ### Added
