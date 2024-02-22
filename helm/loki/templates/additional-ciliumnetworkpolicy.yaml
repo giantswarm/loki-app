@@ -28,6 +28,20 @@ spec:
   - toEntities:
     - world
 ---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "loki.name" . }}-read-egress
+  namespace: {{ .Release.Namespace }}
+spec:
+  endpointSelector:
+    matchLabels:
+      {{- include "loki.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: read
+  egress:
+  - toEntities:
+    - world
+---
 {{- if .Values.ciliumNetworkPolicy.coredns.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
