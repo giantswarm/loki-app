@@ -166,10 +166,10 @@ should give you the right id for `machine-deployment` or `machine-pool` dependin
 #### Multi-tenant setup
 
 1. The default GiantSwarm template is prepared for multi-tenancy.
-In multi tenant setups<a name="multi-tenant-config"></a>, you can enable [loki-multi-tenant-proxy](https://github.com/k8spin/loki-multi-tenant-proxy)
+In multi tenant setups<a name="multi-tenant-config"></a>, you can enable [multi-tenant-proxy](https://github.com/giantswarm/grafana-multi-tenant-proxy)
 to manage credentials for different tenants.
 
-Enable the deployment of loki-multi-tenant-proxy by setting `multiTenantAuth.enabled` to `true`.
+Enable the deployment of multi-tenant-proxy by setting `multiTenantAuth.enabled` to `true`.
 
 Write down your credentials in `multiTenantAuth.credentials`.
 They should be formatted in your values file like this:

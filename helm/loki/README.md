@@ -60,7 +60,7 @@ Helm chart for Grafana Loki in simple, scalable mode
 | multiTenantAuth.credentials | string | `"users:\n  - username: Tenant1\n    password: 1tnaneT\n    orgid: tenant-1\n  - username: Tenant2\n    password: 2tnaneT\n    orgid: tenant-2"` |  |
 | multiTenantAuth.enabled | bool | `false` |  |
 | multiTenantAuth.image.pullPolicy | string | `"IfNotPresent"` |  |
-| multiTenantAuth.image.repository | string | `"giantswarm/loki-multi-tenant-proxy-gs"` |  |
+| multiTenantAuth.image.repository | string | `"giantswarm/grafana-multi-tenant-proxy"` |  |
 | multiTenantAuth.image.tag | string | `"0.1.0"` |  |
 | multiTenantAuth.image.pullSecrets | list | `[]` |  |
 | multiTenantAuth.podSecurityContext.fsGroup | int | `10001` |  |
