@@ -1,4 +1,4 @@
-{{- if .Values.ciliumNetworkPolicy.enabled }}
+{{- if and .Values.ciliumNetworkPolicy.enabled .Values.loki.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
