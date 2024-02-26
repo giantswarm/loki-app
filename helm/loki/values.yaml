@@ -96,9 +96,9 @@ global:
   dnsNamespace: "kube-system"
 
 ciliumNetworkPolicy:
-  enabled: false
+  enabled: true
   coredns:
-    enabled: false
+    enabled: true
 
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
@@ -118,6 +118,10 @@ loki:
     labels: {}
     # -- Set this toggle to false to opt out of automounting API credentials for the service account
     automountServiceAccountToken: true
+  
+  networkPolicy:
+    enabled: true
+    flavor: cilium
 
   gateway:
     extraContainers:
