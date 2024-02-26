@@ -342,6 +342,7 @@ Giant Swarm clusters will use IRSA (Iam Roles for Service Accounts) to allow pod
 
 This means that the role's `Trust Relationship` will be different that the one used for KIAM (cf above) :
 ```bash
+PRINCIPAL_ARN="$(aws --profile="$AWS_PROFILE" iam get-role --role-name "$CLUSTER_NAME"-IAMManager-Role | sed -n 's/.*Arn.*"\(arn:.*\)".*/\1/p')"
 ROLE_DOC='{
     "Version": "2012-10-17",
     "Statement": [
