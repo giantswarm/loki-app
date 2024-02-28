@@ -14,7 +14,7 @@ multiTenantAuth:
 loki:
   # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
   # HTTP header to be set to indicate which tenant's logs are these. To enable
-  # minimal security, you can configure the gateway to route traffic through loki-multi-tenant-proxy
+  # minimal security, you can configure the gateway to route traffic through multi-tenant-proxy
   # to do HTTP basicAuth and overwriting the tenant id header
   loki:
     schemaConfig:

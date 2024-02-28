@@ -33,7 +33,7 @@ spec:
           args:
             - "run"
             - "--port=3100"
-            - '--loki-server=http://loki-read.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
+            - '--target-server=http://loki-read.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
             - "--log-level=WARN"
           {{- with .Values.multiTenantAuth.env }}
@@ -78,7 +78,7 @@ spec:
           args:
             - "run"
             - "--port=3101"
-            - '--loki-server=http://loki-write.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
+            - '--target-server=http://loki-write.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
             - "--log-level=WARN"
             {{- if not .Values.multiTenantAuth.write.enforceOrgId }}
@@ -126,7 +126,7 @@ spec:
           args:
             - "run"
             - "--port=3102"
-            - '--loki-server=http://loki-backend.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
+            - '--target-server=http://loki-backend.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100'
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
             - "--log-level=WARN"
           {{- with .Values.multiTenantAuth.env }}
