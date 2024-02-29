@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- use new multi-tenant-proxy, named `grafana-multi-tenant-proxy`
+
 ## [0.17.0] - 2024-02-26
 
 ### Changed
@@ -16,10 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Helm chart generation when loki is disabled and CNPs are enabled
-
-### Changed
-
-- use new multi-tenant-proxy, named `grafana-multi-tenant-proxy`
 
 ## [0.16.2] - 2024-02-22
 
