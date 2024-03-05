@@ -96,7 +96,6 @@ global:
   dnsNamespace: "kube-system"
 
 ciliumNetworkPolicy:
-  enabled: true
   coredns:
     enabled: true
 
@@ -122,6 +121,12 @@ loki:
   networkPolicy:
     enabled: true
     flavor: cilium
+    egressWorld:
+      # -- Enable additional cilium egress rules to external world for write, read and backend.
+      enabled: true
+    egressKubeApiserver:
+      # -- Enable additional cilium egress rules to kube-apiserver for backend.
+      enabled: true
 
   gateway:
     extraContainers:
