@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add CiliumNetworkPolicy for Acme challenge.
+
 ### Changed
 
 - Upgraded upstream chart from 5.43.6 to 5.45.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.

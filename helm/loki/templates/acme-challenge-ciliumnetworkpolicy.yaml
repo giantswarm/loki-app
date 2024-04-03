@@ -1,0 +1,18 @@
+{{- if and .Values.loki.networkPolicy.enabled (eq .Values.loki.networkPolicy.flavor "cilium") }}
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "loki.name" . }}-ingress-acme-challenge
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      acme.cert-manager.io/http01-solver: "true"
+  ingress:
+  - toPorts:
+    - ports:
+      - port: "8089"
+        protocol: TCP
+{{- end }}
