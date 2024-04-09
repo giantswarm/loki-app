@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.1] - 2024-04-09
+
 ### Changed
 
 - Updated the coredns cilium networpolicy to allow egress traffic to `k8s-dns-node-cache` pods.
@@ -518,7 +520,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.19.1...HEAD
+[0.19.1]: https://github.com/giantswarm/loki-app/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/giantswarm/loki-app/compare/v0.18.2...v0.19.0
 [0.18.2]: https://github.com/giantswarm/loki-app/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/giantswarm/loki-app/compare/v0.18.0...v0.18.1
