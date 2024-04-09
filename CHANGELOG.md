@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated the coredns cilium networpolicy to allow egress traffic to `k8s-dns-node-cache` pods.
+
 ## [0.19.0] - 2024-04-03
 
 ### Added
