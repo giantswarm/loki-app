@@ -271,6 +271,23 @@ loki:
       allowPrivilegeEscalation: false
       seccompProfile:
         type: RuntimeDefault
+    # -- Loki 3 requires a schema to be configured
+    schemaConfig:
+      configs:
+        - from: 2024-04-01
+          object_store: s3
+          store: tsdb
+          schema: v13
+          index:
+            prefix: index_
+            period: 24h
+    storage:
+      # Loki requires a bucket for chunks and the ruler.
+      # Please provide these values if you are using object storage.
+      bucketNames:
+        chunks: chunks
+        ruler: ruler
+        admin: admin
 
   rbac:
     pspEnabled: true
