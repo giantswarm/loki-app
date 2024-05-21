@@ -23,6 +23,9 @@ loki:
   # minimal security, you can configure the gateway to route traffic through multi-tenant-proxy
   # to do HTTP basicAuth and overwriting the tenant id header
   loki:
+    compactor:
+      retention_enabled: true
+      delete_request_store: s3
     schemaConfig:
       # Beware when Changing this config on an existing Loki
       # Doc is here: https://grafana.com/docs/loki/latest/storage/#upgrading-schemas
