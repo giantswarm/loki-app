@@ -36,7 +36,7 @@
                     }
                 },
                 "priorityClassName": {
-                    "type": "null"
+                    "type": ["string", "null"]
                 }
             }
         },
@@ -759,7 +759,7 @@
                             "type": "integer"
                         },
                         "targetMemoryUtilizationPercentage": {
-                            "type": "null"
+                            "type": ["string", "null"]
                         }
                     }
                 },

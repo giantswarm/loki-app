@@ -254,9 +254,9 @@ loki:
 
   # -- Caching configuration
   chunksCache:
-    enabled: false
+    enabled: true
   resultsCache:
-    enabled: false
+    enabled: true
 
   # -- Canary configuration
   lokiCanary:
