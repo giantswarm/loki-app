@@ -86,6 +86,14 @@
                         }
                     }
                 },
+                "chunksCache": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        }
+                    }
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -343,68 +351,6 @@
                                 }
                             }
                         },
-                        "limits_config": {
-                            "type": "object",
-                            "properties": {
-                                "enforce_metric_name": {
-                                    "type": "boolean"
-                                },
-                                "ingestion_burst_size_mb": {
-                                    "type": "integer"
-                                },
-                                "ingestion_rate_mb": {
-                                    "type": "integer"
-                                },
-                                "max_concurrent_tail_requests": {
-                                    "type": "integer"
-                                }
-                            }
-                        },
-                        "memcached": {
-                            "type": "object",
-                            "properties": {
-                                "chunk_cache": {
-                                    "type": "object",
-                                    "properties": {
-                                        "batch_size": {
-                                            "type": "integer"
-                                        },
-                                        "enabled": {
-                                            "type": "boolean"
-                                        },
-                                        "host": {
-                                            "type": "string"
-                                        },
-                                        "parallelism": {
-                                            "type": "integer"
-                                        },
-                                        "service": {
-                                            "type": "string"
-                                        }
-                                    }
-                                },
-                                "results_cache": {
-                                    "type": "object",
-                                    "properties": {
-                                        "default_validity": {
-                                            "type": "string"
-                                        },
-                                        "enabled": {
-                                            "type": "boolean"
-                                        },
-                                        "host": {
-                                            "type": "string"
-                                        },
-                                        "service": {
-                                            "type": "string"
-                                        },
-                                        "timeout": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        },
                         "podSecurityContext": {
                             "type": "object",
                             "properties": {
@@ -429,6 +375,69 @@
                                     }
                                 }
                             }
+                        },
+                        "schemaConfig": {
+                            "type": "object",
+                            "properties": {
+                                "configs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "from": {
+                                                "type": "string"
+                                            },
+                                            "index": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "period": {
+                                                        "type": "string"
+                                                    },
+                                                    "prefix": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "object_store": {
+                                                "type": "string"
+                                            },
+                                            "schema": {
+                                                "type": "string"
+                                            },
+                                            "store": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "storage": {
+                            "type": "object",
+                            "properties": {
+                                "bucketNames": {
+                                    "type": "object",
+                                    "properties": {
+                                        "admin": {
+                                            "type": "string"
+                                        },
+                                        "chunks": {
+                                            "type": "string"
+                                        },
+                                        "ruler": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "lokiCanary": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
                         }
                     }
                 },
@@ -444,14 +453,6 @@
                             }
                         },
                         "dashboards": {
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "type": "boolean"
-                                }
-                            }
-                        },
-                        "lokiCanary": {
                             "type": "object",
                             "properties": {
                                 "enabled": {
@@ -582,6 +583,14 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "resultsCache": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
                         }
                     }
                 },
