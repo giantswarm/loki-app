@@ -251,9 +251,6 @@
                         "nginxConfig": {
                             "type": "object",
                             "properties": {
-                                "genMultiTenant": {
-                                    "type": "boolean"
-                                },
                                 "resolver": {
                                     "type": "string"
                                 }

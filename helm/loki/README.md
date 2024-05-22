@@ -63,7 +63,6 @@ Helm chart for Grafana Loki in simple, scalable mode
 | loki.gateway.extraContainers[0].securityContext.readOnlyRootFilesystem | bool | `true` |  |
 | loki.gateway.extraContainers[0].securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | loki.gateway.image.repository | string | `"giantswarm/nginx-unprivileged"` |  |
-| loki.gateway.nginxConfig.genMultiTenant | bool | `false` |  |
 | loki.gateway.nginxConfig.resolver | string | `"127.0.0.1:8053 valid=60s"` |  |
 | loki.gateway.podSecurityContext | object | `{"fsGroup":101,"runAsGroup":101,"runAsNonRoot":true,"runAsUser":101,"seccompProfile":{"type":"RuntimeDefault"}}` | The SecurityContext for gateway containers |
 | loki.gateway.resources.limits.memory | string | `"500Mi"` |  |

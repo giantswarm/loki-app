@@ -51,8 +51,14 @@ Versions before v1.0.0 are not stable, and can even have breaking changes betwee
 ⚠️ Upgrading to 0.20.x from any older version is a breaking change as described below
 
 - upgrades to Loki 3 which brings along a lot of breaking changes. See the following links for more context:
-  - Upgrading from Loki 2.9 to Loki 3: https://grafana.com/docs/loki/latest/setup/upgrade/#300
+  - Upgrading from Loki 2.9 to Loki 3 (c.f. https://grafana.com/docs/loki/latest/setup/upgrade/#300) which includes
+    - Metric namespace changes
+    - New schema v13 is required to be compatible with Open Telemetry
   - Upgraded upstream chart from 5.x to 6.x: https://grafana.com/docs/loki/latest/setup/upgrade/upgrade-to-6x/
+
+Be aware that this upgrade will cause a slight downtime of Loki as the ingress needs to be recreated (https://github.com/grafana/loki/issues/12554)
+
+Current list of open issues around loki 3 upgrade can be found here: https://github.com/grafana/loki/issues/12506
 
 ### From 0.6.x to 0.7.x
 

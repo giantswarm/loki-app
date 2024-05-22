@@ -174,7 +174,6 @@ loki:
             memory: 10Mi
     nginxConfig:
       resolver: "127.0.0.1:8053 valid=60s"
-      genMultiTenant: false
       # To be set when using MultiTenant with GiantSwarm multi-tenant-proxy
       #customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
       #customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
