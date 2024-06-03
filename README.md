@@ -46,6 +46,20 @@ A major chart version change (like v0.5.0 -> v1.0.0) indicates that there is an 
 
 Versions before v1.0.0 are not stable, and can even have breaking changes between "minor" versions. (like v0.5.0 -> v0.6.0)
 
+### From 0.19.x to 0.20.x
+
+⚠️ Upgrading to 0.20.x from any older version is a breaking change as described below
+
+- upgrades to Loki 3 which brings along a lot of breaking changes. See the following links for more context:
+  - Upgrading from Loki 2.9 to Loki 3 (c.f. https://grafana.com/docs/loki/latest/setup/upgrade/#300) which includes
+    - Metric namespace changes
+    - New schema v13 is required to be compatible with Open Telemetry
+  - Upgraded upstream chart from 5.x to 6.x: https://grafana.com/docs/loki/latest/setup/upgrade/upgrade-to-6x/
+
+Be aware that this upgrade will cause a slight downtime of Loki as the ingress needs to be recreated (https://github.com/grafana/loki/issues/12554)
+
+Current list of open issues around loki 3 upgrade can be found here: https://github.com/grafana/loki/issues/12506
+
 ### From 0.6.x to 0.7.x
 
 ⚠️ Upgrading to 0.9.x from any older version can be a breaking change as described below
@@ -141,7 +155,7 @@ However, because of multi-tenancy, seeing logs that were stored with the new ver
 
 ## Configuration
 
-As this application is build upon the Grafana loki upstream chart as a dependency, most of the values to override can be found [here](https://github.com/grafana/loki/blob/helm-loki-3.2.1/production/helm/loki/values.yaml).
+As this application is build upon the Grafana loki upstream chart as a dependency, most of the values to override can be found [here](https://github.com/grafana/loki/blob/helm-loki-6.5.2/production/helm/loki/values.yaml).
 
 Some samples can be found [here](./sample_configs/)
 

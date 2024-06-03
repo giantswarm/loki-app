@@ -23,17 +23,19 @@ loki:
   # minimal security, you can configure the gateway to route traffic through multi-tenant-proxy
   # to do HTTP basicAuth and overwriting the tenant id header
   loki:
+    compactor:
+      retention_enabled: true
+      delete_request_store: s3
     schemaConfig:
       # Beware when Changing this config on an existing Loki
       # Doc is here: https://grafana.com/docs/loki/latest/storage/#upgrading-schemas
-      # Info about schema v12: https://grafana.com/blog/2022/04/11/new-in-grafana-loki-2.5-faster-queries-more-log-sources-so-long-s3-rate-limits-and-more/
       configs:
-        - from: "2020-09-07"
-          store: boltdb-shipper
+        - from: 2024-04-01
           object_store: s3
-          schema: v12
+          store: tsdb
+          schema: v13
           index:
-            prefix: loki_index_
+            prefix: index_
             period: 24h
     storage:
       type: s3
@@ -67,7 +69,6 @@ loki:
             - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
           secretName: loki-ingress-cert
     nginxConfig:
-      genMultiTenant: true
       customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
       customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
       customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
