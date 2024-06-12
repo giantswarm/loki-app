@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated loki-write hpa in the values so that it also takes into account memory for scaling the pods.
+
 ## [0.19.1] - 2024-04-09
 
 ### Changed

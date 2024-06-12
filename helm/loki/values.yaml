@@ -226,6 +226,7 @@ loki:
       enabled: true
       minReplicas: 2
       maxReplicas: 10
+      targetMemoryUtilizationPercentage: 90
     resources:
       limits:
         memory: 4Gi
