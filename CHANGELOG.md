@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated HPAs in the values so that it also takes into account memory for scaling the pods.
+
 ## [0.20.0] - 2024-06-03
 
 - Upgraded upstream chart from 5.47.2 to 6.5.2 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information. This upgrades Loki from Loki 2.9.6 to Loki 3.0.0 which brings along a lot of breaking changes. Please check the following links before upgrading:
