@@ -14,3 +14,4 @@
   * `sed -i 's/"type": "null"/"type": ["string", "null"]/g' helm/loki/values.schema.json` to accept strings for all null values.
 * if new paths are defined by loki API, update `nginxConfig` in example values.
 * update the link in the [`Configuration`](./README.md#configuration) section of the README to point to the new tag configuration.
+* run `helm-docs helm/loki`

@@ -1,3 +1,16 @@
+global:
+  image:
+    # -- Overrides the Docker registry globally for all images
+    registry: gsoci.azurecr.io
+  # -- Overrides the priorityClassName for all pods
+  priorityClassName:
+  # -- configures cluster domain ("cluster.local" by default)
+  clusterDomain: "cluster.local"
+  # -- configures DNS service name
+  dnsService: "coredns"
+  # -- configures DNS service namespace
+  dnsNamespace: "kube-system"
+
 multiTenantAuth:
   # -- Specifies whether the multi-tenant proxy should be enabled
   enabled: false
@@ -29,11 +42,13 @@ multiTenantAuth:
       repository: giantswarm/configmap-reload
       # -- Tag of image to use for config reloading.
       tag: v0.9.0
+
     # -- Resource requests and limits to apply to the config reloader containers.
     resources:
       requests:
         cpu: "1m"
         memory: "5Mi"
+
     # -- Security context to apply to the config reloader containers.
     containerSecurityContext:
       allowPrivilegeEscalation: false
@@ -82,19 +97,6 @@ multiTenantAuth:
     # -- disabling this allows write requests to set whatever orgid they want
     enforceOrgId: true
 
-global:
-  image:
-    # -- Overrides the Docker registry globally for all images
-    registry: gsoci.azurecr.io
-  # -- Overrides the priorityClassName for all pods
-  priorityClassName:
-  # -- configures cluster domain ("cluster.local" by default)
-  clusterDomain: "cluster.local"
-  # -- configures DNS service name
-  dnsService: "coredns"
-  # -- configures DNS service namespace
-  dnsNamespace: "kube-system"
-
 ciliumNetworkPolicy:
   coredns:
     enabled: true
@@ -103,30 +105,47 @@ loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
 
-  serviceAccount:
-    # -- Specifies whether a ServiceAccount should be created
-    create: true
-    # -- The name of the ServiceAccount to use.
-    # If not set and create is true, a name is generated using the fullname template
-    name: loki
-    # -- Image pull secrets for the service account
-    imagePullSecrets: []
-    # -- Annotations for the service account
-    annotations: {}
-    # -- Labels for the service account
-    labels: {}
-    # -- Set this toggle to false to opt out of automounting API credentials for the service account
-    automountServiceAccountToken: true
-  
-  networkPolicy:
-    enabled: true
-    flavor: cilium
-    egressWorld:
-      # -- Enable additional cilium egress rules to external world for write, read and backend.
-      enabled: true
-    egressKubeApiserver:
-      # -- Enable additional cilium egress rules to kube-apiserver for backend.
-      enabled: true
+  loki:
+    image:
+      repository: giantswarm/loki
+
+    # -- The SecurityContext for Loki pods
+    podSecurityContext:
+      fsGroup: 10001
+      runAsGroup: 10001
+      runAsNonRoot: true
+      runAsUser: 10001
+      seccompProfile:
+        type: RuntimeDefault
+    # -- The SecurityContext for Loki containers
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Loki Storage schema configuration
+    #    Loki 3 requires a schema to be configured so we configure v13, the latest.
+    #    Doc is here: https://grafana.com/docs/loki/latest/configure/storage/#schema-config
+    schemaConfig:
+      configs:
+        - from: 2024-04-01
+          object_store: s3
+          store: tsdb
+          schema: v13
+          index:
+            prefix: index_
+            period: 24h
+    # -- Loki Storage configuration
+    storage:
+      # --- Loki requires a bucket for chunks and the ruler.
+      # TODO(user): Please provide these values if you are using object storage.
+      bucketNames:
+        chunks: chunks
+        ruler: ruler
+        admin: admin
 
   gateway:
     extraContainers:
@@ -155,7 +174,6 @@ loki:
             memory: 10Mi
     nginxConfig:
       resolver: "127.0.0.1:8053 valid=60s"
-      genMultiTenant: false
       # To be set when using MultiTenant with GiantSwarm multi-tenant-proxy
       #customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
       #customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
@@ -234,50 +252,17 @@ loki:
         memory: 3Gi
         cpu: 500m
 
-  loki:
-    image:
-      repository: giantswarm/loki
-    memcached:
-      chunk_cache:
-        enabled: false
-        host: "memcached-app.loki.svc"
-        service: "memcache"
-        batch_size: 256
-        parallelism: 10
-      results_cache:
-        enabled: false
-        host: "memcached-app.loki.svc"
-        service: "memcache"
-        timeout: "500ms"
-        default_validity: "24h"
-    limits_config:
-      enforce_metric_name: true
-      ingestion_rate_mb: 10
-      ingestion_burst_size_mb: 20
-      max_concurrent_tail_requests: 20
-    # -- The SecurityContext for Loki pods
-    podSecurityContext:
-      fsGroup: 10001
-      runAsGroup: 10001
-      runAsNonRoot: true
-      runAsUser: 10001
-      seccompProfile:
-        type: RuntimeDefault
-    # -- The SecurityContext for Loki containers
-    containerSecurityContext:
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-      allowPrivilegeEscalation: false
-      seccompProfile:
-        type: RuntimeDefault
+  # -- Caching configuration
+  chunksCache:
+    enabled: true
+  resultsCache:
+    enabled: true
 
-  rbac:
-    pspEnabled: true
-    pspAnnotations:
-      seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+  # -- Canary configuration
+  lokiCanary:
+    enabled: false
 
+  # -- Configuration of monitoring components
   monitoring:
     dashboards:
       enabled: false
@@ -291,8 +276,38 @@ loki:
       enabled: false
       grafanaAgent:
         installOperator: false
-    lokiCanary:
-      enabled: false
+
+  # -- Configuration of Loki's network policy
+  networkPolicy:
+    enabled: true
+    flavor: cilium
+    egressWorld:
+      # -- Enable additional cilium egress rules to external world for write, read and backend.
+      enabled: true
+    egressKubeApiserver:
+      # -- Enable additional cilium egress rules to kube-apiserver for backend.
+      enabled: true
+
+  rbac:
+    pspEnabled: true
+    pspAnnotations:
+      seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+
+  # -- Configuration of Loki's service account
+  serviceAccount:
+    # -- Specifies whether a ServiceAccount should be created
+    create: true
+    # -- The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: loki
+    # -- Image pull secrets for the service account
+    imagePullSecrets: []
+    # -- Annotations for the service account
+    annotations: {}
+    # -- Labels for the service account
+    labels: {}
+    # -- Set this toggle to false to opt out of automounting API credentials for the service account
+    automountServiceAccountToken: true
 
   sidecar:
     image:
