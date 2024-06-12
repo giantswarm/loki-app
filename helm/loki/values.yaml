@@ -182,6 +182,7 @@ loki:
       enabled: true
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -218,6 +219,7 @@ loki:
       enabled: true
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
     resources:
       limits:
         memory: 3Gi
@@ -230,6 +232,7 @@ loki:
       enabled: true
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
     resources:
       limits:
         memory: 3Gi
