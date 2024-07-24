@@ -4,7 +4,8 @@ from typing import Dict, List, Optional
 import pytest
 import pykube
 from pytest_helm_charts.clusters import Cluster
-from pytest_helm_charts.k8s.deployment import wait_for_deployments_to_run, wait_for_stateful_sets_to_run
+from pytest_helm_charts.k8s.deployment import wait_for_deployments_to_run
+from pytest_helm_charts.k8s.stateful_set import wait_for_stateful_sets_to_run
 
 
 logger = logging.getLogger(__name__)
