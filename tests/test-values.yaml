@@ -1,0 +1,245 @@
+global:
+  clusterDomain: cluster.local
+  dnsService: coredns
+  image:
+    registry: gsoci.azurecr.io
+  podSecurityStandards:
+    enforced: true
+loki:
+  backend:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: eks.amazonaws.com/compute-type
+              operator: NotIn
+              values:
+              - fargate
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: backend
+                app.kubernetes.io/instance: loki
+                app.kubernetes.io/name: loki
+            topologyKey: kubernetes.io/hostname
+          weight: 1
+        requiredDuringSchedulingIgnoredDuringExecution: []
+    extraArgs:
+    - -config.expand-env
+  chunksCache:
+    enabled: false
+  enabled: true
+  extraObjects:
+  - apiVersion: objectstorage.giantswarm.io/v1alpha1
+    kind: Bucket
+    metadata:
+      name: giantswarm-golem-loki
+      namespace: loki
+    spec:
+      accessRole:
+        roleName: giantswarm-golem-loki
+        serviceAccountName: loki
+        serviceAccountNamespace: loki
+      expirationPolicy:
+        days: 100
+      name: giantswarm-golem-loki
+      tags:
+      - key: app
+        value: loki
+      - key: installation
+        value: golem
+      - key: name
+        value: giantswarm-golem-loki
+  gateway:
+    extraContainers:
+    - args:
+      - --listen
+      - 127.0.0.1:8053
+      - --hostsfile=/etc/hosts
+      - --enable-search
+      - --verbose
+      image: gsoci.azurecr.io/giantswarm/go-dnsmasq:release-1.0.7
+      imagePullPolicy: IfNotPresent
+      name: dnsmasq
+      resources:
+        limits:
+          memory: 100Mi
+        requests:
+          cpu: 10m
+          memory: 10Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        seccompProfile:
+          type: RuntimeDefault
+    ingress:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+      enabled: true
+      hosts:
+      - host: loki.golem.gaws.gigantic.io
+        paths:
+        - path: /loki/api/v1/push
+          pathType: ImplementationSpecific
+      ingressClassName: nginx
+      tls:
+      - hosts:
+        - loki.golem.gaws.gigantic.io
+        secretName: loki-ingress-cert
+    nginxConfig:
+      customBackendUrl: http://loki-multi-tenant-proxy.loki.svc.cluster.local:3102
+      customReadUrl: http://loki-multi-tenant-proxy.loki.svc.cluster.local:3100
+      customWriteUrl: http://loki-multi-tenant-proxy.loki.svc.cluster.local:3101
+    service:
+      labels:
+        prometheus.io/service-monitor: "false"
+    verboseLogging: false
+  loki:
+    analytics:
+      reporting_enabled: false
+    compactor:
+      delete_request_store: s3
+      retention_enabled: true
+    image:
+      tag: 3.1.0
+    ingester:
+      autoforget_unhealthy: true
+      chunk_encoding: snappy
+    limits_config:
+      discover_service_name:
+      - service
+      - app
+      - application
+      - name
+      - app_kubernetes_io_name
+      - container
+      - container_name
+      - component
+      - workload
+      - job
+      - scrape_job
+      ingestion_burst_size_mb: 100
+      ingestion_rate_mb: 50
+      max_global_streams_per_user: 10000
+      max_line_size: 10MB
+      retention_period: 744h
+      shard_streams:
+        enabled: true
+      split_queries_by_interval: 12h
+      volume_enabled: true
+    pattern_ingester:
+      enabled: true
+    rulerConfig:
+      alertmanager_url: http://alertmanager-operated.monitoring:9093
+      remote_write:
+        add_org_id_header: false
+        clients:
+          mimir:
+            url: http://mimir-gateway.mimir/api/v1/push
+        enabled: true
+      wal:
+        dir: /var/loki/ruler-wal
+    schemaConfig:
+      configs:
+      - from: "2023-01-24"
+        index:
+          period: 24h
+          prefix: loki_index_
+        object_store: s3
+        schema: v12
+        store: boltdb-shipper
+      - from: "2024-01-02"
+        index:
+          period: 24h
+          prefix: loki_index_
+        object_store: s3
+        schema: v12
+        store: tsdb
+      - from: "2024-05-23"
+        index:
+          period: 24h
+          prefix: loki_index_
+        object_store: s3
+        schema: v13
+        store: tsdb
+    server:
+      grpc_server_max_recv_msg_size: 104857600
+      grpc_server_max_send_msg_size: 104857600
+    storage:
+      bucketNames:
+        admin: giantswarm-golem-loki
+        chunks: giantswarm-golem-loki
+        ruler: giantswarm-golem-loki
+      s3:
+        region: eu-west-2
+      type: s3
+    tracing:
+      enabled: "false"
+  monitoring:
+    serviceMonitor:
+      enabled: true
+  rbac:
+    pspEnabled: false
+  read:
+    extraArgs:
+    - -config.expand-env
+    - -querier.multi-tenant-queries-enabled
+  resultsCache:
+    enabled: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::242036376510:role/giantswarm-golem-loki
+  sidecar:
+    image:
+      repository: gsoci.azurecr.io/giantswarm/k8s-sidecar
+  write:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: eks.amazonaws.com/compute-type
+              operator: NotIn
+              values:
+              - fargate
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: write
+                app.kubernetes.io/instance: loki
+                app.kubernetes.io/name: loki
+            topologyKey: kubernetes.io/hostname
+          weight: 1
+        requiredDuringSchedulingIgnoredDuringExecution: []
+    autoscaling:
+      behavior:
+        scaleUp:
+          policies:
+          - periodSeconds: 120
+            type: Pods
+            value: 1
+      maxReplicas: 25
+    extraArgs:
+    - -config.expand-env
+    persistence:
+      size: 40Gi
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        cpu: 100m
+        memory: 1Gi
+multiTenantAuth:
+  deployCredentials: false
+  enabled: true
+  env:
+  - name: OAUTH_PROVIDER_URL
+    value: https://dex.golem.gaws.gigantic.io
