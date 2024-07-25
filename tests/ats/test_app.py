@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional
+from typing import List, Tuple
 
 import pytest
 import pykube
@@ -33,7 +33,7 @@ def test_api_working(kube_cluster: Cluster) -> None:
 # scope "module" means this is run only once, for the first test case requesting! It might be tricky
 # if you want to assert this multiple times
 @pytest.fixture(scope="module")
-def ic_components(request, kube_cluster: Cluster) -> List[pykube.Deployment, pykube.StatefulSet]:
+def ic_components(kube_cluster: Cluster) -> Tuple[List[pykube.Deployment], List[pykube.StatefulSet]]:
     logger.info("Waiting for loki components to be deployed..")
 
     components_ready = wait_for_ic_components(kube_cluster)
@@ -42,7 +42,7 @@ def ic_components(request, kube_cluster: Cluster) -> List[pykube.Deployment, pyk
 
     return components_ready
 
-def wait_for_ic_components(kube_cluster: Cluster) -> List[pykube.Deployment, pykube.StatefulSet]:
+def wait_for_ic_components(kube_cluster: Cluster) -> Tuple[List[pykube.Deployment], List[pykube.StatefulSet]]:
     deployments = wait_for_deployments_to_run(
         kube_cluster.kube_client,
         [read_deployment_name, gateway_deployment_name],
@@ -55,7 +55,7 @@ def wait_for_ic_components(kube_cluster: Cluster) -> List[pykube.Deployment, pyk
         namespace_name,
         timeout,
     )
-    return deployments, statefulsets
+    return (deployments, statefulsets)
 
 @pytest.fixture(scope="module")
 def pods(kube_cluster: Cluster) -> List[pykube.Pod]:
@@ -72,8 +72,13 @@ def pods(kube_cluster: Cluster) -> List[pykube.Pod]:
 @pytest.mark.smoke
 @pytest.mark.upgrade
 @pytest.mark.flaky(reruns=5, reruns_delay=10)
-def test_pods_available(kube_cluster: Cluster, ic_components: List[pykube.Deployment, pykube.StatefulSet]):
-    for s in ic_components:
+def test_pods_available(ic_components: Tuple[List[pykube.Deployment], List[pykube.StatefulSet]]):
+    # loop over the list of deployments
+    for d in ic_components[0]:
+        assert int(d.obj["status"]["readyReplicas"]) == int(d.obj["spec"]["replicas"])
+
+    # loop over the list of statefulsets
+    for s in ic_components[1]:
         assert int(s.obj["status"]["readyReplicas"]) == int(s.obj["spec"]["replicas"])
 
 # when we start the tests on circleci, we have to wait for pods to be available, hence
