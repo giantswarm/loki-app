@@ -32,27 +32,6 @@ loki:
   chunksCache:
     enabled: false
   enabled: true
-  extraObjects:
-  - apiVersion: objectstorage.giantswarm.io/v1alpha1
-    kind: Bucket
-    metadata:
-      name: giantswarm-golem-loki
-      namespace: loki
-    spec:
-      accessRole:
-        roleName: giantswarm-golem-loki
-        serviceAccountName: loki
-        serviceAccountNamespace: loki
-      expirationPolicy:
-        days: 100
-      name: giantswarm-golem-loki
-      tags:
-      - key: app
-        value: loki
-      - key: installation
-        value: golem
-      - key: name
-        value: giantswarm-golem-loki
   gateway:
     extraContainers:
     - args:
@@ -64,12 +43,6 @@ loki:
       image: gsoci.azurecr.io/giantswarm/go-dnsmasq:release-1.0.7
       imagePullPolicy: IfNotPresent
       name: dnsmasq
-      resources:
-        limits:
-          memory: 100Mi
-        requests:
-          cpu: 10m
-          memory: 10Mi
       securityContext:
         allowPrivilegeEscalation: false
         capabilities:
@@ -136,7 +109,6 @@ loki:
     pattern_ingester:
       enabled: true
     rulerConfig:
-      alertmanager_url: http://alertmanager-operated.monitoring:9093
       remote_write:
         add_org_id_header: false
         clients:
