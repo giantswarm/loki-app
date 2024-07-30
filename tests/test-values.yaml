@@ -5,6 +5,9 @@ global:
     registry: gsoci.azurecr.io
   podSecurityStandards:
     enforced: true
+ciliumNetworkPolicy:
+  coredns:
+    enabled: false
 loki:
   backend:
     affinity:
@@ -32,6 +35,9 @@ loki:
   chunksCache:
     enabled: false
   enabled: true
+  networkPolicy:
+    enabled: true
+    flavor: kubernetes
   gateway:
     extraContainers:
     - args:
