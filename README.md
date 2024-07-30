@@ -241,7 +241,7 @@ loki:
   loki:
     structuredConfig:
       bloom_compactor:
-        enabled: false
+        enabled: true
         retention:
           enabled: true
           max_lookback_days: 30
