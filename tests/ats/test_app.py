@@ -10,7 +10,7 @@ from pytest_helm_charts.k8s.stateful_set import wait_for_stateful_sets_to_run
 
 logger = logging.getLogger(__name__)
 
-namespace_name = "kong"
+namespace_name = "loki"
 write_sts_name = "loki-write"
 backend_sts_name = "loki-backend"
 read_deployment_name = "loki-read"
