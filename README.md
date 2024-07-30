@@ -246,7 +246,7 @@ loki:
           enabled: true
           max_lookback_days: 30
       bloom_gateway:
-        enabled: false
+        enabled: true
         client:
           addresses: dns+loki-backend-headless.loki.svc.cluster.local:9095
     limits_config:
