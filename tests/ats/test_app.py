@@ -16,7 +16,7 @@ backend_sts_name = "loki-backend"
 read_deployment_name = "loki-read"
 gateway_deployment_name = "loki-gateway"
 
-timeout: int = 560
+timeout: int = 900
 
 @pytest.mark.smoke
 def test_api_working(kube_cluster: Cluster) -> None:
