@@ -1,6 +1,14 @@
 version: 2.1
 orbs:
   architect: giantswarm/architect@5.3.1
+jobs:
+  template-chart:
+    docker:
+      - image: giantswarm/helm-chart-testing:v3.11.0
+    steps:
+      - checkout
+      - run: cd helm/loki && helm dep up
+      - run: helm template helm/loki
 
 workflows:
   package-and-push-chart-on-tag:
@@ -31,6 +39,15 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      
+      - template-chart:
+          name: "template-chart-test"
+          filters:
+            branches:
+              ignore:
+                - master
+          requires:
+            - "package and push loki chart"
       
       - architect/run-tests-with-ats:
           name: run-tests-with-ats
