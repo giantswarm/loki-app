@@ -230,6 +230,37 @@ Both subfields also need to have their `host` and `service` specified. If you de
 * `host` should be `memcached-app.loki.svc`. Otherwise, with custom values for `memcached-app`, the `host` value will be memcached's service DNS name.
 * `service` should be `memcache`. With custom values for `memcached-app`, the `service` value will be memcached's service port name.
 
+### Bloom filters
+
+Giant Swarm experimented with bloom filters quite early one after the release of Loki 3.1.0 as can be seen [here](https://github.com/giantswarm/roadmap/issues/3563).
+
+You can quite easily enable blooms in your loki instance by setting the following configuration:
+
+```yaml
+loki:
+  loki:
+    structuredConfig:
+      bloom_compactor:
+        enabled: true
+        retention:
+          enabled: true
+          max_lookback_days: 30
+      bloom_gateway:
+        enabled: true
+        client:
+          addresses: dns+loki-backend-headless.loki.svc.cluster.local:9095
+    limits_config:
+      bloom_gateway_enable_filtering: true
+      bloom_compactor_enable_compaction: true
+```
+
+We decided against enabling it by default for now for multiple reasons mostly argued upstream https://github.com/grafana/loki/issues/12751#issuecomment-2252127654 and https://github.com/grafana/loki/issues/12751#issuecomment-2252138818:
+
+- bloom filters are under heavy development
+- architecture may still change quite often/fast
+- documentation is not guaranteed up-to-date
+- nobody knows about performance yet...
+
 ### Deploying on AWS
 
 The recommended deployment mode is using S3 storage mode. Assuming your cluster
