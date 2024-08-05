@@ -1,0 +1,37 @@
+{{- if .Values.loki.enabled }}
+{{- if .Values.multiTenantAuth.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: loki-multi-tenant-proxy
+  labels:
+    {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "loki.multiTenantProxySelectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: http-read
+      path: /metrics
+      relabelings:
+        - sourceLabels: [job]
+          action: replace
+          replacement: "{{ $.Release.Namespace }}/grafana-multi-tenant-proxy-read"
+          targetLabel: job
+    - port: http-write
+      path: /metrics
+      relabelings:
+        - sourceLabels: [job]
+          action: replace
+          replacement: "{{ $.Release.Namespace }}/grafana-multi-tenant-proxy-write"
+          targetLabel: job
+    - port: http-backend
+      path: /metrics
+      relabelings:
+        - sourceLabels: [job]
+          action: replace
+          replacement: "{{ $.Release.Namespace }}/grafana-multi-tenant-proxy-backend"
+          targetLabel: job
+{{- end }}
+{{- end }}
