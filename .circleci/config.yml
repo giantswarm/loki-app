@@ -45,7 +45,7 @@ workflows:
           filters:
             branches:
               ignore:
-                - master
+                - main
           requires:
             - "package and push loki chart"
       
