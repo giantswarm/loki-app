@@ -216,7 +216,7 @@ loki:
         cpu: 100m
         memory: 1Gi
 multiTenantAuth:
-  deployCredentials: false
+  deployCredentials: true
   enabled: true
   env:
   - name: OAUTH_PROVIDER_URL
