@@ -38,6 +38,8 @@ loki:
   networkPolicy:
     enabled: true
     flavor: kubernetes
+    discovery:
+      port: 3100
   gateway:
     extraContainers:
     - args:
@@ -215,34 +217,6 @@ loki:
       requests:
         cpu: 100m
         memory: 1Gi
-  extraObjects:
-  - apiVersion: networking.k8s.io/v1
-    kind: NetworkPolicy
-    metadata:
-      name: loki-coredns
-      namespace: loki
-    spec:
-      podSelector:
-        matchLabels:
-          app.kubernetes.io/instance: loki
-          app.kubernetes.io/name: loki 
-      egress:
-        - ports:
-            - port: 53
-              protocol: UDP
-            - port: 1053
-              protocol: UDP
-            - port: 53
-              protocol: TCP
-            - port: 1053
-              protocol: TCP
-          to:
-            - podSelector:
-                matchLabels:
-                  app.kubernetes.io/name: coredns
-              namespaceSelector:
-                matchLabels:
-                  kubernetes.io/metadata.name: kube-system
       policyTypes:
         - Egress
 multiTenantAuth:
