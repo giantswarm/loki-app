@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change configuration options for the the multi-tenant proxy to now use a configuration file instead of flags.
+
 ## [0.22.0] - 2024-08-12
 
 ### Changed
