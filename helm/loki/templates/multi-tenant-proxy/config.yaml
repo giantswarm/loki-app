@@ -1,0 +1,18 @@
+{{- if .Values.loki.enabled }}
+{{- if .Values.multiTenantAuth.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-multi-tenant-proxy-config
+  labels:
+    {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
+data:
+  read-config.yaml: |
+    targetServerURL: http://loki-read.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
+  write-config.yaml: |
+    keepOrgId: {{ not .Values.multiTenantAuth.write.enforceOrgId }}
+    targetServerURL: http://loki-write.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
+  backend-config.yaml: |
+    targetServerURL: http://loki-backend.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
+{{- end }}
+{{- end }}

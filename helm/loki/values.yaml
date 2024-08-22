@@ -32,7 +32,7 @@ multiTenantAuth:
   image:
     # -- Repository to get multi-tenant proxy image from.
     repository: giantswarm/grafana-multi-tenant-proxy
-    tag: 0.5.0
+    tag: 0.5.0-2eb33b243f44b504d76f33e609e9b33cf8eb9803
     pullPolicy: IfNotPresent
     pullSecrets: []
 
