@@ -32,7 +32,7 @@ multiTenantAuth:
   image:
     # -- Repository to get multi-tenant proxy image from.
     repository: giantswarm/grafana-multi-tenant-proxy
-    tag: 0.5.0-2eb33b243f44b504d76f33e609e9b33cf8eb9803
+    tag: 0.5.0-db1a390e59aded476385f184cd143b46ea48b3de
     pullPolicy: IfNotPresent
     pullSecrets: []
 
@@ -96,6 +96,7 @@ multiTenantAuth:
   write:
     # -- disabling this allows write requests to set whatever orgid they want
     enforceOrgId: true
+  port: 3501
 
 ciliumNetworkPolicy:
   coredns:
