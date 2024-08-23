@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: loki-multi-tenant-proxy
+  name: {{ include "loki.multiTenantProxyFullname" $ }}
   labels:
     {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
 spec:
@@ -27,12 +27,11 @@ spec:
       securityContext:
         {{- toYaml .Values.multiTenantAuth.podSecurityContext | nindent 8 }}
       containers:
-        - name: loki-multi-tenant-proxy
+        - name: proxy
           image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.image.repository }}:{{ .Values.multiTenantAuth.image.tag }}"
           imagePullPolicy: {{ .Values.multiTenantAuth.image.pullPolicy }}
           args:
             - "run"
-            - "--port={{ .Values.multiTenantAuth.port }}"
             - "--auth-config=/etc/loki-multi-tenant-proxy/authn.yaml"
             - "--proxy-config=/etc/loki-multi-tenant-proxy/config.yaml"
             - "--log-level=WARN"
@@ -42,7 +41,7 @@ spec:
           {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.multiTenantAuth.port }}
+              containerPort: {{ .Values.multiTenantAuth.containerPort }}
               protocol: TCP
           securityContext:
             {{- toYaml .Values.multiTenantAuth.containerSecurityContext | nindent 12 }}
@@ -51,7 +50,7 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/loki-multi-tenant-proxy
-        - name: loki-multi-tenant-proxy-config-reloader
+        - name: config-reloader
           image: "{{ .Values.global.image.registry }}/{{ .Values.multiTenantAuth.configReloader.image.repository }}:{{ .Values.multiTenantAuth.configReloader.image.tag }}"
           args:
             - "--volume-dir=/etc/loki-multi-tenant-proxy"

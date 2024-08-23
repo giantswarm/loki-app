@@ -9,14 +9,14 @@ apiVersion: autoscaling/v2beta1
 {{- end }}
 kind: HorizontalPodAutoscaler
 metadata:
-  name: loki-multi-tenant-proxy
+  name: {{ include "loki.multiTenantProxyFullname" $ }}
   labels:
     {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: loki-multi-tenant-proxy
+    name: {{ include "loki.multiTenantProxyFullname" $ }}
   minReplicas: {{ .Values.multiTenantAuth.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.multiTenantAuth.autoscaling.maxReplicas }}
   metrics:

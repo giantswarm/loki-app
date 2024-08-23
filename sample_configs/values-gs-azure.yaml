@@ -1,15 +1,7 @@
 ---
 multiTenantAuth:
-  enabled: true
-  replicas: 3
-  credentials: |-
-    users:
-      - username: Tenant1
-        password: 1tnaneT
-        orgid: tenant-1
-      - username: Tenant2
-        password: 2tnaneT
-        orgid: tenant-2
+  enabled: false
+  deployCredentials: false
 
 loki:
   # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
@@ -49,27 +41,6 @@ loki:
   # of your Loki deployment.
   gateway:
     replicas: 3
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      annotations:
-        # this annotation means cert-manager will automatically create a ACME certificate
-        cert-manager.io/cluster-issuer: letsencrypt-giantswarm
-      hosts:
-        # host name assigned to your loki instance (must be registered in DNS)
-        - host: loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
-          paths:
-            - path: /
-              pathType: ImplementationSpecific
-      tls:
-        - hosts:
-            # host name assigned to your loki instance (must be registered in DNS)
-            - loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
-          secretName: loki-ingress-cert
-    nginxConfig:
-      customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
-      customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
-      customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
 
   # Shared configuration for all components
   # key _shared_config does not actually exist in the apps values.yaml

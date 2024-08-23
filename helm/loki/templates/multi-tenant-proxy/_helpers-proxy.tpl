@@ -13,3 +13,11 @@ multi-tenant-proxy selector labels
 {{ include "loki.selectorLabels" . }}
 app.kubernetes.io/component: multi-tenant-proxy
 {{- end }}
+
+{{/*
+multi-tenant-proxy fullname
+*/}}
+{{- define "loki.multiTenantProxyFullname" -}}
+{{ include "loki.fullname" . }}-multi-tenant-proxy
+{{- end }}
+

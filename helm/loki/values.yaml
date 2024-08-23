@@ -14,6 +14,9 @@ global:
 multiTenantAuth:
   # -- Specifies whether the multi-tenant proxy should be enabled
   enabled: false
+  networkPolicy:
+    enabled: true
+    flavor: cilium
   # -- Number of replicas for the multi-tenant proxy
   replicas: 3
   autoscaling:
@@ -32,9 +35,12 @@ multiTenantAuth:
   image:
     # -- Repository to get multi-tenant proxy image from.
     repository: giantswarm/grafana-multi-tenant-proxy
-    tag: 0.5.0-db1a390e59aded476385f184cd143b46ea48b3de
+    tag: 0.5.0-0b192a57971e944aa96d9908f543e51bd158439d
     pullPolicy: IfNotPresent
     pullSecrets: []
+
+  # -- List of target servers to proxy
+  targetServers: []
 
   configReloader:
     image:
@@ -93,10 +99,26 @@ multiTenantAuth:
     readOnlyRootFilesystem: true
     seccompProfile:
       type: RuntimeDefault
-  write:
-    # -- disabling this allows write requests to set whatever orgid they want
-    enforceOrgId: true
-  port: 3501
+  containerPort: 3501
+  service:
+    port: 80
+  ingress:
+    # -- Specifies whether an ingress for the multi-tenant-proxy should be created
+    enabled: false
+    # -- Ingress Class Name. MAY be required for Kubernetes versions >= 1.18
+    ingressClassName: ""
+    # -- Hosts configuration for the multi-tenant-proxy ingress, passed through the `tpl` function to allow templating
+    hosts:
+      - host: multi-tenant-proxy.loki.example.com
+        paths:
+          - path: /
+            # -- pathType (e.g. ImplementationSpecific, Prefix, .. etc.) might also be required by some Ingress Controllers
+            # pathType: Prefix
+    # -- TLS configuration for the gateway ingress. Hosts passed through the `tpl` function to allow templating
+    tls:
+      - secretName: loki-multi-tenant-proxy-tls
+        hosts:
+          - write.multi-tenant-proxy.loki.example.com
 
 ciliumNetworkPolicy:
   coredns:

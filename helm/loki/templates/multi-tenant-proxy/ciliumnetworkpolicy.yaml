@@ -1,0 +1,26 @@
+{{- if .Values.loki.enabled }}
+{{- if .Values.multiTenantAuth.enabled }}
+{{- if and (.Values.multiTenantAuth.networkPolicy.enabled) (eq .Values.multiTenantAuth.networkPolicy.flavor "cilium") }}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "loki.multiTenantProxyFullname" $ }}
+  labels:
+    {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - multi-tenant-proxy
+    matchLabels:
+      {{- include "loki.multiTenantProxySelectorLabels" . | nindent 6 }}
+  ingress:
+  - toPorts:
+    - ports: 
+      - port: http
+        protocol: TCP
+{{- end }}
+{{- end }}
+{{- end }}

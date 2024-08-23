@@ -1,0 +1,41 @@
+{{- if .Values.loki.enabled }}
+{{- if .Values.multiTenantAuth.enabled }}
+{{- if .Values.multiTenantAuth.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "loki.multiTenantProxyFullname" $ }}
+  labels:
+    {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.multiTenantAuth.ingress.ingressClassName }}
+  {{- if .Values.multiTenantAuth.ingress.tls }}
+  tls:
+    {{- range .Values.multiTenantAuth.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ tpl . $ | quote }}
+        {{- end }}
+      {{- with .secretName }}
+      secretName: {{ . }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.multiTenantAuth.ingress.hosts }}
+    - host: {{ tpl .host $ | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "loki.multiTenantProxyFullname" $ }}
+                port:
+                  number: {{ $.Values.multiTenantAuth.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
