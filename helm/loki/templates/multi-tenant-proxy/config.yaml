@@ -7,12 +7,17 @@ metadata:
   labels:
     {{- include "loki.multiTenantProxyLabels" . | nindent 4 }}
 data:
-  read-config.yaml: |
-    targetServerURL: http://loki-read.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
-  write-config.yaml: |
-    keepOrgId: {{ not .Values.multiTenantAuth.write.enforceOrgId }}
-    targetServerURL: http://loki-write.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
-  backend-config.yaml: |
-    targetServerURL: http://loki-backend.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
+  config.yaml: |
+    targetServers:
+      - name: loki-read
+        host: http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ .Values.multiTenantAuth.port }}/loki-read
+        target: http://loki-read.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
+      - name: loki-write
+        host: http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ .Values.multiTenantAuth.port }}/loki-write
+        target: http://loki-write.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
+        keepOrgId: {{ not .Values.multiTenantAuth.write.enforceOrgId }}
+      - name: loki-backend
+        host: http://loki-multi-tenant-proxy.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:{{ .Values.multiTenantAuth.port }}/loki-backend
+        target: http://loki-backend.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100
 {{- end }}
 {{- end }}
