@@ -1,6 +1,6 @@
 global:
   clusterDomain: cluster.local
-  dnsService: coredns
+  dnsService: kube-dns
   image:
     registry: gsoci.azurecr.io
   podSecurityStandards:
@@ -9,6 +9,8 @@ ciliumNetworkPolicy:
   coredns:
     enabled: false
 loki:
+  minio:
+    enabled: true
   backend:
     affinity:
       nodeAffinity:
@@ -29,7 +31,6 @@ loki:
                 app.kubernetes.io/name: loki
             topologyKey: kubernetes.io/hostname
           weight: 1
-        requiredDuringSchedulingIgnoredDuringExecution: []
     extraArgs:
     - -config.expand-env
   chunksCache:
@@ -151,14 +152,6 @@ loki:
     server:
       grpc_server_max_recv_msg_size: 104857600
       grpc_server_max_send_msg_size: 104857600
-    storage:
-      bucketNames:
-        admin: giantswarm-golem-loki
-        chunks: giantswarm-golem-loki
-        ruler: giantswarm-golem-loki
-      s3:
-        region: eu-west-2
-      type: s3
     tracing:
       enabled: "false"
   monitoring:
