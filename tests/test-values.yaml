@@ -60,24 +60,6 @@ loki:
         readOnlyRootFilesystem: true
         seccompProfile:
           type: RuntimeDefault
-    ingress:
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-giantswarm
-      enabled: true
-      hosts:
-      - host: loki.golem.gaws.gigantic.io
-        paths:
-        - path: /loki/api/v1/push
-          pathType: ImplementationSpecific
-      ingressClassName: nginx
-      tls:
-      - hosts:
-        - loki.golem.gaws.gigantic.io
-        secretName: loki-ingress-cert
-    nginxConfig:
-      customBackendUrl: http://loki-multi-tenant-proxy.loki.svc.cluster.local:3102
-      customReadUrl: http://loki-multi-tenant-proxy.loki.svc.cluster.local:3100
-      customWriteUrl: http://loki-multi-tenant-proxy.loki.svc.cluster.local:3101
     service:
       labels:
         prometheus.io/service-monitor: "false"
@@ -128,20 +110,6 @@ loki:
         dir: /var/loki/ruler-wal
     schemaConfig:
       configs:
-      - from: "2023-01-24"
-        index:
-          period: 24h
-          prefix: loki_index_
-        object_store: s3
-        schema: v12
-        store: boltdb-shipper
-      - from: "2024-01-02"
-        index:
-          period: 24h
-          prefix: loki_index_
-        object_store: s3
-        schema: v12
-        store: tsdb
       - from: "2024-05-23"
         index:
           period: 24h
@@ -165,9 +133,6 @@ loki:
     - -querier.multi-tenant-queries-enabled
   resultsCache:
     enabled: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::242036376510:role/giantswarm-golem-loki
   sidecar:
     image:
       repository: gsoci.azurecr.io/giantswarm/k8s-sidecar
@@ -213,8 +178,5 @@ loki:
       policyTypes:
         - Egress
 multiTenantAuth:
-  deployCredentials: true
-  enabled: true
-  env:
-  - name: OAUTH_PROVIDER_URL
-    value: https://dex.golem.gaws.gigantic.io
+  deployCredentials: false
+  enabled: false
