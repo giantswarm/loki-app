@@ -12,7 +12,7 @@ Once your app is correctly deployed,  :
 
 - Let it run for a bit, like 10min or more.
 - Make sure that the `loki-canary` component is enabled and deployed. If not, please create a user values configmap on the installation to enable the canary.
-- Inspect the `Loki / Operational` dasboard which will give information mimir's overall health.
-- If eveything appears to be fine, then you can revert the flux's evicting procedure that you did and let it reconcile to its original version.
+- Inspect the `Loki / Operational` dasboard which will give information on Loki's overall health.
+- If everything appears to be fine, then you can revert the flux's evicting procedure that you did and let it reconcile to its original version.
 
 Congratulations, ou have completed the manual e2e testing procedure ! Your PR is now ready to be merged.
