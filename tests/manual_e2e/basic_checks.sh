@@ -21,3 +21,20 @@ if [[ "$canary" != "true" ]]; then
 else
   echo "loki-canary is indeed enabled"
 fi
+
+echo "Checking if all loki pods are up and running"
+
+lokiComponents=("read" "write" "backend" "gateway")
+
+for component in "${lokiComponents[@]}"; do
+  podStatus=$(kubectl get pods -n loki -l app.kubernetes.io/name=loki,app.kubernetes.io/component=$component -o yaml | yq .items[].status.phase)
+
+  for status in $podStatus; do
+    if [[ "$status" != "Running" ]]; then
+      echo "A $component pod is not running. Please check it before retrying"
+      exit 1
+    fi
+  done
+done
+
+echo "All loki pods are up and running"
