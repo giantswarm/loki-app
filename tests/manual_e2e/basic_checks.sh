@@ -10,13 +10,15 @@ echo "Checking if loki app is in deployed state"
 
 deployed=$(kubectl get app -n giantswarm loki -o yaml | yq .status.release.status)
 
-[[ "$deployed" != "deployed" ]] && exit_error "loki app is not in deployed state. Please fix the app before retrying" || echo "loki app is indeed in deployed state"
+[[ "$deployed" != "deployed" ]] \
+  && exit_error "loki app is not in deployed state. Please fix the app before retrying"
 
 echo "Checking if loki-canary is enabled"
 
 canary=$(kubectl get cm -n giantswarm loki-chart-values -oyaml | yq .data.values | yq .loki.lokiCanary.enabled)
 
-[[ "$canary" != "true" ]] && exit_error "loki-canary is not enabled. Please enable it before retrying" || echo "loki-canary is indeed enabled"
+[[ "$canary" != "true" ]] \
+  && exit_error "loki-canary is not enabled. Please enable it before retrying"
 
 echo "Checking if all loki pods are up and running"
 
@@ -28,7 +30,8 @@ for component in "${lokiComponents[@]}"; do
   [[ -z "$podStatus" ]] && exit_error "No $component pods found. Please check it before retrying"
 
   for status in $podStatus; do
-    [[ "$status" != "Running" ]] && exit_error "A $component pod is not running. Please check it before retrying"
+    [[ "$status" != "Running" ]] \
+      && exit_error "A $component pod is not running. Please check it before retrying"
   done
 done
 
