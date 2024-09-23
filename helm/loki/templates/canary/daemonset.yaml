@@ -1,0 +1,22 @@
+{{- with .Values.lokiCanary -}}
+{{- if and .enabled (eq .mode "daemonset") -}}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "loki-canary.fullname" $ }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "loki-canary.labels" $ | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "loki-canary.selectorLabels" $ | nindent 6 }}
+  {{- with .updateStrategy }}
+  updateStrategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    {{- include "canary.podTemplate" $ | nindent 4 }}
+{{- end }}
+{{- end }}
