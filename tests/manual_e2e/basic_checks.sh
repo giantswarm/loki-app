@@ -8,9 +8,9 @@ exit_error() {
 
 echo "Checking if loki app is in deployed state"
 
-deployed=$(kubectl get app -n giantswarm loki -o yaml | yq .status.release.status)
+appStatus=$(kubectl get app -n giantswarm loki -o yaml | yq .status.release.status)
 
-[[ "$deployed" != "deployed" ]] \
+[[ "$appStatus" != "deployed" ]] \
   && exit_error "loki app is not in deployed state. Please fix the app before retrying"
 
 echo "loki app is indeed in deployed state"
