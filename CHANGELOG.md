@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for canary deploymnent
 
+### Changed
+
+- Upgraded upstream chart from 6.10.0 to 6.12.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
 ## [0.24.0] - 2024-09-24
 
 ### Added
