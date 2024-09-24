@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add "manual e2e" testing procedure.
+- Add PR message template referring to the manual testing procedure.
+
 ## [0.23.0] - 2024-09-10
 
 ### Added
