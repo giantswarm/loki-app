@@ -18,9 +18,8 @@ workflows:
       - template-chart:
           name: "template-chart-test"
           filters:
-            branches:
-              ignore:
-                - main
+            tags:
+              only: /^v.*/
 
       - architect/push-to-app-catalog:
           context: "architect"
@@ -31,6 +30,8 @@ workflows:
           chart: "loki"
           ct_config: ".circleci/ct-config.yaml"
           persist_chart_archive: true
+          requires:
+            - "template-chart-test"
           # Trigger job on git tag.
           filters:
             tags:
@@ -44,6 +45,8 @@ workflows:
           app_catalog_test: "control-plane-test-catalog"
           chart: "loki"
           ct_config: ".circleci/ct-config.yaml"
+          requires:
+            - "template-chart-test"
           # Trigger job on git tag.
           filters:
             tags:
