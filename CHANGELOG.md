@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix circleci config.
+
 ## [0.25.1] - 2024-10-08
 
 ### Changed
