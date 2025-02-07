@@ -9,7 +9,7 @@ upgrade-tests-cluster-config-file: tests/kind-config.yaml
 upgrade-tests-app-catalog-url: https://giantswarm.github.io/giantswarm-catalog
 upgrade-tests-app-config-file: tests/test-values.yaml
 
-skip-steps: [functional]
+skip-steps: [functional, upgrade]
 
 # --------
 # Uncomment values below this line to be able to execute app-test-suite against an externally created

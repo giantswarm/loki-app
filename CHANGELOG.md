@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgraded upstream chart from 6.19.0 to 6.25.1 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+  - This upgrades Loki from 3.2.0 to 3.3.2
+  - Minio chart from 4.0.15 to 5.4.0, upgrading minio from RELEASE.2022-09-17T00-09-45Z to RELEASE.2024-12-18T13-15-44Z
+    - => beware, this is a huge step, please carefully test the upgrade if you're using MinIO!
+  - grafana-agent-operator from 0.3.15 to 0.5.1
+  - rollout_operator from 0.13.0 to 0.23.0
+
 ## [0.26.0] - 2024-10-17
 
 ### Changed
