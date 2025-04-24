@@ -291,11 +291,6 @@ loki:
       # -- Enable additional cilium egress rules to kube-apiserver for backend.
       enabled: true
 
-  rbac:
-    pspEnabled: true
-    pspAnnotations:
-      seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
-
   # -- Configuration of Loki's service account
   serviceAccount:
     # -- Specifies whether a ServiceAccount should be created

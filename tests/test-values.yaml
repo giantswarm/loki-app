@@ -125,8 +125,6 @@ loki:
   monitoring:
     serviceMonitor:
       enabled: true
-  rbac:
-    pspEnabled: false
   read:
     extraArgs:
     - -config.expand-env
