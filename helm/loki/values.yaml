@@ -41,7 +41,7 @@ multiTenantAuth:
       # -- Repository to get config reloader image from.
       repository: giantswarm/configmap-reload
       # -- Tag of image to use for config reloading.
-      tag: v0.14.0
+      tag: v0.15.0
 
     # -- Resource requests and limits to apply to the config reloader containers.
     resources:
