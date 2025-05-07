@@ -1,3 +1,4 @@
+{{- if .Values.loki.enabled }}
 {{- if and .Values.loki.networkPolicy.enabled (eq .Values.loki.networkPolicy.flavor "cilium") }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -15,4 +16,5 @@ spec:
     - ports:
       - port: "8089"
         protocol: TCP
+{{- end }}
 {{- end }}

@@ -1,3 +1,4 @@
+{{- if .Values.loki.enabled }}
 {{- with .Values.lokiCanary -}}
 {{- if .enabled -}}
 ---
@@ -17,5 +18,6 @@ spec:
       protocol: TCP
   selector:
     {{- include "loki-canary.selectorLabels" $ | nindent 4 }}
+{{- end -}}
 {{- end -}}
 {{- end -}}

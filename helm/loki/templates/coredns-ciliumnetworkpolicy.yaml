@@ -1,3 +1,4 @@
+{{- if .Values.loki.enabled }}
 {{- if .Values.ciliumNetworkPolicy.coredns.enabled }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -28,4 +29,5 @@ spec:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: kube-system
         k8s:k8s-app: k8s-dns-node-cache
+{{- end }}
 {{- end }}
