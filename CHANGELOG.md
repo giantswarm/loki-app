@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Disable `autoscaling` for `loki-read` and `loki-gateway` in favor of `kedaScaling`.
+- Replace HPA scaling for `loki-read` and `loki-gateway` in favor of Keda
 
 ## [0.28.1] - 2025-05-09
 
