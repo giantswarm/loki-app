@@ -1,0 +1,29 @@
+{{- if .Values.loki.gateway.kedaScaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "loki.gatewayFullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    name: {{ include "loki.gatewayFullname" . }}
+  {{- if .Values.loki.gateway.kedaScaling.horizontalPodAutoscalerConfig }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        {{- toYaml .Values.loki.gateway.kedaScaling.horizontalPodAutoscalerConfig | nindent 8 }}
+  {{- end }}
+  pollingInterval: {{ .Values.loki.gateway.kedaScaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.loki.gateway.kedaScaling.cooldownPeriod }}
+  minReplicaCount: {{ .Values.loki.gateway.kedaScaling.minReplica }}
+  maxReplicaCount: {{ .Values.loki.gateway.kedaScaling.maxReplica }}
+  triggers:
+  - type: memory
+    metricType: Utilization
+    metadata:
+      value: {{ .Values.loki.gateway.kedaScaling.targetMemoryUtilizationPercentage | quote }}
+  - type: cpu
+    metricType: Utilization
+    metadata:
+      value: {{ .Values.loki.gateway.kedaScaling.targetCPUUtilizationPercentage | quote }}
+{{- end }}
