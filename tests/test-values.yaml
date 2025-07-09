@@ -126,6 +126,7 @@ loki:
     serviceMonitor:
       enabled: true
   read:
+    replicas: 2 # Overrides the default value of 3 from upstream as keda scaling does not work in ATS
     extraArgs:
     - -config.expand-env
     - -querier.multi-tenant-queries-enabled
