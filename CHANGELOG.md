@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.0] - 2025-07-09
+
 ### Added
 
 - Add `ScaledObject` resources for `loki-read` and `loki-gateway`.
@@ -636,7 +638,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.28.1...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.29.0...HEAD
+[0.29.0]: https://github.com/giantswarm/loki-app/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/giantswarm/loki-app/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/giantswarm/loki-app/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/giantswarm/loki-app/compare/v0.26.0...v0.27.0
