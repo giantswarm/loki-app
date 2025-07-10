@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.2] - 2025-07-10
+
 ### Changed
 
 - Change the names of Keda related fields in the values to match mimir upstream.
@@ -648,7 +650,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.29.1...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.29.2...HEAD
+[0.29.2]: https://github.com/giantswarm/loki-app/compare/v0.29.1...v0.29.2
 [0.29.1]: https://github.com/giantswarm/loki-app/compare/v0.29.0...v0.29.1
 [0.29.0]: https://github.com/giantswarm/loki-app/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/giantswarm/loki-app/compare/v0.28.0...v0.28.1
