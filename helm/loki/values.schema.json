@@ -254,7 +254,7 @@
                                 }
                             }
                         },
-                        "kedaScaling": {
+                        "kedaAutoscaling": {
                             "type": "object",
                             "properties": {
                                 "cooldownPeriod": {
@@ -266,10 +266,10 @@
                                 "horizontalPodAutoscalerConfig": {
                                     "type": "object"
                                 },
-                                "maxReplica": {
+                                "maxReplicas": {
                                     "type": "integer"
                                 },
-                                "minReplica": {
+                                "minReplicas": {
                                     "type": "integer"
                                 },
                                 "pollingInterval": {
@@ -579,7 +579,7 @@
                                 "type": "string"
                             }
                         },
-                        "kedaScaling": {
+                        "kedaAutoscaling": {
                             "type": "object",
                             "properties": {
                                 "cooldownPeriod": {
@@ -591,10 +591,10 @@
                                 "horizontalPodAutoscalerConfig": {
                                     "type": "object"
                                 },
-                                "maxReplica": {
+                                "maxReplicas": {
                                     "type": "integer"
                                 },
-                                "minReplica": {
+                                "minReplicas": {
                                     "type": "integer"
                                 },
                                 "pollingInterval": {

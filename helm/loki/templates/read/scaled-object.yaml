@@ -1,4 +1,4 @@
-{{- if .Values.loki.read.kedaScaling.enabled }}
+{{- if .Values.loki.read.kedaAutoscaling.enabled }}
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
@@ -7,23 +7,23 @@ metadata:
 spec:
   scaleTargetRef:
     name: {{ include "loki.readFullname" . }}
-  {{- if .Values.loki.read.kedaScaling.horizontalPodAutoscalerConfig }}
+  {{- if .Values.loki.read.kedaAutoscaling.horizontalPodAutoscalerConfig }}
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
-        {{- toYaml .Values.loki.read.kedaScaling.horizontalPodAutoscalerConfig | nindent 8 }}
+        {{- toYaml .Values.loki.read.kedaAutoscaling.horizontalPodAutoscalerConfig | nindent 8 }}
   {{- end }}
-  pollingInterval: {{ .Values.loki.read.kedaScaling.pollingInterval }}
-  cooldownPeriod: {{ .Values.loki.read.kedaScaling.cooldownPeriod }}
-  minReplicaCount: {{ .Values.loki.read.kedaScaling.minReplica }}
-  maxReplicaCount: {{ .Values.loki.read.kedaScaling.maxReplica }}
+  pollingInterval: {{ .Values.loki.read.kedaAutoscaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.loki.read.kedaAutoscaling.cooldownPeriod }}
+  minReplicaCount: {{ .Values.loki.read.kedaAutoscaling.minReplicas }}
+  maxReplicaCount: {{ .Values.loki.read.kedaAutoscaling.maxReplicas }}
   triggers:
   - type: memory
     metricType: Utilization
     metadata:
-      value: {{ .Values.loki.read.kedaScaling.targetMemoryUtilizationPercentage | quote }}
+      value: {{ .Values.loki.read.kedaAutoscaling.targetMemoryUtilizationPercentage | quote }}
   - type: cpu
     metricType: Utilization
     metadata:
-      value: {{ .Values.loki.read.kedaScaling.targetCPUUtilizationPercentage | quote }}
+      value: {{ .Values.loki.read.kedaAutoscaling.targetCPUUtilizationPercentage | quote }}
 {{- end }}
