@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Enable back `ScaledObject` resources and disable hpa for read and gateway components.
+
 ## [0.29.1] - 2025-07-09
 
 ### Changed

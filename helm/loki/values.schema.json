@@ -108,15 +108,6 @@
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
-                                },
-                                "minReplicas": {
-                                    "type": "integer"
-                                },
-                                "targetCPUUtilizationPercentage": {
-                                    "type": "integer"
-                                },
-                                "targetMemoryUtilizationPercentage": {
-                                    "type": "integer"
                                 }
                             }
                         },
@@ -561,15 +552,6 @@
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
-                                },
-                                "minReplicas": {
-                                    "type": "integer"
-                                },
-                                "targetCPUUtilizationPercentage": {
-                                    "type": "integer"
-                                },
-                                "targetMemoryUtilizationPercentage": {
-                                    "type": "integer"
                                 }
                             }
                         },

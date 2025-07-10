@@ -179,10 +179,7 @@ loki:
       #customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
       #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3102
     autoscaling:
-      enabled: true
-      minReplicas: 2
-      targetCPUUtilizationPercentage: 90
-      targetMemoryUtilizationPercentage: 90
+      enabled: false
     kedaScaling:
       enabled: false
       horizontalPodAutoscalerConfig: {}
@@ -238,10 +235,7 @@ loki:
 
   read:
     autoscaling:
-      enabled: true
-      minReplicas: 2
-      targetCPUUtilizationPercentage: 90
-      targetMemoryUtilizationPercentage: 90
+      enabled: false
     kedaScaling:
       enabled: false
       horizontalPodAutoscalerConfig: {}
