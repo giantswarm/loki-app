@@ -181,7 +181,7 @@ loki:
     autoscaling:
       enabled: false
     kedaScaling:
-      enabled: false
+      enabled: true
       horizontalPodAutoscalerConfig: {}
       pollingInterval: 30
       cooldownPeriod: 300
@@ -237,7 +237,7 @@ loki:
     autoscaling:
       enabled: false
     kedaScaling:
-      enabled: false
+      enabled: true
       horizontalPodAutoscalerConfig: {}
       pollingInterval: 30
       cooldownPeriod: 300
