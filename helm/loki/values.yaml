@@ -229,6 +229,15 @@ loki:
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
       targetMemoryUtilizationPercentage: 90
+    kedaAutoscaling:
+      enabled: false
+      horizontalPodAutoscalerConfig: {}
+      pollingInterval: 30
+      cooldownPeriod: 300
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
     resources:
       limits:
         memory: 3Gi
@@ -265,6 +274,15 @@ loki:
       enabled: true
       minReplicas: 2
       maxReplicas: 10
+      targetMemoryUtilizationPercentage: 90
+    kedaAutoscaling:
+      enabled: false
+      horizontalPodAutoscalerConfig: {}
+      pollingInterval: 30
+      cooldownPeriod: 300
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 90
       targetMemoryUtilizationPercentage: 90
     resources:
       limits:
