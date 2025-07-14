@@ -1,0 +1,29 @@
+{{- if .Values.loki.write.kedaAutoscaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "loki.writeFullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    name: {{ include "loki.writeFullname" . }}
+  {{- if .Values.loki.write.kedaAutoscaling.horizontalPodAutoscalerConfig }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        {{- toYaml .Values.loki.write.kedaAutoscaling.horizontalPodAutoscalerConfig | nindent 8 }}
+  {{- end }}
+  pollingInterval: {{ .Values.loki.write.kedaAutoscaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.loki.write.kedaAutoscaling.cooldownPeriod }}
+  minReplicaCount: {{ .Values.loki.write.kedaAutoscaling.minReplicas }}
+  maxReplicaCount: {{ .Values.loki.write.kedaAutoscaling.maxReplicas }}
+  triggers:
+  - type: memory
+    metricType: Utilization
+    metadata:
+      value: {{ .Values.loki.write.kedaAutoscaling.targetMemoryUtilizationPercentage | quote }}
+  - type: cpu
+    metricType: Utilization
+    metadata:
+      value: {{ .Values.loki.write.kedaAutoscaling.targetCPUUtilizationPercentage | quote }}
+{{- end }}
