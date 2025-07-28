@@ -190,8 +190,17 @@ loki:
       cooldownPeriod: 300
       minReplicas: 2
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 90
-      targetMemoryUtilizationPercentage: 90
+      triggers:
+      - type: memory
+        metricType: Utilization
+        metadata:
+           # equivalent of targetMemoryUtilizationPercentage in HPA
+          value: 90
+      - type: cpu
+        metricType: Utilization
+        metadata:
+          # equivalent of targetCPUUtilizationPercentage in HPA
+          value: 90
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -249,8 +258,17 @@ loki:
       cooldownPeriod: 300
       minReplicas: 2
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 90
-      targetMemoryUtilizationPercentage: 90
+      triggers:
+      - type: memory
+        metricType: Utilization
+        metadata:
+           # equivalent of targetMemoryUtilizationPercentage in HPA
+          value: 90
+      - type: cpu
+        metricType: Utilization
+        metadata:
+          # equivalent of targetCPUUtilizationPercentage in HPA
+          value: 90
     resources:
       limits:
         memory: 3Gi
