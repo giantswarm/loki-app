@@ -195,12 +195,12 @@ loki:
         metricType: Utilization
         metadata:
            # equivalent of targetMemoryUtilizationPercentage in HPA
-          value: 90
+          value: "90"
       - type: cpu
         metricType: Utilization
         metadata:
           # equivalent of targetCPUUtilizationPercentage in HPA
-          value: 90
+          value: "90"
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -263,12 +263,12 @@ loki:
         metricType: Utilization
         metadata:
            # equivalent of targetMemoryUtilizationPercentage in HPA
-          value: 90
+          value: "90"
       - type: cpu
         metricType: Utilization
         metadata:
           # equivalent of targetCPUUtilizationPercentage in HPA
-          value: 90
+          value: "90"
     resources:
       limits:
         memory: 3Gi
