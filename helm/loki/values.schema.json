@@ -275,11 +275,27 @@
                                 "pollingInterval": {
                                     "type": "integer"
                                 },
-                                "targetCPUUtilizationPercentage": {
-                                    "type": "integer"
-                                },
-                                "targetMemoryUtilizationPercentage": {
-                                    "type": "integer"
+                                "triggers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "metadata": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "value": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            },
+                                            "metricType": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -600,11 +616,27 @@
                                 "pollingInterval": {
                                     "type": "integer"
                                 },
-                                "targetCPUUtilizationPercentage": {
-                                    "type": "integer"
-                                },
-                                "targetMemoryUtilizationPercentage": {
-                                    "type": "integer"
+                                "triggers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "metadata": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "value": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            },
+                                            "metricType": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         },

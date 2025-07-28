@@ -18,12 +18,5 @@ spec:
   minReplicaCount: {{ .Values.loki.gateway.kedaAutoscaling.minReplicas }}
   maxReplicaCount: {{ .Values.loki.gateway.kedaAutoscaling.maxReplicas }}
   triggers:
-  - type: memory
-    metricType: Utilization
-    metadata:
-      value: {{ .Values.loki.gateway.kedaAutoscaling.targetMemoryUtilizationPercentage | quote }}
-  - type: cpu
-    metricType: Utilization
-    metadata:
-      value: {{ .Values.loki.gateway.kedaAutoscaling.targetCPUUtilizationPercentage | quote }}
+  {{- toYaml .Values.loki.gateway.kedaAutoscaling.triggers | nindent 2 }}
 {{- end }}
