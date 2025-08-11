@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `fallback` section to `loki-read` and `loki-gateway` ScaledObject resources templates.
+
 ## [0.30.1] - 2025-07-28
 
 ### Fixed

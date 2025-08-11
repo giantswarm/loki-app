@@ -18,5 +18,9 @@ spec:
   minReplicaCount: {{ .Values.loki.gateway.kedaAutoscaling.minReplicas }}
   maxReplicaCount: {{ .Values.loki.gateway.kedaAutoscaling.maxReplicas }}
   triggers:
-  {{- toYaml .Values.loki.gateway.kedaAutoscaling.triggers | nindent 2 }}
+    {{- toYaml .Values.loki.gateway.kedaAutoscaling.triggers | nindent 2 }}
+  {{- if .Values.loki.read.kedaAutoscaling.fallback }}
+  fallback:
+    {{- toYaml .Values.loki.read.kedaAutoscaling.fallback | nindent 2 }}
+  {{- end }}
 {{- end }}

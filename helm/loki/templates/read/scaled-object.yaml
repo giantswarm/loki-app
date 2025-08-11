@@ -19,4 +19,8 @@ spec:
   maxReplicaCount: {{ .Values.loki.read.kedaAutoscaling.maxReplicas }}
   triggers:
   {{- toYaml .Values.loki.read.kedaAutoscaling.triggers | nindent 2 }}
+  {{- if .Values.loki.read.kedaAutoscaling.fallback }}
+  fallback:
+    {{- toYaml .Values.loki.read.kedaAutoscaling.fallback | nindent 2 }}
+  {{- end }}
 {{- end }}
