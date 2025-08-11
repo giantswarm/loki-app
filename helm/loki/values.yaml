@@ -190,6 +190,7 @@ loki:
       cooldownPeriod: 300
       minReplicas: 2
       maxReplicas: 10
+      fallback: {}
       triggers:
       - type: memory
         metricType: Utilization
@@ -258,6 +259,7 @@ loki:
       cooldownPeriod: 300
       minReplicas: 2
       maxReplicas: 10
+      fallback: {}
       triggers:
       - type: memory
         metricType: Utilization
