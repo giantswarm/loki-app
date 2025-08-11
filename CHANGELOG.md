@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.0] - 2025-08-11
+
 ### Added
 
 - Add `fallback` section to `loki-read` and `loki-gateway` ScaledObject resources templates.
@@ -666,7 +668,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.30.1...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.31.0...HEAD
+[0.31.0]: https://github.com/giantswarm/loki-app/compare/v0.30.1...v0.31.0
 [0.30.1]: https://github.com/giantswarm/loki-app/compare/v0.30.0...v0.30.1
 [0.30.0]: https://github.com/giantswarm/loki-app/compare/v0.29.2...v0.30.0
 [0.29.2]: https://github.com/giantswarm/loki-app/compare/v0.29.1...v0.29.2
