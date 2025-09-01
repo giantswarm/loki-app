@@ -150,7 +150,7 @@ loki:
   gateway:
     extraContainers:
       - name: dnsmasq
-        image: "giantswarm/go-dnsmasq:release-1.0.7"
+        image: "gsoci.azurecr.io/giantswarm/go-dnsmasq:release-1.0.7"
         imagePullPolicy: IfNotPresent
         args:
           - --listen
@@ -347,7 +347,7 @@ loki:
 
   sidecar:
     image:
-      repository: giantswarm/k8s-sidecar
+      repository: gsoci.azurecr.io/giantswarm/k8s-sidecar
     securityContext:
       readOnlyRootFilesystem: true
       capabilities:

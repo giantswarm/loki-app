@@ -52,7 +52,7 @@ Helm chart for Grafana Loki in simple, scalable mode
 | loki.gateway.extraContainers[0].args[2] | string | `"--hostsfile=/etc/hosts"` |  |
 | loki.gateway.extraContainers[0].args[3] | string | `"--enable-search"` |  |
 | loki.gateway.extraContainers[0].args[4] | string | `"--verbose"` |  |
-| loki.gateway.extraContainers[0].image | string | `"giantswarm/go-dnsmasq:release-1.0.7"` |  |
+| loki.gateway.extraContainers[0].image | string | `"gsoci.azurecr.io/giantswarm/go-dnsmasq:release-1.0.7"` |  |
 | loki.gateway.extraContainers[0].imagePullPolicy | string | `"IfNotPresent"` |  |
 | loki.gateway.extraContainers[0].name | string | `"dnsmasq"` |  |
 | loki.gateway.extraContainers[0].resources.limits.memory | string | `"100Mi"` |  |
@@ -96,7 +96,7 @@ Helm chart for Grafana Loki in simple, scalable mode
 | loki.serviceAccount.imagePullSecrets | list | `[]` | Image pull secrets for the service account |
 | loki.serviceAccount.labels | object | `{}` | Labels for the service account |
 | loki.serviceAccount.name | string | `"loki"` | The name of the ServiceAccount to use. If not set and create is true, a name is generated using the fullname template |
-| loki.sidecar.image.repository | string | `"giantswarm/k8s-sidecar"` |  |
+| loki.sidecar.image.repository | string | `"gsoci.azurecr.io/giantswarm/k8s-sidecar"` |  |
 | loki.sidecar.resources.limits.cpu | string | `"100m"` |  |
 | loki.sidecar.resources.limits.memory | string | `"100Mi"` |  |
 | loki.sidecar.resources.requests.cpu | string | `"50m"` |  |
