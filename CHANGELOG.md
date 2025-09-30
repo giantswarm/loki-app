@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `CiliumNetworkPolicy` to allow communication between Loki and the Mimir ruler.
+
+### Changed
+
+- Refactor existing CNPs to align them with upstream.
+
 ## [0.31.1] - 2025-09-01
 
 ### Changed

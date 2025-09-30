@@ -1,5 +1,5 @@
 {{- if .Values.loki.enabled }}
-{{- if .Values.ciliumNetworkPolicy.coredns.enabled }}
+{{- if and .Values.loki.networkPolicy.egressCoredns.enabled (eq .Values.loki.networkPolicy.flavor "cilium") }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:

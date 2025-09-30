@@ -2,19 +2,6 @@
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
     "properties": {
-        "ciliumNetworkPolicy": {
-            "type": "object",
-            "properties": {
-                "coredns": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean"
-                        }
-                    }
-                }
-            }
-        },
         "global": {
             "type": "object",
             "properties": {
@@ -548,7 +535,23 @@
                 "networkPolicy": {
                     "type": "object",
                     "properties": {
+                        "egressCoredns": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        },
                         "egressKubeApiserver": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        },
+                        "egressMimir": {
                             "type": "object",
                             "properties": {
                                 "enabled": {
