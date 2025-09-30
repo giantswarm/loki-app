@@ -97,10 +97,6 @@ multiTenantAuth:
     # -- disabling this allows write requests to set whatever orgid they want
     enforceOrgId: true
 
-ciliumNetworkPolicy:
-  coredns:
-    enabled: true
-
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
@@ -325,8 +321,14 @@ loki:
     egressWorld:
       # -- Enable additional cilium egress rules to external world for write, read and backend.
       enabled: true
+    egressCoredns:
+      # -- Enable additional cilium egress rules to coredns for write, read and backend.
+      enabled: true
     egressKubeApiserver:
       # -- Enable additional cilium egress rules to kube-apiserver for backend.
+      enabled: true
+    egressMimir:
+      # -- Enable additional cilium egress rules to Mimir for backend.
       enabled: true
 
   # -- Configuration of Loki's service account

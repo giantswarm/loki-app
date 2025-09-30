@@ -1,0 +1,28 @@
+{{- if .Values.loki.enabled }}
+{{- if and .Values.loki.networkPolicy.egressMimir.enabled (eq .Values.loki.networkPolicy.flavor "cilium") }}
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "loki.name" . }}-backend-mimir-egress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      {{- include "loki.backendSelectorLabels" . | nindent 6 }}
+  egress:
+    - toPorts:
+      - ports: 
+        - port: "8080"
+          protocol: TCP
+      toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/component: gateway
+            app.kubernetes.io/instance: mimir
+            app.kubernetes.io/name: mimir
+            # Mimir runs in the mimir namespace
+            k8s:io.kubernetes.pod.namespace: mimir
+{{- end }}
+{{- end }}
