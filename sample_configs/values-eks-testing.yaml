@@ -1,7 +1,3 @@
-multiTenantAuth:
-  enabled: false
-  deployCredentials: false
-
 global:
   # For imported eks clusters only. Remove this field for CAPI EKS clusters.
   dnsService: "kube-dns"
