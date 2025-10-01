@@ -70,8 +70,6 @@ loki:
     compactor:
       delete_request_store: s3
       retention_enabled: true
-    image:
-      tag: 3.1.0
     ingester:
       autoforget_unhealthy: true
       chunk_encoding: snappy

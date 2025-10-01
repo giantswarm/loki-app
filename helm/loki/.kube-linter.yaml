@@ -1,6 +1,6 @@
-checks:	
-  addAllBuiltIn: true	
-  exclude:	
+checks:
+  addAllBuiltIn: true
+  exclude:
   - "use-namespace"
   - "unset-memory-requirements"
   - "unset-cpu-requirements"
