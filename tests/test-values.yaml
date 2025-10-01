@@ -176,6 +176,3 @@ loki:
         memory: 1Gi
       policyTypes:
         - Egress
-multiTenantAuth:
-  deployCredentials: false
-  enabled: false

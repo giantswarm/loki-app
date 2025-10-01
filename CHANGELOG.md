@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove `multi tenant proxy` from the loki app because we stopped supporting it.
+
 ## [0.31.2] - 2025-09-30
 
 ### Added

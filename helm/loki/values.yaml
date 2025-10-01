@@ -11,92 +11,6 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
-multiTenantAuth:
-  # -- Specifies whether the multi-tenant proxy should be enabled
-  enabled: false
-  # -- Number of replicas for the multi-tenant proxy
-  replicas: 3
-  autoscaling:
-    # -- Enable autoscaling for the multi-tenant proxy
-    enabled: true
-    # -- Minimum autoscaling replicas for the multi-tenant proxy
-    minReplicas: 2
-    # -- Maximum autoscaling replicas for the multi-tenant proxy
-    maxReplicas: 4
-    # -- Target CPU utilisation percentage for the multi-tenant proxy
-    targetCPUUtilizationPercentage: 90
-    # -- Target memory utilisation percentage for the multi-tenant proxy
-    targetMemoryUtilizationPercentage:
-  # -- See `kubectl explain deployment.spec.strategy` for more
-  # -- ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-  image:
-    # -- Repository to get multi-tenant proxy image from.
-    repository: giantswarm/grafana-multi-tenant-proxy
-    tag: 0.8.0
-    pullPolicy: IfNotPresent
-    pullSecrets: []
-
-  configReloader:
-    image:
-      # -- Repository to get config reloader image from.
-      repository: giantswarm/configmap-reload
-      # -- Tag of image to use for config reloading.
-      tag: v0.15.0
-
-    # -- Resource requests and limits to apply to the config reloader containers.
-    resources:
-      requests:
-        cpu: "1m"
-        memory: "5Mi"
-
-    # -- Security context to apply to the config reloader containers.
-    containerSecurityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      readOnlyRootFilesystem: true
-      seccompProfile:
-        type: RuntimeDefault
-  # Environment variables for the multi-tenant proxy
-  # env: []
-  # -- Resource requests and limits for the write
-  resources:
-    limits:
-      memory: 500Mi
-    requests:
-      memory: 50Mi
-      cpu: 50m
-  # disable if credentials are provided externally
-  deployCredentials: true
-  credentials: |-
-    users:
-      - username: Tenant1
-        password: 1tnaneT
-        orgid: tenant-1
-      - username: Tenant2
-        password: 2tnaneT
-        orgid: tenant-2
-  podSecurityContext:
-    fsGroup: 10001
-    runAsGroup: 10001
-    runAsNonRoot: true
-    runAsUser: 10001
-    seccompProfile:
-      type: RuntimeDefault
-  # -- The SecurityContext for Loki containers
-  containerSecurityContext:
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-    readOnlyRootFilesystem: true
-    seccompProfile:
-      type: RuntimeDefault
-  write:
-    # -- disabling this allows write requests to set whatever orgid they want
-    enforceOrgId: true
-
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
@@ -170,10 +84,6 @@ loki:
             memory: 10Mi
     nginxConfig:
       resolver: "127.0.0.1:8053 valid=60s"
-      # To be set when using MultiTenant with GiantSwarm multi-tenant-proxy
-      #customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
-      #customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
-      #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3102
     autoscaling:
       enabled: true
       minReplicas: 2
