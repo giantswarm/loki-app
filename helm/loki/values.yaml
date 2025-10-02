@@ -217,7 +217,7 @@ loki:
       # -- The Docker registry
       registry: gsoci.azurecr.io
       # -- Docker image repository
-      repository: grafana/loki-canary
+      repository: giantswarm/loki-canary
     # -- The SecurityContext for Loki pods
     podSecurityContext:
       fsGroup: 10001
