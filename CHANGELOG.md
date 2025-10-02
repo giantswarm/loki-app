@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove loki canary now that the deployment change is merged upstream.
+
 ## [0.32.0] - 2025-10-01
 
 ### Changed
