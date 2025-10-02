@@ -474,8 +474,88 @@
                 "lokiCanary": {
                     "type": "object",
                     "properties": {
+                        "containerSecurityContext": {
+                            "type": "object",
+                            "properties": {
+                                "allowPrivilegeEscalation": {
+                                    "type": "boolean"
+                                },
+                                "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                        "drop": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "readOnlyRootFilesystem": {
+                                    "type": "boolean"
+                                }
+                            }
+                        },
                         "enabled": {
                             "type": "boolean"
+                        },
+                        "image": {
+                            "type": "object",
+                            "properties": {
+                                "registry": {
+                                    "type": "string"
+                                },
+                                "repository": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "kind": {
+                            "type": "string"
+                        },
+                        "podSecurityContext": {
+                            "type": "object",
+                            "properties": {
+                                "fsGroup": {
+                                    "type": "integer"
+                                },
+                                "runAsGroup": {
+                                    "type": "integer"
+                                },
+                                "runAsNonRoot": {
+                                    "type": "boolean"
+                                },
+                                "runAsUser": {
+                                    "type": "integer"
+                                },
+                                "seccompProfile": {
+                                    "type": "object",
+                                    "properties": {
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "replicas": {
+                            "type": "integer"
+                        },
+                        "updateStrategy": {
+                            "type": "object",
+                            "properties": {
+                                "rollingUpdate": {
+                                    "type": "object",
+                                    "properties": {
+                                        "maxUnavailable": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 },
@@ -827,169 +907,6 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            }
-        },
-        "lokiCanary": {
-            "type": "object",
-            "properties": {
-                "annotations": {
-                    "type": "object"
-                },
-                "containerSecurityContext": {
-                    "type": "object",
-                    "properties": {
-                        "allowPrivilegeEscalation": {
-                            "type": "boolean"
-                        },
-                        "capabilities": {
-                            "type": "object",
-                            "properties": {
-                                "drop": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "readOnlyRootFilesystem": {
-                            "type": "boolean"
-                        }
-                    }
-                },
-                "deployment": {
-                    "type": "object",
-                    "properties": {
-                        "replicaCount": {
-                            "type": "integer"
-                        },
-                        "strategy": {
-                            "type": "object",
-                            "properties": {
-                                "type": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                "dnsConfig": {
-                    "type": "object"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
-                "extraArgs": {
-                    "type": "array"
-                },
-                "extraEnv": {
-                    "type": "array"
-                },
-                "extraEnvFrom": {
-                    "type": "array"
-                },
-                "extraVolumeMounts": {
-                    "type": "array"
-                },
-                "extraVolumes": {
-                    "type": "array"
-                },
-                "image": {
-                    "type": "object",
-                    "properties": {
-                        "digest": {
-                            "type": "null"
-                        },
-                        "pullPolicy": {
-                            "type": "string"
-                        },
-                        "registry": {
-                            "type": "string"
-                        },
-                        "repository": {
-                            "type": "string"
-                        },
-                        "tag": {
-                            "type": "null"
-                        }
-                    }
-                },
-                "labelname": {
-                    "type": "string"
-                },
-                "mode": {
-                    "type": "string"
-                },
-                "nodeSelector": {
-                    "type": "object"
-                },
-                "podLabels": {
-                    "type": "object"
-                },
-                "podSecurityContext": {
-                    "type": "object",
-                    "properties": {
-                        "fsGroup": {
-                            "type": "integer"
-                        },
-                        "runAsGroup": {
-                            "type": "integer"
-                        },
-                        "runAsNonRoot": {
-                            "type": "boolean"
-                        },
-                        "runAsUser": {
-                            "type": "integer"
-                        },
-                        "seccompProfile": {
-                            "type": "object",
-                            "properties": {
-                                "type": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                "priorityClassName": {
-                    "type": "null"
-                },
-                "push": {
-                    "type": "boolean"
-                },
-                "resources": {
-                    "type": "object"
-                },
-                "service": {
-                    "type": "object",
-                    "properties": {
-                        "annotations": {
-                            "type": "object"
-                        },
-                        "labels": {
-                            "type": "object"
-                        }
-                    }
-                },
-                "tolerations": {
-                    "type": "array"
-                },
-                "updateStrategy": {
-                    "type": "object",
-                    "properties": {
-                        "rollingUpdate": {
-                            "type": "object",
-                            "properties": {
-                                "maxUnavailable": {
-                                    "type": "integer"
-                                }
-                            }
-                        },
-                        "type": {
-                            "type": "string"
                         }
                     }
                 }
