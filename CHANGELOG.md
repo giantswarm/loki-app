@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.2] - 2025-10-28
+
 ### Fixed
 
 - Add missing loki to mimir alertmanager CNP
@@ -710,7 +712,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.33.1...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.33.2...HEAD
+[0.33.2]: https://github.com/giantswarm/loki-app/compare/v0.33.1...v0.33.2
 [0.33.1]: https://github.com/giantswarm/loki-app/compare/v0.33.0...v0.33.1
 [0.33.0]: https://github.com/giantswarm/loki-app/compare/v0.32.0...v0.33.0
 [0.32.0]: https://github.com/giantswarm/loki-app/compare/v0.31.2...v0.32.0
