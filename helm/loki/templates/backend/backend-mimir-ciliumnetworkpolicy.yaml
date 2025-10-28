@@ -24,5 +24,11 @@ spec:
             app.kubernetes.io/name: mimir
             # Mimir runs in the mimir namespace
             k8s:io.kubernetes.pod.namespace: mimir
+        - matchLabels:
+            app.kubernetes.io/component: alertmanager
+            app.kubernetes.io/instance: mimir
+            app.kubernetes.io/name: mimir
+            # Mimir runs in the mimir namespace
+            k8s:io.kubernetes.pod.namespace: mimir
 {{- end }}
 {{- end }}
