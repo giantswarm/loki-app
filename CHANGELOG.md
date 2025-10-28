@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Add missing loki to mimir alertmanager CNP
+
 ## [0.33.1] - 2025-10-14
 
 ### Changed
