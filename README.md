@@ -17,6 +17,7 @@ storage must be ensured for the chart to work.
 - [Install](#install)
 - [Upgrading](#upgrading)
 - [Configuration](#configuration)
+- [Pull Requests tests](#pull-requests-tests)
 - [Limitations](#limitations)
 - [Links](#links)
 - [Credit](#credits)
@@ -583,6 +584,10 @@ promtail --config.file=promtail-test.yml --inspect
 (while true ; do echo "test log line $(date)"; sleep 1; done ) >> /tmp/lokitest.log
 ```
 * Query loki with `logcli` and see your data
+
+## Pull Requests tests
+
+We have a few tips for testing pull requests [here](TESTING.md).
 
 ## Limitations
 
