@@ -289,7 +289,7 @@ loki:
 
   sidecar:
     image:
-      repository: gsoci.azurecr.io/giantswarm/k8s-sidecar
+      repository: giantswarm/k8s-sidecar
     securityContext:
       readOnlyRootFilesystem: true
       capabilities:
