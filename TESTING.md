@@ -11,7 +11,7 @@
 ## kind tests (via ats)
 
 Prerequisites:
-- have docker runinng on your laptop
+- have docker running on your laptop
 - have kind installed (https://kind.sigs.k8s.io/)
 - have ats repository cloned (https://github.com/giantswarm/app-test-suite)
 
