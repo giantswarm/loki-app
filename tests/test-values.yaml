@@ -132,7 +132,7 @@ loki:
     enabled: false
   sidecar:
     image:
-      repository: gsoci.azurecr.io/giantswarm/k8s-sidecar
+      repository: giantswarm/k8s-sidecar
   write:
     affinity:
       nodeAffinity:
