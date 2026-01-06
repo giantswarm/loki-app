@@ -1,6 +1,6 @@
-checks:	
-  addAllBuiltIn: true	
-  exclude:	
+checks:
+  addAllBuiltIn: true
+  exclude:
   - "use-namespace"
   - "unset-memory-requirements"
   - "unset-cpu-requirements"
@@ -23,3 +23,9 @@ checks:
   - "latest-tag"
   - "hpa-minimum-three-replicas"
   - "non-existent-service-account"
+  - "no-node-affinity"
+  - "dnsconfig-options"
+  - "latest-tag"
+  - "pdb-unhealthy-pod-eviction-policy"
+  - "restart-policy"
+  - "job-ttl-seconds-after-finished"

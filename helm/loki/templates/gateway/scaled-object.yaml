@@ -1,0 +1,26 @@
+{{- if .Values.loki.gateway.kedaAutoscaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "loki.gatewayFullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    name: {{ include "loki.gatewayFullname" . }}
+  {{- if .Values.loki.gateway.kedaAutoscaling.horizontalPodAutoscalerConfig }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        {{- toYaml .Values.loki.gateway.kedaAutoscaling.horizontalPodAutoscalerConfig | nindent 8 }}
+  {{- end }}
+  pollingInterval: {{ .Values.loki.gateway.kedaAutoscaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.loki.gateway.kedaAutoscaling.cooldownPeriod }}
+  minReplicaCount: {{ .Values.loki.gateway.kedaAutoscaling.minReplicas }}
+  maxReplicaCount: {{ .Values.loki.gateway.kedaAutoscaling.maxReplicas }}
+  triggers:
+    {{- toYaml .Values.loki.gateway.kedaAutoscaling.triggers | nindent 2 }}
+  {{- if .Values.loki.read.kedaAutoscaling.fallback }}
+  fallback:
+    {{- toYaml .Values.loki.read.kedaAutoscaling.fallback | nindent 4 }}
+  {{- end }}
+{{- end }}

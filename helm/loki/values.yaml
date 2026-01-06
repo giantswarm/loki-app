@@ -11,96 +11,6 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
-multiTenantAuth:
-  # -- Specifies whether the multi-tenant proxy should be enabled
-  enabled: false
-  # -- Number of replicas for the multi-tenant proxy
-  replicas: 3
-  autoscaling:
-    # -- Enable autoscaling for the multi-tenant proxy
-    enabled: true
-    # -- Minimum autoscaling replicas for the multi-tenant proxy
-    minReplicas: 2
-    # -- Maximum autoscaling replicas for the multi-tenant proxy
-    maxReplicas: 4
-    # -- Target CPU utilisation percentage for the multi-tenant proxy
-    targetCPUUtilizationPercentage: 90
-    # -- Target memory utilisation percentage for the multi-tenant proxy
-    targetMemoryUtilizationPercentage:
-  # -- See `kubectl explain deployment.spec.strategy` for more
-  # -- ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-  image:
-    # -- Repository to get multi-tenant proxy image from.
-    repository: giantswarm/grafana-multi-tenant-proxy
-    tag: 0.8.0
-    pullPolicy: IfNotPresent
-    pullSecrets: []
-
-  configReloader:
-    image:
-      # -- Repository to get config reloader image from.
-      repository: giantswarm/configmap-reload
-      # -- Tag of image to use for config reloading.
-      tag: v0.14.0
-
-    # -- Resource requests and limits to apply to the config reloader containers.
-    resources:
-      requests:
-        cpu: "1m"
-        memory: "5Mi"
-
-    # -- Security context to apply to the config reloader containers.
-    containerSecurityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      readOnlyRootFilesystem: true
-      seccompProfile:
-        type: RuntimeDefault
-  # Environment variables for the multi-tenant proxy
-  # env: []
-  # -- Resource requests and limits for the write
-  resources:
-    limits:
-      memory: 500Mi
-    requests:
-      memory: 50Mi
-      cpu: 50m
-  # disable if credentials are provided externally
-  deployCredentials: true
-  credentials: |-
-    users:
-      - username: Tenant1
-        password: 1tnaneT
-        orgid: tenant-1
-      - username: Tenant2
-        password: 2tnaneT
-        orgid: tenant-2
-  podSecurityContext:
-    fsGroup: 10001
-    runAsGroup: 10001
-    runAsNonRoot: true
-    runAsUser: 10001
-    seccompProfile:
-      type: RuntimeDefault
-  # -- The SecurityContext for Loki containers
-  containerSecurityContext:
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-    readOnlyRootFilesystem: true
-    seccompProfile:
-      type: RuntimeDefault
-  write:
-    # -- disabling this allows write requests to set whatever orgid they want
-    enforceOrgId: true
-
-ciliumNetworkPolicy:
-  coredns:
-    enabled: true
-
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
@@ -150,7 +60,7 @@ loki:
   gateway:
     extraContainers:
       - name: dnsmasq
-        image: "giantswarm/go-dnsmasq:release-1.0.7"
+        image: "gsoci.azurecr.io/giantswarm/go-dnsmasq:release-1.0.7"
         imagePullPolicy: IfNotPresent
         args:
           - --listen
@@ -174,15 +84,30 @@ loki:
             memory: 10Mi
     nginxConfig:
       resolver: "127.0.0.1:8053 valid=60s"
-      # To be set when using MultiTenant with GiantSwarm multi-tenant-proxy
-      #customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
-      #customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
-      #customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3102
     autoscaling:
       enabled: true
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
       targetMemoryUtilizationPercentage: 90
+    kedaAutoscaling:
+      enabled: false
+      horizontalPodAutoscalerConfig: {}
+      pollingInterval: 30
+      cooldownPeriod: 300
+      minReplicas: 2
+      maxReplicas: 10
+      fallback: {}
+      triggers:
+      - type: memory
+        metricType: Utilization
+        metadata:
+           # equivalent of targetMemoryUtilizationPercentage in HPA
+          value: "90"
+      - type: cpu
+        metricType: Utilization
+        metadata:
+          # equivalent of targetCPUUtilizationPercentage in HPA
+          value: "90"
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -263,6 +188,25 @@ loki:
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
       targetMemoryUtilizationPercentage: 90
+    kedaAutoscaling:
+      enabled: false
+      horizontalPodAutoscalerConfig: {}
+      pollingInterval: 30
+      cooldownPeriod: 300
+      minReplicas: 2
+      maxReplicas: 10
+      fallback: {}
+      triggers:
+      - type: memory
+        metricType: Utilization
+        metadata:
+           # equivalent of targetMemoryUtilizationPercentage in HPA
+          value: "90"
+      - type: cpu
+        metricType: Utilization
+        metadata:
+          # equivalent of targetCPUUtilizationPercentage in HPA
+          value: "90"
     resources:
       limits:
         memory: 3Gi
@@ -292,8 +236,38 @@ loki:
     enabled: true
 
   # -- Canary configuration
+  # The Loki canary pushes logs to and queries from this loki installation to test
+  # that it's working correctly
   lokiCanary:
     enabled: false
+    kind: Deployment
+    replicas: 3
+    # -- Image to use for loki canary
+    image:
+      # -- The Docker registry
+      registry: gsoci.azurecr.io
+      # -- Docker image repository
+      repository: giantswarm/loki-canary
+    # -- The SecurityContext for Loki pods
+    podSecurityContext:
+      fsGroup: 10001
+      runAsGroup: 10001
+      runAsNonRoot: true
+      runAsUser: 10001
+      seccompProfile:
+        type: RuntimeDefault
+    # -- The SecurityContext for Loki containers
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+    # -- Update strategy for the `loki-canary` Daemonset pods
+    updateStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
 
   # -- Configuration of monitoring components
   monitoring:
@@ -317,14 +291,15 @@ loki:
     egressWorld:
       # -- Enable additional cilium egress rules to external world for write, read and backend.
       enabled: true
+    egressCoredns:
+      # -- Enable additional cilium egress rules to coredns for write, read and backend.
+      enabled: true
     egressKubeApiserver:
       # -- Enable additional cilium egress rules to kube-apiserver for backend.
       enabled: true
-
-  rbac:
-    pspEnabled: true
-    pspAnnotations:
-      seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+    egressMimir:
+      # -- Enable additional cilium egress rules to Mimir for backend.
+      enabled: true
 
   # -- Configuration of Loki's service account
   serviceAccount:
@@ -363,80 +338,3 @@ loki:
 
   test:
     enabled: false
-
-# The Loki canary pushes logs to and queries from this loki installation to test
-# that it's working correctly
-lokiCanary:
-  enabled: false
-  mode: deployment
-  # -- Used when `mode=deployment`
-  deployment:
-    replicaCount: 3
-    strategy:
-      type: RollingUpdate
-  # -- If true, the canary will send directly to Loki via the address configured for verification --
-  # -- If false, it will write to stdout and an Agent will be needed to scrape and send the logs --
-  push: true
-  # -- The name of the label to look for at loki when doing the checks.
-  labelname: pod
-  # -- Additional annotations for the `loki-canary` Daemonset
-  annotations: {}
-  # -- Additional labels for each `loki-canary` pod
-  podLabels: {}
-  service:
-    # -- Annotations for loki-canary Service
-    annotations: {}
-    # -- Additional labels for loki-canary Service
-    labels: {}
-  # -- Additional CLI arguments for the `loki-canary' command
-  extraArgs: []
-  # -- Environment variables to add to the canary pods
-  extraEnv: []
-  # -- Environment variables from secrets or configmaps to add to the canary pods
-  extraEnvFrom: []
-  # -- Volume mounts to add to the canary pods
-  extraVolumeMounts: []
-  # -- Volumes to add to the canary pods
-  extraVolumes: []
-  # -- Resource requests and limits for the canary
-  resources: {}
-  # -- DNS config for canary pods
-  dnsConfig: {}
-  # -- Node selector for canary pods
-  nodeSelector: {}
-  # -- Tolerations for canary pods
-  tolerations: []
-  # -- The name of the PriorityClass for loki-canary pods
-  priorityClassName: null
-  # -- Image to use for loki canary
-  image:
-    # -- The Docker registry
-    registry: docker.io
-    # -- Docker image repository
-    repository: grafana/loki-canary
-    # -- Overrides the image tag whose default is the chart's appVersion
-    tag: null
-    # -- Overrides the image tag with an image digest
-    digest: null
-    # -- Docker image pull policy
-    pullPolicy: IfNotPresent
-  # -- The SecurityContext for Loki pods
-  podSecurityContext:
-    fsGroup: 10001
-    runAsGroup: 10001
-    runAsNonRoot: true
-    runAsUser: 10001
-    seccompProfile:
-      type: RuntimeDefault
-  # -- The SecurityContext for Loki containers
-  containerSecurityContext:
-    readOnlyRootFilesystem: true
-    capabilities:
-      drop:
-        - ALL
-    allowPrivilegeEscalation: false
-  # -- Update strategy for the `loki-canary` Daemonset pods
-  updateStrategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1

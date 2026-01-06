@@ -70,8 +70,6 @@ loki:
     compactor:
       delete_request_store: s3
       retention_enabled: true
-    image:
-      tag: 3.1.0
     ingester:
       autoforget_unhealthy: true
       chunk_encoding: snappy
@@ -125,9 +123,8 @@ loki:
   monitoring:
     serviceMonitor:
       enabled: true
-  rbac:
-    pspEnabled: false
   read:
+    replicas: 2 # Overrides the default value of 3 from upstream as keda scaling does not work in ATS
     extraArgs:
     - -config.expand-env
     - -querier.multi-tenant-queries-enabled
@@ -135,7 +132,7 @@ loki:
     enabled: false
   sidecar:
     image:
-      repository: gsoci.azurecr.io/giantswarm/k8s-sidecar
+      repository: giantswarm/k8s-sidecar
   write:
     affinity:
       nodeAffinity:
@@ -177,6 +174,3 @@ loki:
         memory: 1Gi
       policyTypes:
         - Egress
-multiTenantAuth:
-  deployCredentials: false
-  enabled: false

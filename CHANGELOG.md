@@ -7,6 +7,114 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.35.0] - 2025-12-15
+
+### Changed
+
+- Upgraded upstream chart from 6.46.0 to 6.49.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+  - This upgrades Loki from 3.5.7 to 3.6.3
+
+## [0.34.0] - 2025-11-07
+
+### Changed
+
+- Upgraded upstream chart from 6.42.0 to 6.46.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+  - This upgrades Loki from 3.5.5 to 3.5.7
+
+## [0.33.2] - 2025-10-28
+
+### Fixed
+
+- Add missing loki to mimir alertmanager CNP
+
+## [0.33.1] - 2025-10-14
+
+### Changed
+
+- Upgraded upstream chart from 6.39.0 to 6.42.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+## [0.33.0] - 2025-10-02
+
+### Removed
+
+- Remove loki canary now that the deployment change is merged upstream.
+
+## [0.32.0] - 2025-10-01
+
+### Changed
+
+- Upgraded upstream chart from 6.29.0 to 6.39.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+### Removed
+
+- Remove `multi tenant proxy` from the loki app because we stopped supporting it.
+
+## [0.31.2] - 2025-09-30
+
+### Added
+
+- Add `CiliumNetworkPolicy` to allow communication between Loki and the Mimir ruler.
+
+### Changed
+
+- Refactor existing CNPs to align them with upstream.
+
+## [0.31.1] - 2025-09-01
+
+### Changed
+
+- Load k8s-sidecar and go-dnsmasq container images from gsoci.azurecr.io by default
+
+## [0.31.0] - 2025-08-11
+
+### Added
+
+- Add `fallback` section to `loki-read` and `loki-gateway` ScaledObject resources templates.
+
+## [0.30.1] - 2025-07-28
+
+### Fixed
+
+- Fix keda cpu and memory triggers by making value a string instead of an int.
+
+## [0.30.0] - 2025-07-28
+
+### Changed
+
+- Make Keda triggers configurable from the values.
+
+## [0.29.2] - 2025-07-10
+
+### Changed
+
+- Change the names of Keda related fields in the values to match mimir upstream.
+
+## [0.29.1] - 2025-07-09
+
+### Changed
+
+- Disable `ScaledObject` resources and enable back hpa for read and gateway components.
+
+## [0.29.0] - 2025-07-09
+
+### Added
+
+- Add `ScaledObject` resources for `loki-read` and `loki-gateway`.
+
+### Changed
+
+- Replace HPA scaling for `loki-read` and `loki-gateway` in favor of Keda
+
+## [0.28.1] - 2025-05-09
+
+### Changed
+
+- Upgraded upstream chart from 6.27.0 to 6.29.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
+
+### Fixed
+
+- ensured `.loki.enabled: false` prevents creating any resource
+
 ## [0.28.0] - 2025-02-24
 
 ### Changed
@@ -618,7 +726,22 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.28.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.35.0...HEAD
+[0.35.0]: https://github.com/giantswarm/loki-app/compare/v0.34.0...v0.35.0
+[0.34.0]: https://github.com/giantswarm/loki-app/compare/v0.33.2...v0.34.0
+[0.33.2]: https://github.com/giantswarm/loki-app/compare/v0.33.1...v0.33.2
+[0.33.1]: https://github.com/giantswarm/loki-app/compare/v0.33.0...v0.33.1
+[0.33.0]: https://github.com/giantswarm/loki-app/compare/v0.32.0...v0.33.0
+[0.32.0]: https://github.com/giantswarm/loki-app/compare/v0.31.2...v0.32.0
+[0.31.2]: https://github.com/giantswarm/loki-app/compare/v0.31.1...v0.31.2
+[0.31.1]: https://github.com/giantswarm/loki-app/compare/v0.31.0...v0.31.1
+[0.31.0]: https://github.com/giantswarm/loki-app/compare/v0.30.1...v0.31.0
+[0.30.1]: https://github.com/giantswarm/loki-app/compare/v0.30.0...v0.30.1
+[0.30.0]: https://github.com/giantswarm/loki-app/compare/v0.29.2...v0.30.0
+[0.29.2]: https://github.com/giantswarm/loki-app/compare/v0.29.1...v0.29.2
+[0.29.1]: https://github.com/giantswarm/loki-app/compare/v0.29.0...v0.29.1
+[0.29.0]: https://github.com/giantswarm/loki-app/compare/v0.28.1...v0.29.0
+[0.28.1]: https://github.com/giantswarm/loki-app/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/giantswarm/loki-app/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/giantswarm/loki-app/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/giantswarm/loki-app/compare/v0.25.2...v0.26.0

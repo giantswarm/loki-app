@@ -17,6 +17,7 @@ storage must be ensured for the chart to work.
 - [Install](#install)
 - [Upgrading](#upgrading)
 - [Configuration](#configuration)
+- [Pull Requests tests](#pull-requests-tests)
 - [Limitations](#limitations)
 - [Links](#links)
 - [Credit](#credits)
@@ -122,7 +123,7 @@ Most notable changes:
 * The change of chart leads to a change of achitecture. The component's names are not the same, and the persistent volumes change. A bit of recent data may be lost in the migration.
 * We switched to using a subchart. This changes the layout of your `values.yaml`:
   * most of the settings are moving under a `loki` section. Actually that's all the upstream-specific chart configuration.
-  * except what is not specific to upstream chart, like `global`, `multiTenantAuth`, `imagePullSecrets` and `giantswarm` settings
+  * except what is not specific to upstream chart, like `global`, `imagePullSecrets` and `giantswarm` settings
   * note that you will probably have a `loki` section inside another `loki` section
 * You can look at the default and sample `values` files to understand the changes:
   * with `loki-app` v0.4.x:
@@ -176,43 +177,6 @@ options, please consult the [full `values.yaml` file](https://github.com/giantsw
 should give you the right id for `machine-deployment` or `machine-pool` depending on your provider). Beware, there's 2 places to update! (obsolete with SSD)
 
 3. update `gateway.ingress.hosts.host` and `gateway.ingress.tls.host` 
-
-#### Multi-tenant setup
-
-1. The default GiantSwarm template is prepared for multi-tenancy.
-In multi tenant setups<a name="multi-tenant-config"></a>, you can enable [multi-tenant-proxy](https://github.com/giantswarm/grafana-multi-tenant-proxy)
-to manage credentials for different tenants.
-
-Enable the deployment of multi-tenant-proxy by setting `multiTenantAuth.enabled` to `true`.
-
-Write down your credentials in `multiTenantAuth.credentials`.
-They should be formatted in your values file like this:
-
-```yaml
-multiTenantAuth:
-  enabled: true
-  credentials: |-
-    users:
-      - username: Tenant1
-        password: 1tnaneT
-        orgid: tenant-1
-      - username: Tenant2
-        password: 2tnaneT
-        orgid: tenant-2
-```
-
-2. In single tenant setups<a name="single-tenant-config"></a> with simple basic auth logins you want to use the
-`gateway.basicAuth.existingSecret` config option.
-To create the secret with necessary users and passwords use the following commands:
-
-```bash
-echo "passwd01" | htpasswd -i -c.htpasswd user01
-echo "passwd02" | htpasswd -i .htpasswd user02
-echo "passwd03" | htpasswd -i .htpasswd user03
-
-kubectl -n loki create secret generic loki-basic-auth --from-file=.htpasswd
-```
-Then, set `gateway.basicAuth.existingSecret` to `loki-basic-auth`.
 
 ### Caching
 
@@ -620,6 +584,10 @@ promtail --config.file=promtail-test.yml --inspect
 (while true ; do echo "test log line $(date)"; sleep 1; done ) >> /tmp/lokitest.log
 ```
 * Query loki with `logcli` and see your data
+
+## Pull Requests tests
+
+We have a few tips for testing pull requests [here](TESTING.md).
 
 ## Limitations
 
