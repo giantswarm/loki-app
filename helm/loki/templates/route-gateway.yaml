@@ -42,5 +42,51 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
   {{- end }}
+  {{- if and $route.enabled $route.securityPolicy.enabled }}
+{{- $policy := $route.securityPolicy }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: {{ include "loki.gatewayFullname" $ }}
+  labels:
+    {{- include "loki.gatewayLabels" $ | nindent 4 }}
+    {{- with $policy.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $policy.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: {{ $route.kind | default "HTTPRoute" }}
+      name: {{ $route.name | default (include "loki.gatewayFullname" $ ) }}
+  {{ with $policy.basicAuth }}
+  basicAuth:
+    {{- toYaml . | nindent 4 }}
+  {{ end }}
+  {{ with $policy.cors }}
+  cors:
+    {{- toYaml . | nindent 4 }}
+  {{ end }}
+  {{ with $policy.jwt }}
+  jwt:
+    {{- toYaml . | nindent 4 }}
+  {{ end }}
+  {{ with $policy.oidc }}
+  oidc:
+    {{- toYaml . | nindent 4 }}
+  {{ end }}
+  {{ with $policy.extAuth }}
+  extAuth:
+    {{- toYaml . | nindent 4 }}
+  {{ end }}
+  {{ with $policy.authorization }}
+  authorization:
+    {{- toYaml . | nindent 4 }}
+  {{ end }}
+{{- end }}
 {{- end }}
 {{- end }}
