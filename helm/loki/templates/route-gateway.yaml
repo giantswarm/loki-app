@@ -87,6 +87,32 @@ spec:
   authorization:
     {{- toYaml . | nindent 4 }}
   {{ end }}
+  {{- if and $route.enabled $route.backendTrafficPolicy.enabled }}
+{{ $trafficPolicy := $route.backendTrafficPolicy }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  labels:
+    {{- include "loki.gatewayLabels" $ | nindent 4 }}
+    {{- with $trafficPolicy.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $trafficPolicy.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  name: {{ include "loki.gatewayFullname" $ }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: {{ $route.kind | default "HTTPRoute" }}
+    name: {{ $route.name | default (include "loki.gatewayFullname" $ ) }}
+  timeout:
+    tcp:
+      connectTimeout: {{ $trafficPolicy.timeout.tcp.connectTimeout | default "60s" }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
