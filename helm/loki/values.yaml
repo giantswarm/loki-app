@@ -176,7 +176,7 @@ loki:
           # basicAuth:
           #   users:
           #     name: <secret_name>
-        
+
         backendTrafficPolicy:
           enabled: false
           annotations: {}
