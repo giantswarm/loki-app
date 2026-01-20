@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for Gateway API resources
+
 ## [0.35.0] - 2025-12-15
 
 ### Changed
