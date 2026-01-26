@@ -1,0 +1,108 @@
+{{- if and .Values.loki.enabled (.Values.loki.loki.storage.provisioning.enabled) (include "loki.storage.provisioning.isAWS" .) .Values.loki.loki.storage.provisioning.iam.enabled }}
+{{- $region := .Values.loki.loki.storage.provisioning.region }}
+{{- $observeOnly := .Values.loki.loki.storage.provisioning.observeOnly }}
+{{- $roleName := include "loki.storage.iamRoleName" . }}
+{{- $serviceAccountName := .Values.loki.serviceAccount.name | default "loki" }}
+{{- $namespace := .Release.Namespace }}
+{{- $tags := include "loki.storage.tags" . | fromYaml }}
+{{- $accountId := include "loki.storage.awsAccountId" . }}
+{{- $oidcProvider := include "loki.storage.oidcProvider" . }}
+---
+apiVersion: iam.aws.upbound.io/v1beta1
+kind: Role
+metadata:
+  name: {{ $roleName }}
+  namespace: {{ $namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: iam
+  annotations:
+    {{- if $observeOnly }}
+    crossplane.io/external-name: {{ $roleName }}
+    {{- end }}
+spec:
+  {{- if $observeOnly }}
+  managementPolicies:
+    - Observe
+  {{- else }}
+  managementPolicies:
+    - "*"
+  {{- end }}
+  forProvider:
+    {{- if not $observeOnly }}
+    assumeRolePolicy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Federated": "arn:aws:iam::{{ $accountId }}:oidc-provider/{{ $oidcProvider }}"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+              "StringEquals": {
+                "{{ $oidcProvider }}:sub": "system:serviceaccount:{{ $namespace }}:{{ $serviceAccountName }}",
+                "{{ $oidcProvider }}:aud": "sts.amazonaws.com"
+              }
+            }
+          }
+        ]
+      }
+    tags:
+      {{- range $tags }}
+      {{ .key }}: {{ .value | quote }}
+      {{- end }}
+      Name: {{ $roleName }}
+    {{- end }}
+  providerConfigRef:
+    name: default
+---
+{{- if not $observeOnly }}
+apiVersion: iam.aws.upbound.io/v1beta1
+kind: RolePolicy
+metadata:
+  name: {{ $roleName }}-s3-access
+  namespace: {{ $namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: iam
+spec:
+  forProvider:
+    roleRef:
+      name: {{ $roleName }}
+    policy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "s3:ListBucket",
+              "s3:GetBucketLocation"
+            ],
+            "Resource": [
+              "arn:aws:s3:::{{ include "loki.storage.bucketName" (dict "root" . "bucketType" "chunks") }}",
+              "arn:aws:s3:::{{ include "loki.storage.bucketName" (dict "root" . "bucketType" "ruler") }}",
+              "arn:aws:s3:::{{ include "loki.storage.bucketName" (dict "root" . "bucketType" "admin") }}"
+            ]
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "s3:PutObject",
+              "s3:GetObject",
+              "s3:DeleteObject"
+            ],
+            "Resource": [
+              "arn:aws:s3:::{{ include "loki.storage.bucketName" (dict "root" . "bucketType" "chunks") }}/*",
+              "arn:aws:s3:::{{ include "loki.storage.bucketName" (dict "root" . "bucketType" "ruler") }}/*",
+              "arn:aws:s3:::{{ include "loki.storage.bucketName" (dict "root" . "bucketType" "admin") }}/*"
+            ]
+          }
+        ]
+      }
+  providerConfigRef:
+    name: default
+{{- end }}
+{{- end }}

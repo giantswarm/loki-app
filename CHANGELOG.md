@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Crossplane support for automated S3 bucket provisioning on CAPA (AWS) clusters
+  - New storage provisioning configuration under `loki.loki.storage.provisioning`
+  - Automatic bucket creation via Crossplane with lifecycle policies
+  - IAM role and policy management for IRSA authentication
+  - Two-phase migration support: observe mode and full management mode
+  - Automatic tag inheritance from AWSCluster CR
+  - Dynamic AWS account ID and OIDC provider lookup from cluster resources
+
 ## [0.36.0] - 2026-01-20
 
 ### Added

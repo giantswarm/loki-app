@@ -5,7 +5,7 @@ global:
 ciliumNetworkPolicy:
   # For imported eks clusters : false. For capi eks clusters : true.
   enabled: false
-  
+
 loki:
   ruler:
     enabled: false
@@ -36,6 +36,30 @@ loki:
         accessKeyId: adminKey
         s3ForcePathStyle: true
         insecure: true
+      ## Crossplane Storage Provisioning Configuration (Alternative to MinIO for production)
+      ## Uncomment and configure for automated S3 bucket provisioning via Crossplane
+      # provisioning:
+      #   # Phase 1: Observe Mode - Crossplane watches existing buckets without managing them
+      #   enabled: false
+      #   observeOnly: true
+      #   provider: aws
+      #   clusterName: "my-cluster"  # Must match AWSCluster CR name
+      #   clusterNamespace: org-giantswarm
+      #   region: eu-west-1
+      #   lifecycle:
+      #     enabled: true
+      #     retentionDays: 100
+      #   iam:
+      #     enabled: true
+      #     roleName: "giantswarm-my-cluster-loki-storage"
+      #   tags:
+      #     - key: team
+      #       value: atlas
+      #     - key: environment
+      #       value: production
+      #
+      # Phase 2: Full Management - After removing old Bucket CR
+      # Set observeOnly: false to enable full Crossplane management
   # Object storage mocking
   minio:
     enabled: true
@@ -52,6 +76,12 @@ loki:
   rbac:
     # psp are disabled for most recent kubernetes clusters.
     pspEnabled: false
+
+  ## Service Account Configuration
+  ## When using Crossplane storage provisioning with IAM, uncomment and configure:
+  # serviceAccount:
+  #   annotations:
+  #     eks.amazonaws.com/role-arn: "arn:aws:iam::${AWS_ACCOUNT_ID}:role/giantswarm-my-cluster-loki-storage"
 
   gateway:
     replicas: 3

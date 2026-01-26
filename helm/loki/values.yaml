@@ -11,9 +11,15 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
+# -- Override the name of the chart
+nameOverride: ""
+
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
+
+  # -- Override the name of the loki subchart
+  nameOverride: ""
 
   loki:
     image:
@@ -56,6 +62,39 @@ loki:
         chunks: chunks
         ruler: ruler
         admin: admin
+      # -- Storage provisioning using Crossplane (AWS S3 for CAPA)
+      provisioning:
+        # -- Enable automated bucket provisioning via Crossplane
+        enabled: false
+        # -- Observe mode: Crossplane watches existing buckets without managing them
+        # Set to true for Phase 1 migration, false for full management
+        observeOnly: true
+        # -- Cloud provider type: 'aws' for CAPA, 'azure' for CAPZ
+        provider: aws
+        # -- Cluster name (should match the AWSCluster/AzureCluster CR name)
+        clusterName: ""
+        # -- Namespace where the cluster CR exists
+        clusterNamespace: org-giantswarm
+        # -- Cloud region for resources
+        region: eu-west-1
+        # -- Bucket lifecycle configuration
+        lifecycle:
+          # -- Enable lifecycle rules for log retention
+          enabled: true
+          # -- Number of days to retain logs before expiration
+          retentionDays: 100
+        # -- IAM Role configuration for IRSA
+        iam:
+          # -- Enable IAM role creation via Crossplane
+          enabled: true
+          # -- IAM role name (should match existing role when using observeOnly mode)
+          # Example: giantswarm-my-installation-loki-storage
+          roleName: ""
+        # -- Additional tags to apply to all storage resources
+        # Tags from cluster CR will be merged automatically
+        tags: []
+        # - key: team
+        #   value: atlas
 
   gateway:
     extraContainers:
@@ -327,6 +366,8 @@ loki:
     # -- Image pull secrets for the service account
     imagePullSecrets: []
     # -- Annotations for the service account
+    # Note: When storage.provisioning.enabled is true with IAM enabled,
+    # the eks.amazonaws.com/role-arn annotation will be added automatically
     annotations: {}
     # -- Labels for the service account
     labels: {}
