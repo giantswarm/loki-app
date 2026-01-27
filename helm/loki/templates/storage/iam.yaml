@@ -1,6 +1,5 @@
 {{- if and .Values.loki.enabled (.Values.loki.loki.storage.provisioning.enabled) (include "loki.storage.provisioning.isAWS" .) .Values.loki.loki.storage.provisioning.iam.enabled }}
 {{- $region := .Values.loki.loki.storage.provisioning.region }}
-{{- $observeOnly := .Values.loki.loki.storage.provisioning.observeOnly }}
 {{- $roleName := include "loki.storage.iamRoleName" . }}
 {{- $serviceAccountName := .Values.loki.serviceAccount.name | default "loki" }}
 {{- $namespace := .Release.Namespace }}
@@ -17,11 +16,9 @@ metadata:
     {{- include "loki.labels" . | nindent 4 }}
     app.kubernetes.io/component: iam
   annotations:
-    {{- if $observeOnly }}
     crossplane.io/external-name: {{ $roleName }}
-    {{- end }}
 spec:
-  {{- if $observeOnly }}
+  {{- if .Values.loki.loki.storage.provisioning.observeOnly }}
   managementPolicies:
     - Observe
   {{- else }}
@@ -29,7 +26,6 @@ spec:
     - "*"
   {{- end }}
   forProvider:
-    {{- if not $observeOnly }}
     assumeRolePolicy: |
       {
         "Version": "2012-10-17",
@@ -54,7 +50,6 @@ spec:
       {{ .key }}: {{ .value | quote }}
       {{- end }}
       Name: {{ $roleName }}
-    {{- end }}
   providerConfigRef:
     name: default
 ---
