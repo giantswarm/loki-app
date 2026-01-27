@@ -1,8 +1,6 @@
 {{- if and .Values.loki.enabled (.Values.loki.loki.storage.provisioning.enabled) (include "loki.storage.provisioning.isAWS" .) }}
 {{- $region := .Values.loki.loki.storage.provisioning.region }}
 {{- $observeOnly := .Values.loki.loki.storage.provisioning.observeOnly }}
-{{- $lifecycleEnabled := .Values.loki.loki.storage.provisioning.lifecycle.enabled }}
-{{- $retentionDays := .Values.loki.loki.storage.provisioning.lifecycle.retentionDays }}
 {{- $tags := include "loki.storage.tags" . | fromYaml }}
 {{- range $bucketType := list "chunks" "ruler" "admin" }}
 ---
@@ -16,31 +14,26 @@ metadata:
     app.kubernetes.io/component: storage
     loki.giantswarm.io/bucket-type: {{ $bucketType }}
   annotations:
-    {{- if $observeOnly }}
     crossplane.io/external-name: {{ include "loki.storage.bucketName" (dict "root" $ "bucketType" $bucketType) }}
-    {{- end }}
 spec:
-  {{- if $observeOnly }}
   managementPolicies:
+    {{- if $observeOnly }}
     - Observe
-  {{- else }}
-  managementPolicies:
+    {{- else }}
     - "*"
-  {{- end }}
+    {{- end }}
   forProvider:
     region: {{ $region }}
-    {{- if not $observeOnly }}
     tags:
       {{- range $tags }}
       {{ .key }}: {{ .value | quote }}
       {{- end }}
       Name: {{ include "loki.storage.bucketName" (dict "root" $ "bucketType" $bucketType) }}
       loki.giantswarm.io/bucket-type: {{ $bucketType }}
-    {{- end }}
   providerConfigRef:
     name: default
 ---
-{{- if and $lifecycleEnabled (not $observeOnly) }}
+{{- if .Values.loki.loki.storage.provisioning.lifecycle.enabled }}
 apiVersion: s3.aws.upbound.io/v1beta1
 kind: BucketLifecycleConfiguration
 metadata:
@@ -51,6 +44,12 @@ metadata:
     app.kubernetes.io/component: storage
     loki.giantswarm.io/bucket-type: {{ $bucketType }}
 spec:
+  managementPolicies:
+    {{- if $observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
   forProvider:
     bucketRef:
       name: {{ include "loki.storage.bucketName" (dict "root" $ "bucketType" $bucketType) }}
@@ -59,14 +58,13 @@ spec:
       - id: expire-old-logs
         status: Enabled
         expiration:
-          - days: {{ $retentionDays }}
+          - days: {{ .Values.loki.loki.storage.provisioning.lifecycle.retentionDays }}
         filter:
           - prefix: ""
   providerConfigRef:
     name: default
 {{- end }}
 ---
-{{- if not $observeOnly }}
 apiVersion: s3.aws.upbound.io/v1beta1
 kind: BucketPublicAccessBlock
 metadata:
@@ -77,6 +75,12 @@ metadata:
     app.kubernetes.io/component: storage
     loki.giantswarm.io/bucket-type: {{ $bucketType }}
 spec:
+  managementPolicies:
+    {{- if $observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
   forProvider:
     bucketRef:
       name: {{ include "loki.storage.bucketName" (dict "root" $ "bucketType" $bucketType) }}
@@ -87,6 +91,5 @@ spec:
     restrictPublicBuckets: true
   providerConfigRef:
     name: default
-{{- end }}
 {{- end }}
 {{- end }}

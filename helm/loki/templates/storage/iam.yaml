@@ -18,13 +18,12 @@ metadata:
   annotations:
     crossplane.io/external-name: {{ $roleName }}
 spec:
-  {{- if .Values.loki.loki.storage.provisioning.observeOnly }}
   managementPolicies:
+    {{- if .Values.loki.loki.storage.provisioning.observeOnly }}
     - Observe
-  {{- else }}
-  managementPolicies:
+    {{- else }}
     - "*"
-  {{- end }}
+    {{- end }}
   forProvider:
     assumeRolePolicy: |
       {
@@ -53,7 +52,6 @@ spec:
   providerConfigRef:
     name: default
 ---
-{{- if not $observeOnly }}
 apiVersion: iam.aws.upbound.io/v1beta1
 kind: RolePolicy
 metadata:
@@ -62,7 +60,15 @@ metadata:
   labels:
     {{- include "loki.labels" . | nindent 4 }}
     app.kubernetes.io/component: iam
+  annotations:
+    crossplane.io/external-name: {{ $roleName }}-s3-access
 spec:
+  managementPolicies:
+    {{- if .Values.loki.loki.storage.provisioning.observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
   forProvider:
     roleRef:
       name: {{ $roleName }}
@@ -99,5 +105,4 @@ spec:
       }
   providerConfigRef:
     name: default
-{{- end }}
 {{- end }}
