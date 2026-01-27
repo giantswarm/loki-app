@@ -71,6 +71,8 @@ loki:
         observeOnly: true
         # -- Cloud provider type: 'aws' for CAPA, 'azure' for CAPZ
         provider: aws
+        # -- Crossplane ProviderConfig name
+        providerConfigRef: default
         # -- Cluster name (should match the AWSCluster/AzureCluster CR name)
         clusterName: ""
         # -- Namespace where the cluster CR exists

@@ -1,7 +1,10 @@
 {{- if and .Values.loki.enabled (.Values.loki.loki.storage.provisioning.enabled) (include "loki.storage.provisioning.isAWS" .) }}
 {{- $region := .Values.loki.loki.storage.provisioning.region }}
 {{- $observeOnly := .Values.loki.loki.storage.provisioning.observeOnly }}
-{{- $tags := include "loki.storage.tags" . | fromYaml }}
+{{- $tagsObj := include "loki.storage.tags" . | fromYaml }}
+{{- $tags := $tagsObj.tags | default list }}
+{{- $providerConfigRef := .Values.loki.loki.storage.provisioning.providerConfigRef }}
+{{- $isChinaRegion := hasPrefix "cn-" $region }}
 {{- /* Build a map of unique bucket names to their types */ -}}
 {{- $bucketMap := dict -}}
 {{- range $bucketType := list "chunks" "ruler" "admin" -}}
@@ -30,20 +33,24 @@ spec:
     - "*"
     {{- end }}
   forProvider:
+    forceDestroy: false
+    objectLockEnabled: false
     region: {{ $region }}
     tags:
       {{- range $tag := $tags }}
-      {{ $tag.key }}: {{ $tag.value | quote }}
+      {{ index $tag "key" }}: {{ index $tag "value" | quote }}
       {{- end }}
   providerConfigRef:
-    name: default
+    name: {{ $providerConfigRef }}
 ---
 {{- if $.Values.loki.loki.storage.provisioning.lifecycle.enabled }}
 apiVersion: s3.aws.upbound.io/v1beta1
 kind: BucketLifecycleConfiguration
 metadata:
-  name: {{ $bucketName }}-lifecycle
+  name: {{ $bucketName }}
   namespace: {{ $.Release.Namespace }}
+  annotations:
+    crossplane.io/external-name: {{ $bucketName }}
   labels:
     {{- include "loki.labels" $ | nindent 4 }}
     app.kubernetes.io/component: storage
@@ -59,21 +66,66 @@ spec:
       name: {{ $bucketName }}
     region: {{ $region }}
     rule:
-      - id: expire-old-logs
+      - id: Expiration
         status: Enabled
         expiration:
           - days: {{ $.Values.loki.loki.storage.provisioning.lifecycle.retentionDays }}
-        filter:
-          - prefix: ""
   providerConfigRef:
-    name: default
+    name: {{ $providerConfigRef }}
 {{- end }}
+---
+apiVersion: s3.aws.upbound.io/v1beta1
+kind: BucketPolicy
+metadata:
+  name: {{ $bucketName }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "loki.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: storage
+  annotations:
+    crossplane.io/external-name: {{ $bucketName }}
+spec:
+  managementPolicies:
+    {{- if $observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
+  forProvider:
+    bucketRef:
+      name: {{ $bucketName }}
+    policy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Sid": "EnforceSSLOnly",
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": ["s3:*"],
+            "Resource": [
+              "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:s3:::{{ $bucketName }}",
+              "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:s3:::{{ $bucketName }}/*"
+            ],
+            "Condition": {
+              "Bool": {
+                "aws:SecureTransport": "false"
+              }
+            }
+          }
+        ]
+      }
+    region: {{ $region }}
+  providerConfigRef:
+    name: {{ $providerConfigRef }}
 ---
 apiVersion: s3.aws.upbound.io/v1beta1
 kind: BucketPublicAccessBlock
 metadata:
-  name: {{ $bucketName }}-public-access-block
+  name: {{ $bucketName }}
   namespace: {{ $.Release.Namespace }}
+  annotations:
+    crossplane.io/external-name: {{ $bucketName }}
   labels:
     {{- include "loki.labels" $ | nindent 4 }}
     app.kubernetes.io/component: storage
@@ -93,6 +145,6 @@ spec:
     ignorePublicAcls: true
     restrictPublicBuckets: true
   providerConfigRef:
-    name: default
+    name: {{ $providerConfigRef }}
 {{- end }}
 {{- end }}
