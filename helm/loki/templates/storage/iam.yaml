@@ -45,10 +45,9 @@ spec:
         ]
       }
     tags:
-      {{- range $tags }}
-      {{ .key }}: {{ .value | quote }}
+      {{- range $tag := $tags }}
+      {{ $tag.key }}: {{ $tag.value | quote }}
       {{- end }}
-      Name: {{ $roleName }}
   providerConfigRef:
     name: default
 ---

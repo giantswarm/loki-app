@@ -136,16 +136,3 @@ Looks up tags from the AWSCluster CR in the cluster namespace
 {{- $allTags := concat $tags $defaultTags $userTags -}}
 {{- toYaml $allTags -}}
 {{- end -}}
-
-{{/*
-Service account IAM annotations
-Merges user-provided annotations with IAM role annotation when storage provisioning is enabled
-*/}}
-{{- define "loki.serviceAccount.annotations" -}}
-{{- $annotations := .Values.loki.serviceAccount.annotations | default dict -}}
-{{- if and (include "loki.storage.provisioning.enabled" .) (include "loki.storage.provisioning.isAWS" .) .Values.loki.loki.storage.provisioning.iam.enabled -}}
-{{- $roleArn := include "loki.storage.iamRoleArn" . -}}
-{{- $_ := set $annotations "eks.amazonaws.com/role-arn" $roleArn -}}
-{{- end -}}
-{{- toYaml $annotations -}}
-{{- end -}}
