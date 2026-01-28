@@ -93,10 +93,6 @@ loki:
   test:
     enabled: false
 
-## Phase 1: Observe Mode Migration
-## Enable this configuration first while old storage resources are still active
-##
-## IMPORTANT: Private Cluster Detection
 ## The chart automatically detects if your cluster is private by checking
 ## the cluster user-values ConfigMap for global.connectivity.network.mode == "private"
 ## For private clusters, it will:
@@ -131,28 +127,3 @@ crossplane:
       name: giantswarm-my-installation-loki
       # Number of days to retain logs before expiration
       lifecycleDays: 100
-
-## Phase 2: Full Management (After testing Phase 1)
-## 1. Verify Crossplane resources are in "Observe" state and synced
-## 2. Remove the old storage resources from your configuration
-## 3. Change observeOnly: false (full management mode)
-## 4. Apply the changes - Crossplane will now fully manage the storage
-# crossplane:
-#   enabled: true
-#   provider: azure
-#   region: westeurope
-#   clusterName: "my-installation"
-#   clusterNamespace: org-giantswarm
-#   providerConfigRef: default
-#   observeOnly: false  # Full management mode
-#   tags:
-#     - key: team
-#       value: atlas
-#     - key: environment
-#       value: production
-#
-#   azure:
-#     enabled: true
-#     container:
-#       name: giantswarm-my-installation-loki
-#       lifecycleDays: 100
