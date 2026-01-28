@@ -1,8 +1,8 @@
 {{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAWS" .) .Values.crossplane.aws.enabled .Values.crossplane.aws.iam.enabled }}
 {{- $roleName := .Values.crossplane.aws.iam.roleName }}
 {{- $namespace := .Release.Namespace }}
-{{- $tags := (include "loki.crossplane.tags" . | fromYaml).tags | default list }}
-{{- $oidcProvider := include "loki.crossplane.oidcProvider" . }}
+{{- $tags := include "loki.crossplane.tags" . | fromYaml }}
+{{- $oidcProvider := include "loki.crossplane.aws.oidcProvider" . }}
 {{- $isChinaRegion := hasPrefix "cn-" .Values.crossplane.region }}
 {{- $bucketName := .Values.crossplane.aws.bucket.name }}
 ---
@@ -31,7 +31,7 @@ spec:
           {
             "Effect": "Allow",
             "Principal": {
-              "Federated": "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:iam::{{ include "loki.crossplane.awsAccountId" . }}:oidc-provider/{{ $oidcProvider }}"
+              "Federated": "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:iam::{{ include "loki.crossplane.aws.accountId" . }}:oidc-provider/{{ $oidcProvider }}"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
@@ -75,8 +75,8 @@ spec:
           }
     {{- if $tags }}
     tags:
-      {{- range $tag := $tags }}
-      {{ index $tag "key" }}: {{ index $tag "value" | quote }}
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
       {{- end }}
     {{- end }}
   providerConfigRef:

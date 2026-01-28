@@ -21,54 +21,21 @@ application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantsw
 {{- end }}
 
 {{/*
-Storage provisioning enabled check
+Crossplane is AWS/CAPA
 */}}
-{{- define "loki.storage.provisioning.enabled" -}}
-{{- if and .Values.loki.loki.storage.provisioning.enabled .Values.loki.loki.storage.provisioning.clusterName -}}
+{{- define "loki.crossplane.isAWS" -}}
+{{- if eq .Values.crossplane.provider "aws" -}}
 true
 {{- end -}}
-{{- end -}}
-
-{{/*
-Storage provisioning is AWS/CAPA
-*/}}
-{{- define "loki.storage.provisioning.isAWS" -}}
-{{- if eq .Values.loki.loki.storage.provisioning.provider "aws" -}}
-true
-{{- end -}}
-{{- end -}}
-
-{{/*
-Get bucket name for a given bucket type (chunks, ruler, admin)
-Returns the bucket name from loki.loki.storage.bucketNames configuration
-*/}}
-{{- define "loki.storage.bucketName" -}}
-{{- $bucketType := .bucketType -}}
-{{- $root := .root -}}
-{{- if eq $bucketType "chunks" -}}
-{{- $root.Values.loki.loki.storage.bucketNames.chunks -}}
-{{- else if eq $bucketType "ruler" -}}
-{{- $root.Values.loki.loki.storage.bucketNames.ruler -}}
-{{- else if eq $bucketType "admin" -}}
-{{- $root.Values.loki.loki.storage.bucketNames.admin -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Get IAM role name
-Returns the role name from loki.loki.storage.provisioning.iam.roleName configuration
-*/}}
-{{- define "loki.storage.iamRoleName" -}}
-{{- .Values.loki.loki.storage.provisioning.iam.roleName -}}
 {{- end -}}
 
 {{/*
 Get AWS Account ID from AWSCluster identity
 Supports both AWSClusterRoleIdentity and AWSClusterControllerIdentity
 */}}
-{{- define "loki.storage.awsAccountId" -}}
-{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
-{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- define "loki.crossplane.aws.accountId" -}}
+{{- $clusterName := .Values.crossplane.clusterName -}}
+{{- $clusterNamespace := .Values.crossplane.clusterNamespace -}}
 {{- $accountId := "" -}}
 {{- $awsCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta2" "AWSCluster" $clusterNamespace $clusterName -}}
 {{- if $awsCluster -}}
@@ -100,9 +67,9 @@ Supports both AWSClusterRoleIdentity and AWSClusterControllerIdentity
 Get OIDC Provider URL from cluster
 First tries annotation aws.giantswarm.io/irsa-trust-domains, then falls back to identity
 */}}
-{{- define "loki.storage.oidcProvider" -}}
-{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
-{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- define "loki.crossplane.aws.oidcProvider" -}}
+{{- $clusterName := .Values.crossplane.clusterName -}}
+{{- $clusterNamespace := .Values.crossplane.clusterNamespace -}}
 {{- $oidcProvider := "" -}}
 {{- $awsCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta2" "AWSCluster" $clusterNamespace $clusterName -}}
 {{- if $awsCluster -}}
@@ -126,43 +93,24 @@ First tries annotation aws.giantswarm.io/irsa-trust-domains, then falls back to 
 {{- end -}}
 
 {{/*
-Generate IAM role ARN
-*/}}
-{{- define "loki.storage.iamRoleArn" -}}
-{{- $accountId := include "loki.storage.awsAccountId" . -}}
-{{- $roleName := include "loki.storage.iamRoleName" . -}}
-{{- printf "arn:aws:iam::%s:role/%s" $accountId $roleName -}}
-{{- end -}}
-
-{{/*
 Merge tags from cluster CR with user-provided tags
-Returns tags in the appropriate format based on provider:
-- AWS: {tags: [{key: "foo", value: "bar"}]} (list format)
-- Azure: {foo: "bar"} (map format)
+Returns tags as a map: {foo: "bar"}
 */}}
 {{- define "loki.crossplane.tags" -}}
 {{- $clusterName := .Values.crossplane.clusterName -}}
 {{- $clusterNamespace := .Values.crossplane.clusterNamespace -}}
 {{- $provider := .Values.crossplane.provider -}}
+{{- $tags := dict -}}
 {{- if eq $provider "aws" -}}
-  {{- $tags := list -}}
   {{- $awsCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta2" "AWSCluster" $clusterNamespace $clusterName -}}
   {{- if $awsCluster -}}
     {{- if $awsCluster.spec.additionalTags -}}
       {{- range $key, $value := $awsCluster.spec.additionalTags -}}
-        {{- $tags = append $tags (dict "key" $key "value" $value) -}}
+        {{- $_ := set $tags $key $value -}}
       {{- end -}}
     {{- end -}}
   {{- end -}}
-  {{- $defaultTags := list
-    (dict "key" "app" "value" "loki")
-    (dict "key" "managed-by" "value" "crossplane")
-  -}}
-  {{- $userTags := .Values.crossplane.tags | default list -}}
-  {{- $allTags := concat $tags $defaultTags $userTags -}}
-  {{- dict "tags" $allTags | toYaml -}}
 {{- else if eq $provider "azure" -}}
-  {{- $tags := dict -}}
   {{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
   {{- if $azureCluster -}}
     {{- if $azureCluster.spec.additionalTags -}}
@@ -171,17 +119,17 @@ Returns tags in the appropriate format based on provider:
       {{- end -}}
     {{- end -}}
   {{- end -}}
-  {{- $defaultTags := dict
-    "app" "loki"
-    "managed-by" "crossplane"
-  -}}
-  {{- $tags = merge $tags $defaultTags -}}
-  {{- $userTags := .Values.crossplane.tags | default list -}}
-  {{- range $tag := $userTags -}}
-    {{- $_ := set $tags (index $tag "key") (index $tag "value") -}}
-  {{- end -}}
-  {{- $tags | toYaml -}}
 {{- end -}}
+{{- $defaultTags := dict
+  "app" "loki"
+  "managed-by" "crossplane"
+-}}
+{{- $tags = merge $tags $defaultTags -}}
+{{- $userTags := .Values.crossplane.tags | default list -}}
+{{- range $tag := $userTags -}}
+  {{- $_ := set $tags (index $tag "key") (index $tag "value") -}}
+{{- end -}}
+{{- $tags | toYaml -}}
 {{- end -}}
 
 {{/*
@@ -218,13 +166,6 @@ Get Azure Resource Group from AzureCluster CR
   {{- $resourceGroup = $azureCluster.spec.resourceGroup | default "" -}}
 {{- end -}}
 {{- $resourceGroup -}}
-{{- end -}}
-
-{{/*
-Get Azure Location from region config
-*/}}
-{{- define "loki.crossplane.azure.location" -}}
-{{- .Values.crossplane.region -}}
 {{- end -}}
 
 {{/*
