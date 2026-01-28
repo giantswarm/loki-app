@@ -135,28 +135,53 @@ Generate IAM role ARN
 {{- end -}}
 
 {{/*
-Merge tags from AWSCluster CR with user-provided tags
-Looks up tags from the AWSCluster CR in the cluster namespace
+Merge tags from cluster CR with user-provided tags
+Returns tags in the appropriate format based on provider:
+- AWS: {tags: [{key: "foo", value: "bar"}]} (list format)
+- Azure: {foo: "bar"} (map format)
 */}}
-{{- define "loki.storage.tags" -}}
-{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
-{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
-{{- $tags := list -}}
-{{- $awsCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta2" "AWSCluster" $clusterNamespace $clusterName -}}
-{{- if $awsCluster -}}
-  {{- if $awsCluster.spec.additionalTags -}}
-    {{- range $key, $value := $awsCluster.spec.additionalTags -}}
-      {{- $tags = append $tags (dict "key" $key "value" $value) -}}
+{{- define "loki.crossplane.tags" -}}
+{{- $clusterName := .Values.crossplane.clusterName -}}
+{{- $clusterNamespace := .Values.crossplane.clusterNamespace -}}
+{{- $provider := .Values.crossplane.provider -}}
+{{- if eq $provider "aws" -}}
+  {{- $tags := list -}}
+  {{- $awsCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta2" "AWSCluster" $clusterNamespace $clusterName -}}
+  {{- if $awsCluster -}}
+    {{- if $awsCluster.spec.additionalTags -}}
+      {{- range $key, $value := $awsCluster.spec.additionalTags -}}
+        {{- $tags = append $tags (dict "key" $key "value" $value) -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
+  {{- $defaultTags := list
+    (dict "key" "app" "value" "loki")
+    (dict "key" "managed-by" "value" "crossplane")
+  -}}
+  {{- $userTags := .Values.crossplane.tags | default list -}}
+  {{- $allTags := concat $tags $defaultTags $userTags -}}
+  {{- dict "tags" $allTags | toYaml -}}
+{{- else if eq $provider "azure" -}}
+  {{- $tags := dict -}}
+  {{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+  {{- if $azureCluster -}}
+    {{- if $azureCluster.spec.additionalTags -}}
+      {{- range $key, $value := $azureCluster.spec.additionalTags -}}
+        {{- $_ := set $tags $key $value -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $defaultTags := dict
+    "app" "loki"
+    "managed-by" "crossplane"
+  -}}
+  {{- $tags = merge $tags $defaultTags -}}
+  {{- $userTags := .Values.crossplane.tags | default list -}}
+  {{- range $tag := $userTags -}}
+    {{- $_ := set $tags (index $tag "key") (index $tag "value") -}}
+  {{- end -}}
+  {{- $tags | toYaml -}}
 {{- end -}}
-{{- $defaultTags := list
-  (dict "key" "app" "value" "loki")
-  (dict "key" "managed-by" "value" "crossplane")
--}}
-{{- $userTags := .Values.loki.loki.storage.provisioning.tags | default list -}}
-{{- $allTags := concat $tags $defaultTags $userTags -}}
-{{- dict "tags" $allTags | toYaml -}}
 {{- end -}}
 
 {{/*
@@ -224,34 +249,6 @@ Get Azure Subscription ID from AzureCluster identity
 {{- $subscriptionId -}}
 {{- end -}}
 
-{{/*
-Merge tags from AzureCluster CR with user-provided tags
-Looks up tags from the AzureCluster CR in the cluster namespace
-Returns tags as a map suitable for Azure resources
-*/}}
-{{- define "loki.crossplane.azure.tags" -}}
-{{- $clusterName := .Values.crossplane.clusterName -}}
-{{- $clusterNamespace := .Values.crossplane.clusterNamespace -}}
-{{- $tags := dict -}}
-{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
-{{- if $azureCluster -}}
-  {{- if $azureCluster.spec.additionalTags -}}
-    {{- range $key, $value := $azureCluster.spec.additionalTags -}}
-      {{- $_ := set $tags $key $value -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-{{- $defaultTags := dict
-  "app" "loki"
-  "managed-by" "crossplane"
--}}
-{{- $tags = merge $tags $defaultTags -}}
-{{- $userTags := .Values.crossplane.tags | default list -}}
-{{- range $tag := $userTags -}}
-  {{- $_ := set $tags (index $tag "key") (index $tag "value") -}}
-{{- end -}}
-{{- $tags | toYaml -}}
-{{- end -}}
 
 {{/*
 Check if Azure cluster is private

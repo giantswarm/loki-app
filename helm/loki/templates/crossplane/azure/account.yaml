@@ -1,5 +1,5 @@
 {{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled }}
-{{- $tags := include "loki.crossplane.azure.tags" . | fromYaml }}
+{{- $tags := include "loki.crossplane.tags" . | fromYaml }}
 {{- $containerName := .Values.crossplane.azure.container.name }}
 {{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" $containerName) }}
 {{- $isPrivate := include "loki.crossplane.azure.isPrivateCluster" . | eq "true" }}
