@@ -563,54 +563,6 @@
                                             "type": "string"
                                         }
                                     }
-                                },
-                                "provisioning": {
-                                    "type": "object",
-                                    "properties": {
-                                        "clusterName": {
-                                            "type": "string"
-                                        },
-                                        "clusterNamespace": {
-                                            "type": "string"
-                                        },
-                                        "enabled": {
-                                            "type": "boolean"
-                                        },
-                                        "iam": {
-                                            "type": "object",
-                                            "properties": {
-                                                "enabled": {
-                                                    "type": "boolean"
-                                                },
-                                                "roleName": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        },
-                                        "lifecycle": {
-                                            "type": "object",
-                                            "properties": {
-                                                "enabled": {
-                                                    "type": "boolean"
-                                                },
-                                                "retentionDays": {
-                                                    "type": "integer"
-                                                }
-                                            }
-                                        },
-                                        "observeOnly": {
-                                            "type": "boolean"
-                                        },
-                                        "provider": {
-                                            "type": "string"
-                                        },
-                                        "region": {
-                                            "type": "string"
-                                        },
-                                        "tags": {
-                                            "type": "array"
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -1053,6 +1005,77 @@
                                             "type": "string"
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "crossplane": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "clusterName": {
+                    "type": "string"
+                },
+                "clusterNamespace": {
+                    "type": "string"
+                },
+                "providerConfigRef": {
+                    "type": "string"
+                },
+                "observeOnly": {
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        },
+                        "required": ["key", "value"]
+                    }
+                },
+                "aws": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "bucket": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "lifecycleDays": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "iam": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "roleName": {
+                                    "type": "string"
                                 }
                             }
                         }

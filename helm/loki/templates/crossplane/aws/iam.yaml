@@ -1,21 +1,10 @@
-{{- if and .Values.loki.enabled (.Values.loki.loki.storage.provisioning.enabled) (include "loki.storage.provisioning.isAWS" .) .Values.loki.loki.storage.provisioning.iam.enabled }}
-{{- $region := .Values.loki.loki.storage.provisioning.region }}
-{{- $roleName := include "loki.storage.iamRoleName" . }}
-{{- $serviceAccountName := .Values.loki.serviceAccount.name | default "loki" }}
+{{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAWS" .) .Values.crossplane.aws.enabled .Values.crossplane.aws.iam.enabled }}
+{{- $roleName := .Values.crossplane.aws.iam.roleName }}
 {{- $namespace := .Release.Namespace }}
-{{- $tagsObj := include "loki.storage.tags" . | fromYaml }}
-{{- $tags := $tagsObj.tags | default list }}
-{{- $accountId := include "loki.storage.awsAccountId" . }}
-{{- $oidcProvider := include "loki.storage.oidcProvider" . }}
-{{- $providerConfigRef := .Values.loki.loki.storage.provisioning.providerConfigRef }}
-{{- $isChinaRegion := hasPrefix "cn-" $region }}
-{{- /* Build unique list of bucket names */ -}}
-{{- $bucketMap := dict }}
-{{- range $bucketType := list "chunks" "ruler" "admin" }}
-  {{- $bucketName := include "loki.storage.bucketName" (dict "root" . "bucketType" $bucketType) }}
-  {{- $_ := set $bucketMap $bucketName true }}
-{{- end }}
-{{- $uniqueBuckets := keys $bucketMap | sortAlpha }}
+{{- $tags := (include "loki.crossplane.tags" . | fromYaml).tags | default list }}
+{{- $oidcProvider := include "loki.crossplane.oidcProvider" . }}
+{{- $isChinaRegion := hasPrefix "cn-" .Values.crossplane.region }}
+{{- $bucketName := .Values.crossplane.aws.bucket.name }}
 ---
 apiVersion: iam.aws.upbound.io/v1beta1
 kind: Role
@@ -29,7 +18,7 @@ metadata:
     crossplane.io/external-name: {{ $roleName }}
 spec:
   managementPolicies:
-    {{- if .Values.loki.loki.storage.provisioning.observeOnly }}
+    {{- if .Values.crossplane.observeOnly }}
     - Observe
     {{- else }}
     - "*"
@@ -42,12 +31,12 @@ spec:
           {
             "Effect": "Allow",
             "Principal": {
-              "Federated": "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:iam::{{ $accountId }}:oidc-provider/{{ $oidcProvider }}"
+              "Federated": "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:iam::{{ include "loki.crossplane.awsAccountId" . }}:oidc-provider/{{ $oidcProvider }}"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
               "StringEquals": {
-                "{{ $oidcProvider }}:sub": "system:serviceaccount:{{ $namespace }}:{{ $serviceAccountName }}",
+                "{{ $oidcProvider }}:sub": "system:serviceaccount:{{ $namespace }}:{{ .Values.loki.serviceAccount.name | default "loki" }}",
                 "{{ $oidcProvider }}:aud": "sts.amazonaws.com{{- if $isChinaRegion }}.cn{{- end }}"
               }
             }
@@ -69,12 +58,8 @@ spec:
                   "s3:DeleteObject"
                 ],
                 "Resource": [
-                  {{- range $i, $bucketName := $uniqueBuckets }}
                   "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:s3:::{{ $bucketName }}",
-                  {{- end }}
-                  {{- range $i, $bucketName := $uniqueBuckets }}
-                  "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:s3:::{{ $bucketName }}/*"{{- if lt $i (sub (len $uniqueBuckets) 1) }},{{- end }}
-                  {{- end }}
+                  "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:s3:::{{ $bucketName }}/*"
                 ]
               },
               {
@@ -95,5 +80,5 @@ spec:
       {{- end }}
     {{- end }}
   providerConfigRef:
-    name: {{ $providerConfigRef }}
+    name: {{ .Values.crossplane.providerConfigRef }}
 {{- end }}
