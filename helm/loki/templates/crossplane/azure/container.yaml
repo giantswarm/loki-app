@@ -1,0 +1,36 @@
+{{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled }}
+{{- $tags := include "loki.crossplane.azure.tags" . | fromYaml }}
+{{- $containerName := .Values.crossplane.azure.container.name }}
+---
+apiVersion: storage.azure.upbound.io/v1beta1
+kind: Container
+metadata:
+  name: {{ $containerName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+  annotations:
+    crossplane.io/external-name: {{ $containerName }}
+spec:
+  managementPolicies:
+    {{- if .Values.crossplane.observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
+  forProvider:
+    storageAccountNameSelector:
+      matchLabels:
+        app.kubernetes.io/component: storage
+        app.kubernetes.io/name: {{ include "loki.name" . }}
+    containerAccessType: private
+    {{- if $tags }}
+    metadata:
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+  providerConfigRef:
+    name: {{ .Values.crossplane.providerConfigRef }}
+{{- end }}

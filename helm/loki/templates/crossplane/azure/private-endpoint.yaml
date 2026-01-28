@@ -1,0 +1,116 @@
+{{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled (include "loki.crossplane.azure.isPrivateCluster" . | eq "true") }}
+{{- $tags := include "loki.crossplane.azure.tags" . | fromYaml }}
+{{- $containerName := .Values.crossplane.azure.container.name }}
+{{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" $containerName) }}
+{{- $vnetName := include "loki.crossplane.azure.vnetName" . }}
+---
+apiVersion: network.azure.upbound.io/v1beta1
+kind: PrivateEndpoint
+metadata:
+  name: {{ $containerName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+  annotations:
+    crossplane.io/external-name: {{ $containerName }}
+spec:
+  managementPolicies:
+    {{- if .Values.crossplane.observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
+  forProvider:
+    location: {{ .Values.crossplane.region }}
+    resourceGroupName: {{ include "loki.crossplane.azure.resourceGroup" . }}
+    subnetIdSelector:
+      matchLabels:
+        azure.giantswarm.io/cluster-name: {{ .Values.crossplane.clusterName }}
+        azure.giantswarm.io/subnet-name: node-subnet
+    privateDnsZoneGroup:
+      - name: default
+        privateDnsZoneIdsRefs:
+          - name: privatelink-blob-core-windows-net
+    privateServiceConnection:
+      - name: {{ $storageAccountName }}-psc
+        isManualConnection: false
+        privateConnectionResourceIdSelector:
+          matchLabels:
+            app.kubernetes.io/component: storage
+            app.kubernetes.io/name: {{ include "loki.name" . }}
+        subresourceNames:
+          - blob
+    {{- if $tags }}
+    tags:
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+  providerConfigRef:
+    name: {{ .Values.crossplane.providerConfigRef }}
+---
+apiVersion: network.azure.upbound.io/v1beta1
+kind: PrivateDNSZone
+metadata:
+  name: privatelink-blob-core-windows-net
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+  annotations:
+    crossplane.io/external-name: privatelink.blob.core.windows.net
+spec:
+  managementPolicies:
+    {{- if .Values.crossplane.observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
+  forProvider:
+    resourceGroupName: {{ include "loki.crossplane.azure.resourceGroup" . }}
+    {{- if $tags }}
+    tags:
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+  providerConfigRef:
+    name: {{ .Values.crossplane.providerConfigRef }}
+---
+apiVersion: network.azure.upbound.io/v1beta1
+kind: PrivateDNSZoneVirtualNetworkLink
+metadata:
+  name: giantswarm-observability
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+  annotations:
+    crossplane.io/external-name: giantswarm-observability
+spec:
+  managementPolicies:
+    {{- if .Values.crossplane.observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
+  forProvider:
+    privateDnsZoneNameSelector:
+      matchLabels:
+        app.kubernetes.io/component: storage
+    resourceGroupName: {{ include "loki.crossplane.azure.resourceGroup" . }}
+    virtualNetworkIdSelector:
+      matchLabels:
+        azure.giantswarm.io/cluster-name: {{ .Values.crossplane.clusterName }}
+        azure.giantswarm.io/vnet-name: {{ $vnetName }}
+    registrationEnabled: false
+    {{- if $tags }}
+    tags:
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+  providerConfigRef:
+    name: {{ .Values.crossplane.providerConfigRef }}
+{{- end }}

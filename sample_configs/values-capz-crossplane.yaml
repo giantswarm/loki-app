@@ -1,5 +1,5 @@
 # Example configuration for CAPZ (Azure) with Crossplane-managed Storage
-# This demonstrates the two-phase migration from manual bucket management to Crossplane
+# This demonstrates the two-phase migration from manual storage management to Crossplane
 
 global:
   dnsService: "coredns"
@@ -8,13 +8,13 @@ global:
 loki:
   loki:
     storage:
-      # Container names - these will match the Crossplane-created blob containers
-      # Note: On Azure, the object-storage-operator creates both a Storage Account
-      # and a Blob Container. The storage account name is sanitized (alphanumeric, max 24 chars).
+      # Single container name for all Loki storage
+      # Note: On Azure, Crossplane creates both a Storage Account and a Blob Container.
+      # The storage account name is sanitized (alphanumeric, max 24 chars).
       bucketNames:
-        chunks: giantswarm-my-installation-loki-chunks
-        ruler: giantswarm-my-installation-loki-ruler
-        admin: giantswarm-my-installation-loki-admin
+        chunks: giantswarm-my-installation-loki
+        ruler: giantswarm-my-installation-loki
+        admin: giantswarm-my-installation-loki
       type: azure
       azure:
         # Storage account name will be auto-generated (sanitized version of container name)
@@ -22,64 +22,8 @@ loki:
         # Authentication via storage account keys (no workload identity needed)
         accountName: ""  # Will be set by connection secret
         accountKey: ""   # Will be set by connection secret
-
-      ## Phase 1: Observe Mode Migration
-      ## Enable this configuration first while old Bucket CR is still active
-      ##
-      ## IMPORTANT: Private Cluster Detection
-      ## The chart automatically detects if your cluster is private by checking
-      ## AzureCluster.spec.networkSpec.apiServerLB.type == "Internal"
-      ## For private clusters, it will:
-      ## - Disable public network access on storage accounts
-      ## - Create private endpoints
-      ## - Create private DNS zones (privatelink.blob.core.windows.net)
-      ## - Create virtual network links
-      ## - Link to your cluster's VNet and subnet
-      provisioning:
-        enabled: true
-        observeOnly: true  # Crossplane will only watch, not manage
-        provider: azure
-        clusterName: "my-installation"  # MUST match your AzureCluster CR name
-        clusterNamespace: org-giantswarm
-        # Azure location (e.g., westeurope, eastus, germanywestcentral)
-        region: westeurope
-        # Crossplane ProviderConfig for Azure
-        providerConfigRef: default
-        lifecycle:
-          enabled: true
-          retentionDays: 100
-        # IAM is not applicable for Azure (uses storage account keys)
-        iam:
-          enabled: false
-        tags:
-          - key: team
-            value: atlas
-          - key: environment
-            value: production
-
-      ## Phase 2: Full Management (After testing Phase 1)
-      ## 1. Verify Crossplane resources are in "Observe" state and synced
-      ## 2. Remove the old Bucket CR from your configuration
-      ## 3. Change observeOnly: false (or remove the line, default is false)
-      ## 4. Apply the changes - Crossplane will now fully manage the storage
-      # provisioning:
-      #   enabled: true
-      #   observeOnly: false  # Full management mode
-      #   provider: azure
-      #   clusterName: "my-installation"
-      #   clusterNamespace: org-giantswarm
-      #   region: westeurope
-      #   providerConfigRef: default
-      #   lifecycle:
-      #     enabled: true
-      #     retentionDays: 100
-      #   iam:
-      #     enabled: false
-      #   tags:
-      #     - key: team
-      #       value: atlas
-      #     - key: environment
-      #       value: production
+        # Blob container name (matches the single container)
+        containerName: giantswarm-my-installation-loki
 
   # Service account - no special annotations needed for Azure storage account keys
   serviceAccount:
@@ -148,3 +92,67 @@ loki:
   # Disable test pods
   test:
     enabled: false
+
+## Phase 1: Observe Mode Migration
+## Enable this configuration first while old storage resources are still active
+##
+## IMPORTANT: Private Cluster Detection
+## The chart automatically detects if your cluster is private by checking
+## the cluster user-values ConfigMap for global.connectivity.network.mode == "private"
+## For private clusters, it will:
+## - Disable public network access on storage accounts
+## - Create private endpoints
+## - Create private DNS zones (privatelink.blob.core.windows.net)
+## - Create virtual network links
+## - Link to your cluster's VNet and subnet
+crossplane:
+  enabled: true
+  provider: azure
+  # Azure location (e.g., westeurope, eastus, germanywestcentral)
+  region: westeurope
+  # MUST match your AzureCluster CR name
+  clusterName: "my-installation"
+  clusterNamespace: org-giantswarm
+  # Crossplane ProviderConfig for Azure
+  providerConfigRef: default
+  # Observe mode: Crossplane will only watch, not manage
+  observeOnly: true
+  # Additional tags to apply to all storage resources
+  tags:
+    - key: team
+      value: atlas
+    - key: environment
+      value: production
+
+  azure:
+    enabled: true
+    container:
+      # Single container name for all Loki storage
+      name: giantswarm-my-installation-loki
+      # Number of days to retain logs before expiration
+      lifecycleDays: 100
+
+## Phase 2: Full Management (After testing Phase 1)
+## 1. Verify Crossplane resources are in "Observe" state and synced
+## 2. Remove the old storage resources from your configuration
+## 3. Change observeOnly: false (full management mode)
+## 4. Apply the changes - Crossplane will now fully manage the storage
+# crossplane:
+#   enabled: true
+#   provider: azure
+#   region: westeurope
+#   clusterName: "my-installation"
+#   clusterNamespace: org-giantswarm
+#   providerConfigRef: default
+#   observeOnly: false  # Full management mode
+#   tags:
+#     - key: team
+#       value: atlas
+#     - key: environment
+#       value: production
+#
+#   azure:
+#     enabled: true
+#     container:
+#       name: giantswarm-my-installation-loki
+#       lifecycleDays: 100

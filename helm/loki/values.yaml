@@ -62,41 +62,6 @@ loki:
         chunks: chunks
         ruler: ruler
         admin: admin
-      # -- Storage provisioning using Crossplane (AWS S3 for CAPA, Azure Storage for CAPZ)
-      provisioning:
-        # -- Enable automated bucket provisioning via Crossplane
-        enabled: false
-        # -- Observe mode: Crossplane watches existing buckets without managing them
-        # Set to true for Phase 1 migration, false for full management
-        observeOnly: true
-        # -- Cloud provider type: 'aws' for CAPA, 'azure' for CAPZ
-        provider: aws
-        # -- Crossplane ProviderConfig name
-        providerConfigRef: default
-        # -- Cluster name (should match the AWSCluster/AzureCluster CR name)
-        clusterName: ""
-        # -- Namespace where the cluster CR exists
-        clusterNamespace: org-giantswarm
-        # -- Cloud region for resources
-        region: eu-west-1
-        # -- Bucket lifecycle configuration
-        lifecycle:
-          # -- Enable lifecycle rules for log retention
-          enabled: true
-          # -- Number of days to retain logs before expiration
-          retentionDays: 100
-        # -- IAM Role configuration for IRSA
-        iam:
-          # -- Enable IAM role creation via Crossplane (for AWS only)
-          enabled: true
-          # -- IAM role name (should match existing role when using observeOnly mode)
-          # Example: giantswarm-my-installation-loki-storage
-          roleName: ""
-        # -- Additional tags to apply to all storage resources
-        # Tags from cluster CR will be merged automatically
-        tags: []
-        # - key: team
-        #   value: atlas
 
   gateway:
     extraContainers:
@@ -368,7 +333,7 @@ loki:
     # -- Image pull secrets for the service account
     imagePullSecrets: []
     # -- Annotations for the service account
-    # Note: When storage.provisioning.enabled is true with IAM enabled,
+    # Note: When crossplane.enabled is true with IAM enabled,
     # the eks.amazonaws.com/role-arn annotation will be added automatically
     annotations: {}
     # -- Labels for the service account
@@ -397,3 +362,55 @@ loki:
 
   test:
     enabled: false
+
+# -- Crossplane configuration for cloud resource provisioning
+crossplane:
+  # -- Enable automated storage provisioning via Crossplane
+  enabled: false
+  # -- Cloud provider type: 'aws' for CAPA, 'azure' for CAPZ
+  provider: aws
+  # -- Cloud region for resources
+  region: ""
+  # -- Cluster name (should match the AWSCluster/AzureCluster CR name)
+  clusterName: ""
+  # -- Namespace where the cluster CR exists
+  clusterNamespace: org-giantswarm
+  # -- Crossplane ProviderConfig name
+  providerConfigRef: default
+  # -- Observe mode: Crossplane watches existing resources without managing them
+  # Set to true for Phase 1 migration, false for full management
+  observeOnly: false
+  # -- Additional tags to apply to all storage resources
+  # Tags from cluster CR will be merged automatically
+  tags: []
+  # - key: team
+  #   value: atlas
+
+  # -- AWS-specific configuration
+  aws:
+    # -- Enable AWS resources (S3, IAM)
+    enabled: false
+    # -- S3 bucket configuration
+    bucket:
+      # -- S3 bucket name for all Loki storage
+      name: ""
+      # -- Number of days to retain logs before expiration
+      lifecycleDays: 100
+    # -- IAM Role configuration for IRSA
+    iam:
+      # -- Enable IAM role creation via Crossplane
+      enabled: true
+      # -- IAM role name (should match existing role when using observeOnly mode)
+      # Example: giantswarm-my-installation-loki-storage
+      roleName: ""
+
+  # -- Azure-specific configuration
+  azure:
+    # -- Enable Azure resources (Storage Account, Container)
+    enabled: false
+    # -- Storage container configuration
+    container:
+      # -- Container name for all Loki storage
+      name: ""
+      # -- Number of days to retain logs before expiration (optional, omit to disable lifecycle)
+      lifecycleDays: 100

@@ -1,0 +1,38 @@
+{{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled .Values.crossplane.azure.container.lifecycleDays }}
+{{- $containerName := .Values.crossplane.azure.container.name }}
+{{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" $containerName) }}
+---
+apiVersion: storage.azure.upbound.io/v1beta1
+kind: ManagementPolicy
+metadata:
+  name: {{ $storageAccountName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+  annotations:
+    crossplane.io/external-name: {{ $storageAccountName }}-lifecycle
+spec:
+  managementPolicies:
+    {{- if .Values.crossplane.observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
+  forProvider:
+    storageAccountIdSelector:
+      matchLabels:
+        app.kubernetes.io/component: storage
+        app.kubernetes.io/name: {{ include "loki.name" . }}
+    rule:
+      - name: DeleteOldBlobs
+        enabled: true
+        filters:
+          blobTypes:
+            - blockBlob
+        actions:
+          baseBlob:
+            - deleteBlobAfterDaysSinceModificationGreaterThan: {{ .Values.crossplane.azure.container.lifecycleDays }}
+  providerConfigRef:
+    name: {{ .Values.crossplane.providerConfigRef }}
+{{- end }}
