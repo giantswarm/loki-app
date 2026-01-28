@@ -333,8 +333,6 @@ loki:
     # -- Image pull secrets for the service account
     imagePullSecrets: []
     # -- Annotations for the service account
-    # Note: When crossplane.enabled is true with IAM enabled,
-    # the eks.amazonaws.com/role-arn annotation will be added automatically
     annotations: {}
     # -- Labels for the service account
     labels: {}

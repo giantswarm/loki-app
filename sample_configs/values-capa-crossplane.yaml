@@ -5,83 +5,48 @@ global:
   dnsService: "coredns"
   dnsNamespace: "kube-system"
 
+## Crossplane configuration
+crossplane:
+  enabled: true
+  observeOnly: true # Crossplane will only watch, not manage
+  provider: aws
+  region: "eu-west-1"
+  clusterName: "my-installation"  # MUST match your AWSCluster CR name
+  clusterNamespace: org-giantswarm
+  tags:
+    - key: team
+      value: atlas
+    - key: environment
+      value: production
+  aws:
+    enabled: true
+    bucket:
+      name: "giantswarm-my-installation-loki"
+      lifecycleDays: 100
+    iam:
+      enabled: true
+      roleName: "giantswarm-my-installation-loki-storage"
+
 loki:
   loki:
     storage:
-      # Bucket names - these will match the Crossplane-created buckets
+      # Bucket names - use the same bucket name for all three
       bucketNames:
-        chunks: giantswarm-my-installation-loki-chunks
-        ruler: giantswarm-my-installation-loki-ruler
-        admin: giantswarm-my-installation-loki-admin
+        chunks: giantswarm-my-installation-loki
+        ruler: giantswarm-my-installation-loki
+        admin: giantswarm-my-installation-loki
       type: s3
       s3:
         region: eu-west-1
         # No credentials needed - IRSA handles authentication via IAM role
 
-      ## Phase 1: Observe Mode Migration
-      ## Enable this configuration first while old Bucket CR is still active
-      provisioning:
-        enabled: true
-        observeOnly: true  # Crossplane will only watch, not manage
-        provider: aws
-        clusterName: "my-installation"  # MUST match your AWSCluster CR name
-        clusterNamespace: org-giantswarm
-        region: eu-west-1
-        lifecycle:
-          enabled: true
-          retentionDays: 100
-        iam:
-          enabled: true
-          roleName: "giantswarm-my-installation-loki-storage"
-        tags:
-          - key: team
-            value: atlas
-          - key: environment
-            value: production
-
-      ## Phase 2: Full Management (After testing Phase 1)
-      ## 1. Verify Crossplane resources are in "Observe" state and synced
-      ## 2. Remove the old Bucket CR from your configuration
-      ## 3. Change observeOnly: false (or remove the line, default is false)
-      ## 4. Apply the changes - Crossplane will now fully manage the buckets
-      # provisioning:
-      #   enabled: true
-      #   observeOnly: false  # Full management mode
-      #   provider: aws
-      #   clusterName: "my-installation"
-      #   clusterNamespace: org-giantswarm
-      #   region: eu-west-1
-      #   lifecycle:
-      #     enabled: true
-      #     retentionDays: 100
-      #   iam:
-      #     enabled: true
-      #     roleName: "giantswarm-my-installation-loki-storage"
-      #   tags:
-      #     - key: team
-      #       value: atlas
-      #     - key: environment
-      #       value: production
-      #   region: eu-west-1
-      #   clusterNamespace: org-giantswarm
-      #   lifecycle:
-      #     enabled: true
-      #     retentionDays: 100
-      #   iam:
-      #     enabled: true
-      #     roleNamePrefix: "loki-storage"
-      #   tags:
-      #     - key: team
-      #       value: atlas
-      #     - key: environment
-      #       value: production
-
-  # Service account with IAM role annotation for IRSA
+  # Service account - IAM role ARN annotation is managed by Loki subchart
+  # when crossplane is enabled, it will use the IAM role created by Crossplane
   serviceAccount:
     create: true
     name: loki
     annotations:
-      # This role ARN is created by Crossplane when iam.enabled: true
+      # This role ARN is created by Crossplane when aws.iam.enabled: true
       # Replace ${AWS_ACCOUNT_ID} with your actual AWS account ID
       # Or use the pattern: giantswarm-{installationName}-loki-storage
       eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/giantswarm-my-installation-loki-storage"
