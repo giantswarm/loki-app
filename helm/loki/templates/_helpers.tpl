@@ -158,3 +158,172 @@ Looks up tags from the AWSCluster CR in the cluster namespace
 {{- $allTags := concat $tags $defaultTags $userTags -}}
 {{- dict "tags" $allTags | toYaml -}}
 {{- end -}}
+
+{{/*
+Storage provisioning is Azure/CAPZ
+*/}}
+{{- define "loki.storage.provisioning.isAzure" -}}
+{{- if eq .Values.loki.loki.storage.provisioning.provider "azure" -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Sanitize storage account name for Azure
+Azure storage account names must be:
+- Between 3 and 24 characters
+- Lowercase letters and numbers only
+- Globally unique
+*/}}
+{{- define "loki.azure.storageAccountName" -}}
+{{- $bucketName := .bucketName -}}
+{{- $sanitized := regexReplaceAll "[^a-z0-9]" (lower $bucketName) "" -}}
+{{- $sanitized | trunc 24 -}}
+{{- end -}}
+
+{{/*
+Get Azure Resource Group from AzureCluster CR
+*/}}
+{{- define "loki.azure.resourceGroup" -}}
+{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
+{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- $resourceGroup := "" -}}
+{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+{{- if $azureCluster -}}
+  {{- $resourceGroup = $azureCluster.spec.resourceGroup | default "" -}}
+{{- end -}}
+{{- $resourceGroup -}}
+{{- end -}}
+
+{{/*
+Get Azure Location from AzureCluster CR or fall back to region config
+*/}}
+{{- define "loki.azure.location" -}}
+{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
+{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- $location := .Values.loki.loki.storage.provisioning.region -}}
+{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+{{- if $azureCluster -}}
+  {{- $location = $azureCluster.spec.location | default $location -}}
+{{- end -}}
+{{- $location -}}
+{{- end -}}
+
+{{/*
+Get Azure Subscription ID from AzureCluster identity
+*/}}
+{{- define "loki.azure.subscriptionId" -}}
+{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
+{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- $subscriptionId := "" -}}
+{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+{{- if $azureCluster -}}
+  {{- if $azureCluster.spec.subscriptionID -}}
+    {{- $subscriptionId = $azureCluster.spec.subscriptionID -}}
+  {{- else if $azureCluster.spec.identityRef -}}
+    {{- $identityName := $azureCluster.spec.identityRef.name -}}
+    {{- $identity := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureClusterIdentity" "" $identityName -}}
+    {{- if and $identity $identity.spec.subscriptionID -}}
+      {{- $subscriptionId = $identity.spec.subscriptionID -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $subscriptionId -}}
+{{- end -}}
+
+{{/*
+Merge tags from AzureCluster CR with user-provided tags
+Looks up tags from the AzureCluster CR in the cluster namespace
+Returns tags as a map suitable for Azure resources
+*/}}
+{{- define "loki.azure.tags" -}}
+{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
+{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- $tags := dict -}}
+{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+{{- if $azureCluster -}}
+  {{- if $azureCluster.spec.additionalTags -}}
+    {{- range $key, $value := $azureCluster.spec.additionalTags -}}
+      {{- $_ := set $tags $key $value -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $defaultTags := dict
+  "app" "loki"
+  "managed-by" "crossplane"
+-}}
+{{- $tags = merge $tags $defaultTags -}}
+{{- $userTags := .Values.loki.loki.storage.provisioning.tags | default list -}}
+{{- range $tag := $userTags -}}
+  {{- $_ := set $tags (index $tag "key") (index $tag "value") -}}
+{{- end -}}
+{{- $tags | toYaml -}}
+{{- end -}}
+
+{{/*
+Check if Azure cluster is private
+Reads the cluster user-values ConfigMap and checks global.connectivity.network.mode
+*/}}
+{{- define "loki.azure.isPrivateCluster" -}}
+{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
+{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- $isPrivate := false -}}
+{{- $configMapName := printf "%s-user-values" $clusterName -}}
+{{- $configMap := lookup "v1" "ConfigMap" "org-giantswarm" $configMapName -}}
+{{- if $configMap -}}
+  {{- if $configMap.data -}}
+    {{- if $configMap.data.values -}}
+      {{- $values := $configMap.data.values | fromYaml -}}
+      {{- if $values.global -}}
+        {{- if $values.global.connectivity -}}
+          {{- if $values.global.connectivity.network -}}
+            {{- if eq ($values.global.connectivity.network.mode | toString) "private" -}}
+              {{- $isPrivate = true -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $isPrivate -}}
+{{- end -}}
+
+{{/*
+Get Azure Virtual Network name from AzureCluster CR
+*/}}
+{{- define "loki.azure.vnetName" -}}
+{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
+{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- $vnetName := "" -}}
+{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+{{- if $azureCluster -}}
+  {{- if $azureCluster.spec.networkSpec -}}
+    {{- $vnetName = $azureCluster.spec.networkSpec.vnet.name | default "" -}}
+  {{- end -}}
+{{- end -}}
+{{- $vnetName -}}
+{{- end -}}
+
+{{/*
+Get Azure Subnet name for private endpoints from AzureCluster CR
+Falls back to node subnet if no specific subnet is defined
+*/}}
+{{- define "loki.azure.subnetName" -}}
+{{- $clusterName := .Values.loki.loki.storage.provisioning.clusterName -}}
+{{- $clusterNamespace := .Values.loki.loki.storage.provisioning.clusterNamespace -}}
+{{- $subnetName := "" -}}
+{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+{{- if $azureCluster -}}
+  {{- if $azureCluster.spec.networkSpec -}}
+    {{- if $azureCluster.spec.networkSpec.subnets -}}
+      {{- range $subnet := $azureCluster.spec.networkSpec.subnets -}}
+        {{- if eq ($subnet.role | toString) "node" -}}
+          {{- $subnetName = $subnet.name -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $subnetName -}}
+{{- end -}}

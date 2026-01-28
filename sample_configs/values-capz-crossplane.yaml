@@ -1,0 +1,150 @@
+# Example configuration for CAPZ (Azure) with Crossplane-managed Storage
+# This demonstrates the two-phase migration from manual bucket management to Crossplane
+
+global:
+  dnsService: "coredns"
+  dnsNamespace: "kube-system"
+
+loki:
+  loki:
+    storage:
+      # Container names - these will match the Crossplane-created blob containers
+      # Note: On Azure, the object-storage-operator creates both a Storage Account
+      # and a Blob Container. The storage account name is sanitized (alphanumeric, max 24 chars).
+      bucketNames:
+        chunks: giantswarm-my-installation-loki-chunks
+        ruler: giantswarm-my-installation-loki-ruler
+        admin: giantswarm-my-installation-loki-admin
+      type: azure
+      azure:
+        # Storage account name will be auto-generated (sanitized version of container name)
+        # accountName: giantswarmmyinstallati (example - 24 char limit, alphanumeric only)
+        # Authentication via storage account keys (no workload identity needed)
+        accountName: ""  # Will be set by connection secret
+        accountKey: ""   # Will be set by connection secret
+
+      ## Phase 1: Observe Mode Migration
+      ## Enable this configuration first while old Bucket CR is still active
+      ##
+      ## IMPORTANT: Private Cluster Detection
+      ## The chart automatically detects if your cluster is private by checking
+      ## AzureCluster.spec.networkSpec.apiServerLB.type == "Internal"
+      ## For private clusters, it will:
+      ## - Disable public network access on storage accounts
+      ## - Create private endpoints
+      ## - Create private DNS zones (privatelink.blob.core.windows.net)
+      ## - Create virtual network links
+      ## - Link to your cluster's VNet and subnet
+      provisioning:
+        enabled: true
+        observeOnly: true  # Crossplane will only watch, not manage
+        provider: azure
+        clusterName: "my-installation"  # MUST match your AzureCluster CR name
+        clusterNamespace: org-giantswarm
+        # Azure location (e.g., westeurope, eastus, germanywestcentral)
+        region: westeurope
+        # Crossplane ProviderConfig for Azure
+        providerConfigRef: default
+        lifecycle:
+          enabled: true
+          retentionDays: 100
+        # IAM is not applicable for Azure (uses storage account keys)
+        iam:
+          enabled: false
+        tags:
+          - key: team
+            value: atlas
+          - key: environment
+            value: production
+
+      ## Phase 2: Full Management (After testing Phase 1)
+      ## 1. Verify Crossplane resources are in "Observe" state and synced
+      ## 2. Remove the old Bucket CR from your configuration
+      ## 3. Change observeOnly: false (or remove the line, default is false)
+      ## 4. Apply the changes - Crossplane will now fully manage the storage
+      # provisioning:
+      #   enabled: true
+      #   observeOnly: false  # Full management mode
+      #   provider: azure
+      #   clusterName: "my-installation"
+      #   clusterNamespace: org-giantswarm
+      #   region: westeurope
+      #   providerConfigRef: default
+      #   lifecycle:
+      #     enabled: true
+      #     retentionDays: 100
+      #   iam:
+      #     enabled: false
+      #   tags:
+      #     - key: team
+      #       value: atlas
+      #     - key: environment
+      #       value: production
+
+  # Service account - no special annotations needed for Azure storage account keys
+  serviceAccount:
+    create: true
+    name: loki
+
+  # Network policies for CAPZ environments
+  networkPolicy:
+    enabled: true
+    flavor: cilium
+    egressWorld:
+      enabled: true
+    egressCoredns:
+      enabled: true
+    egressKubeApiserver:
+      enabled: true
+    egressMimir:
+      enabled: true
+
+  # Autoscaling configuration
+  gateway:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  backend:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  read:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  write:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetMemoryUtilizationPercentage: 90
+
+  # Caching configuration
+  chunksCache:
+    enabled: true
+  resultsCache:
+    enabled: true
+
+  # Monitoring
+  monitoring:
+    serviceMonitor:
+      enabled: true
+    selfMonitoring:
+      enabled: false
+
+  # Disable MinIO for production
+  minio:
+    enabled: false
+
+  # Disable test pods
+  test:
+    enabled: false

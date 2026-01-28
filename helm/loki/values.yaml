@@ -62,7 +62,7 @@ loki:
         chunks: chunks
         ruler: ruler
         admin: admin
-      # -- Storage provisioning using Crossplane (AWS S3 for CAPA)
+      # -- Storage provisioning using Crossplane (AWS S3 for CAPA, Azure Storage for CAPZ)
       provisioning:
         # -- Enable automated bucket provisioning via Crossplane
         enabled: false
@@ -87,7 +87,7 @@ loki:
           retentionDays: 100
         # -- IAM Role configuration for IRSA
         iam:
-          # -- Enable IAM role creation via Crossplane
+          # -- Enable IAM role creation via Crossplane (for AWS only)
           enabled: true
           # -- IAM role name (should match existing role when using observeOnly mode)
           # Example: giantswarm-my-installation-loki-storage

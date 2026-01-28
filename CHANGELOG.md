@@ -9,13 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Crossplane support for automated S3 bucket provisioning on CAPA (AWS) clusters
+- Add Crossplane support for automated storage provisioning on CAPA (AWS) and CAPZ (Azure) clusters
   - New storage provisioning configuration under `loki.loki.storage.provisioning`
-  - Automatic bucket creation via Crossplane with lifecycle policies
-  - IAM role and policy management for IRSA authentication
+  - AWS: S3 bucket creation with lifecycle policies and IAM role/policy management for IRSA
+  - Azure: Storage Account and Blob Container creation with storage account key authentication
+  - Azure: Private cluster support with Private Endpoint, Private DNS Zone, and VNet Link
   - Two-phase migration support: observe mode and full management mode
-  - Automatic tag inheritance from AWSCluster CR
-  - Dynamic AWS account ID and OIDC provider lookup from cluster resources
+  - Automatic tag inheritance from cluster CRs (AWSCluster/AzureCluster)
+  - Dynamic resource discovery from cluster resources (AWS account ID, OIDC provider, Azure subscription, resource group, location)
 
 ## [0.36.0] - 2026-01-20
 
