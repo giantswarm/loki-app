@@ -1,5 +1,5 @@
 {{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAWS" .) .Values.crossplane.aws.enabled .Values.crossplane.aws.iam.enabled }}
-{{- $roleName := .Values.crossplane.aws.bucket.name }}
+{{- $bucketName := .Values.crossplane.aws.bucket.name }}
 {{- $namespace := .Release.Namespace }}
 {{- $tags := include "loki.crossplane.tags" . | fromYaml }}
 {{- $oidcProvider := include "loki.crossplane.aws.oidcProvider" . }}
@@ -8,13 +8,13 @@
 apiVersion: iam.aws.upbound.io/v1beta1
 kind: Role
 metadata:
-  name: {{ $roleName }}
+  name: {{ $bucketName }}
   namespace: {{ $namespace }}
   labels:
     {{- include "loki.labels" . | nindent 4 }}
     app.kubernetes.io/component: iam
   annotations:
-    crossplane.io/external-name: {{ $roleName }}
+    crossplane.io/external-name: {{ $bucketName }}
 spec:
   managementPolicies:
     {{- if .Values.crossplane.observeOnly }}
@@ -43,7 +43,7 @@ spec:
         ]
       }
     inlinePolicy:
-      - name: {{ $roleName }}
+      - name: {{ $bucketName }}
         policy: |
           {
             "Version": "2012-10-17",
