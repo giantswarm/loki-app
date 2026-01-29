@@ -1,10 +1,9 @@
 {{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAWS" .) .Values.crossplane.aws.enabled .Values.crossplane.aws.iam.enabled }}
-{{- $roleName := .Values.crossplane.aws.iam.roleName }}
+{{- $roleName := .Values.crossplane.aws.bucket.name }}
 {{- $namespace := .Release.Namespace }}
 {{- $tags := include "loki.crossplane.tags" . | fromYaml }}
 {{- $oidcProvider := include "loki.crossplane.aws.oidcProvider" . }}
 {{- $isChinaRegion := hasPrefix "cn-" .Values.crossplane.region }}
-{{- $bucketName := .Values.crossplane.aws.bucket.name }}
 ---
 apiVersion: iam.aws.upbound.io/v1beta1
 kind: Role
