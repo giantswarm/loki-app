@@ -23,7 +23,7 @@
                     }
                 },
                 "priorityClassName": {
-                    "type": "null"
+                    "type": ["string", "null"]
                 }
             }
         },
@@ -345,6 +345,103 @@
                                     }
                                 }
                             }
+                        },
+                        "route": {
+                            "type": "object",
+                            "properties": {
+                                "main": {
+                                    "type": "object",
+                                    "properties": {
+                                        "additionalRules": {
+                                            "type": "array"
+                                        },
+                                        "annotations": {
+                                            "type": "object"
+                                        },
+                                        "apiVersion": {
+                                            "type": "string"
+                                        },
+                                        "backendTrafficPolicy": {
+                                            "type": "object",
+                                            "properties": {
+                                                "annotations": {
+                                                    "type": "object"
+                                                },
+                                                "enabled": {
+                                                    "type": "boolean"
+                                                },
+                                                "labels": {
+                                                    "type": "object"
+                                                },
+                                                "timeout": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "tcp": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "connectTimeout": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "enabled": {
+                                            "type": "boolean"
+                                        },
+                                        "filters": {
+                                            "type": "array"
+                                        },
+                                        "hostnames": {
+                                            "type": "array"
+                                        },
+                                        "kind": {
+                                            "type": "string"
+                                        },
+                                        "labels": {
+                                            "type": "object"
+                                        },
+                                        "matches": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "path": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "type": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "parentRefs": {
+                                            "type": "array"
+                                        },
+                                        "securityPolicy": {
+                                            "type": "object",
+                                            "properties": {
+                                                "annotations": {
+                                                    "type": "object"
+                                                },
+                                                "enabled": {
+                                                    "type": "boolean"
+                                                },
+                                                "labels": {
+                                                    "type": "object"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 },
@@ -611,6 +708,9 @@
                             }
                         }
                     }
+                },
+                "nameOverride": {
+                    "type": "string"
                 },
                 "networkPolicy": {
                     "type": "object",
@@ -911,6 +1011,77 @@
                     }
                 }
             }
+        },
+        "crossplane": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "clusterName": {
+                    "type": "string"
+                },
+                "clusterNamespace": {
+                    "type": "string"
+                },
+                "providerConfigRef": {
+                    "type": "string"
+                },
+                "observeOnly": {
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        },
+                        "required": ["key", "value"]
+                    }
+                },
+                "aws": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "bucket": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "lifecycleDays": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "iam": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "nameOverride": {
+            "type": "string"
         }
     }
 }

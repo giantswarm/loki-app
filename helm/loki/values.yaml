@@ -11,9 +11,15 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
+# -- Override the name of the chart
+nameOverride: ""
+
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
+
+  # -- Override the name of the loki subchart
+  nameOverride: ""
 
   loki:
     image:
@@ -354,3 +360,38 @@ loki:
 
   test:
     enabled: false
+
+# -- Crossplane configuration for automated infrastructure provisioning
+crossplane:
+  # -- Enable Crossplane resources
+  enabled: false
+  # -- Crossplane provider (e.g., aws, azure)
+  provider: aws
+  # -- Crossplane ProviderConfig name
+  providerConfigRef: "default"
+  # -- Cloud region for resources
+  region: ""
+  # -- Cluster name (used for cluster discovery)
+  clusterName: ""
+  # -- Cluster namespace (used for cluster discovery)
+  clusterNamespace: "org-giantswarm"
+  # -- Enable observe-only mode for safe migration
+  observeOnly: false
+  # -- Additional tags to apply to all storage resources
+  # Tags from cluster CR will be merged automatically
+  tags: []
+  # - key: team
+  #   value: atlas
+  aws:
+    # -- Enable AWS Crossplane resources
+    enabled: false
+    # -- Bucket configuration for Loki storage
+    bucket:
+      # -- Bucket name for Loki storage (used for chunks, ruler, and admin)
+      name: ""
+      # -- Lifecycle expiration in days
+      lifecycleDays: 100
+    # -- IAM Role configuration for IRSA
+    iam:
+      # -- Enable IAM role creation via Crossplane
+      enabled: true
