@@ -1073,9 +1073,6 @@
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
-                                },
-                                "roleName": {
-                                    "type": "string"
                                 }
                             }
                         }

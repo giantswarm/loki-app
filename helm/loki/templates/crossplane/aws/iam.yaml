@@ -1,21 +1,20 @@
 {{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAWS" .) .Values.crossplane.aws.enabled .Values.crossplane.aws.iam.enabled }}
-{{- $roleName := .Values.crossplane.aws.iam.roleName }}
-{{- $namespace := .Release.Namespace }}
-{{- $tags := (include "loki.crossplane.tags" . | fromYaml).tags | default list }}
-{{- $oidcProvider := include "loki.crossplane.oidcProvider" . }}
-{{- $isChinaRegion := hasPrefix "cn-" .Values.crossplane.region }}
 {{- $bucketName := .Values.crossplane.aws.bucket.name }}
+{{- $namespace := .Release.Namespace }}
+{{- $tags := include "loki.crossplane.tags" . | fromYaml }}
+{{- $oidcProvider := include "loki.crossplane.aws.oidcProvider" . }}
+{{- $isChinaRegion := hasPrefix "cn-" .Values.crossplane.region }}
 ---
 apiVersion: iam.aws.upbound.io/v1beta1
 kind: Role
 metadata:
-  name: {{ $roleName }}
+  name: {{ $bucketName }}
   namespace: {{ $namespace }}
   labels:
     {{- include "loki.labels" . | nindent 4 }}
     app.kubernetes.io/component: iam
   annotations:
-    crossplane.io/external-name: {{ $roleName }}
+    crossplane.io/external-name: {{ $bucketName }}
 spec:
   managementPolicies:
     {{- if .Values.crossplane.observeOnly }}
@@ -31,7 +30,7 @@ spec:
           {
             "Effect": "Allow",
             "Principal": {
-              "Federated": "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:iam::{{ include "loki.crossplane.awsAccountId" . }}:oidc-provider/{{ $oidcProvider }}"
+              "Federated": "arn:aws{{- if $isChinaRegion }}-cn{{- end }}:iam::{{ include "loki.crossplane.aws.accountId" . }}:oidc-provider/{{ $oidcProvider }}"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
@@ -44,7 +43,7 @@ spec:
         ]
       }
     inlinePolicy:
-      - name: {{ $roleName }}
+      - name: {{ $bucketName }}
         policy: |
           {
             "Version": "2012-10-17",
@@ -75,8 +74,8 @@ spec:
           }
     {{- if $tags }}
     tags:
-      {{- range $tag := $tags }}
-      {{ index $tag "key" }}: {{ index $tag "value" | quote }}
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
       {{- end }}
     {{- end }}
   providerConfigRef:

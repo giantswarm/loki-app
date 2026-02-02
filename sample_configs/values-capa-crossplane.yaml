@@ -25,7 +25,6 @@ crossplane:
       lifecycleDays: 100
     iam:
       enabled: true
-      roleName: "giantswarm-my-installation-loki-storage"
 
 loki:
   loki:

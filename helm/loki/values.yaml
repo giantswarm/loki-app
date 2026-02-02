@@ -395,6 +395,3 @@ crossplane:
     iam:
       # -- Enable IAM role creation via Crossplane
       enabled: true
-      # -- IAM role name (should match existing role when using observeOnly mode)
-      # Example: giantswarm-my-installation-loki-storage
-      roleName: ""
