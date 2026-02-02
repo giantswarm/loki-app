@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.37.0] - 2026-02-02
+
 ### Added
 
 - Add Crossplane support for automated S3 bucket provisioning on CAPA (AWS) clusters
@@ -742,7 +744,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.36.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.37.0...HEAD
+[0.37.0]: https://github.com/giantswarm/loki-app/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/giantswarm/loki-app/compare/v0.35.0...v0.36.0
 [0.35.0]: https://github.com/giantswarm/loki-app/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/giantswarm/loki-app/compare/v0.33.2...v0.34.0
