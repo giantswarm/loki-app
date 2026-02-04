@@ -26,6 +26,8 @@ Crossplane is AWS/CAPA
 {{- define "loki.crossplane.isAWS" -}}
 {{- if eq .Values.crossplane.provider "aws" -}}
 true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
 
