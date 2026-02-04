@@ -1037,7 +1037,19 @@
                     "type": "boolean"
                 },
                 "tags": {
-                    "type": "array"
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        },
+                        "required": ["key", "value"]
+                    }
                 },
                 "aws": {
                     "type": "object",
@@ -1061,9 +1073,6 @@
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
-                                },
-                                "roleName": {
-                                    "type": "string"
                                 }
                             }
                         }

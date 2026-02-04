@@ -36,6 +36,26 @@ loki:
         accessKeyId: adminKey
         s3ForcePathStyle: true
         insecure: true
+      ## Crossplane Storage Provisioning Configuration (recommended over MinIO for production)
+      ## Uncomment and configure for automated S3 bucket provisioning via Crossplane
+      # provisioning:
+      #   enabled: false
+      #   observeOnly: true
+      #   provider: aws
+      #   clusterName: "my-cluster"  # Must match AWSCluster CR name
+      #   clusterNamespace: org-giantswarm
+      #   region: eu-west-1
+      #   lifecycle:
+      #     enabled: true
+      #     retentionDays: 100
+      #   iam:
+      #     enabled: true
+      #   tags:
+      #     - key: team
+      #       value: atlas
+      #     - key: environment
+      #       value: production
+      #
   # Object storage mocking
   minio:
     enabled: true

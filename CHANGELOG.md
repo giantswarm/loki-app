@@ -9,16 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Crossplane support for automated storage provisioning on CAPA (AWS) and CAPZ (Azure) clusters
-  - New top-level `crossplane` configuration section (cloud-agnostic design)
-  - Organized templates into provider-specific directories (`templates/crossplane/aws/`, `templates/crossplane/azure/`)
-  - AWS: S3 bucket creation with lifecycle policies and IAM role/policy management for IRSA
+- Add Crossplane support for automated storage provisioning on CAPZ (Azure) clusters
   - Azure: Storage Account and Blob Container creation with storage account key authentication
   - Azure: Private cluster support with Private Endpoint, Private DNS Zone, and VNet Link
+  
+## [0.37.0] - 2026-02-02
+
+### Added
+
+- Add Crossplane support for automated S3 bucket provisioning on CAPA (AWS) clusters
+  - New Crossplane configuration under top-level `crossplane`
   - Automatic S3 bucket creation via Crossplane with lifecycle policies
+  - IAM role and policy management for IRSA authentication
   - Two-phase migration support: observe mode and full management mode
-  - Automatic tag inheritance from cluster CRs (AWSCluster/AzureCluster)
-  - Dynamic resource discovery from cluster resources (AWS account ID, OIDC provider, Azure subscription, resource group, location)
+  - Automatic tag inheritance from AWSCluster CR
+  - Dynamic AWS account ID and OIDC provider lookup from cluster resources
 
 ## [0.36.0] - 2026-01-20
 
@@ -745,7 +750,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.36.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.37.0...HEAD
+[0.37.0]: https://github.com/giantswarm/loki-app/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/giantswarm/loki-app/compare/v0.35.0...v0.36.0
 [0.35.0]: https://github.com/giantswarm/loki-app/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/giantswarm/loki-app/compare/v0.33.2...v0.34.0

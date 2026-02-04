@@ -367,16 +367,15 @@ crossplane:
   enabled: false
   # -- Cloud provider type: 'aws' for CAPA, 'azure' for CAPZ
   provider: aws
+  # -- Crossplane ProviderConfig name
+  providerConfigRef: "default"
   # -- Cloud region for resources
   region: ""
-  # -- Cluster name (should match the AWSCluster/AzureCluster CR name)
+  # -- Cluster name (used for cluster discovery)
   clusterName: ""
-  # -- Namespace where the cluster CR exists
-  clusterNamespace: org-giantswarm
-  # -- Crossplane ProviderConfig name
-  providerConfigRef: default
-  # -- Observe mode: Crossplane watches existing resources without managing them
-  # Set to true for Phase 1 migration, false for full management
+  # -- Cluster namespace (used for cluster discovery)
+  clusterNamespace: "org-giantswarm"
+  # -- Enable observe-only mode for safe migration
   observeOnly: false
   # -- Additional tags to apply to all storage resources
   # Tags from cluster CR will be merged automatically
@@ -388,9 +387,9 @@ crossplane:
   aws:
     # -- Enable AWS resources (S3, IAM)
     enabled: false
-    # -- S3 bucket configuration
+    # -- S3 Bucket configuration for Loki storage
     bucket:
-      # -- S3 bucket name for all Loki storage
+      # -- Bucket name for Loki storage (used for chunks, ruler, and admin)
       name: ""
       # -- Number of days to retain logs before expiration
       lifecycleDays: 100
@@ -405,7 +404,7 @@ crossplane:
     enabled: false
     # -- Storage container configuration
     container:
-      # -- Container name for all Loki storage
+      # -- Container name for Loki storage (used for chunks, ruler, and admin)
       name: ""
       # -- Number of days to retain logs before expiration (optional, omit to disable lifecycle)
       lifecycleDays: 100
