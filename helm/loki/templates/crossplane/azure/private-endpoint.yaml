@@ -3,6 +3,7 @@
 {{- $containerName := .Values.crossplane.azure.container.name }}
 {{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" $containerName) }}
 {{- $vnetName := include "loki.crossplane.azure.vnetName" . }}
+{{- $vnetId := include "loki.crossplane.azure.vnetId" . }}
 ---
 apiVersion: network.azure.upbound.io/v1beta1
 kind: PrivateEndpoint
@@ -100,10 +101,14 @@ spec:
       matchLabels:
         app.kubernetes.io/component: storage
     resourceGroupName: {{ include "loki.crossplane.azure.resourceGroup" . }}
+    {{- if $vnetId }}
+    virtualNetworkId: {{ $vnetId }}
+    {{- else }}
     virtualNetworkIdSelector:
       matchLabels:
         azure.giantswarm.io/cluster-name: {{ .Values.crossplane.clusterName }}
         azure.giantswarm.io/vnet-name: {{ $vnetName }}
+    {{- end }}
     registrationEnabled: false
     {{- if $tags }}
     tags:

@@ -32,7 +32,7 @@ spec:
               - blockBlob
         actions:
           - baseBlob:
-              deleteBlobAfterDaysSinceModificationGreaterThan: {{ .Values.crossplane.azure.container.lifecycleDays }}
+              - deleteBlobAfterDaysSinceModificationGreaterThan: {{ .Values.crossplane.azure.container.lifecycleDays }}
   providerConfigRef:
     name: {{ .Values.crossplane.providerConfigRef }}
 {{- end }}

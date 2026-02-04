@@ -114,3 +114,22 @@ Falls back to node subnet if no specific subnet is defined
 {{- end -}}
 {{- $subnetName -}}
 {{- end -}}
+
+{{/*
+Get Azure Virtual Network ID from AzureCluster CR
+Returns the full Azure resource ID for the VNet
+*/}}
+{{- define "loki.crossplane.azure.vnetId" -}}
+{{- $clusterName := .Values.crossplane.clusterName -}}
+{{- $clusterNamespace := .Values.crossplane.clusterNamespace -}}
+{{- $vnetId := "" -}}
+{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+{{- if $azureCluster -}}
+  {{- if $azureCluster.spec.networkSpec -}}
+    {{- if $azureCluster.spec.networkSpec.vnet -}}
+      {{- $vnetId = $azureCluster.spec.networkSpec.vnet.id | default "" -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $vnetId -}}
+{{- end -}}
