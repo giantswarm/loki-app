@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `HTTPRouteFilter` support for Gateway API routes.
+
+### Changed
+
+- Refactor loki-gateway HTTPRoute template to use loki's templating for naming.
+
 ## [0.37.0] - 2026-02-02
 
 ### Added
