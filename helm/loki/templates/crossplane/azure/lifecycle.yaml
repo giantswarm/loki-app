@@ -28,11 +28,11 @@ spec:
       - name: DeleteOldBlobs
         enabled: true
         filters:
-          blobTypes:
-            - blockBlob
+          - blobTypes:
+              - blockBlob
         actions:
-          baseBlob:
-            - deleteBlobAfterDaysSinceModificationGreaterThan: {{ .Values.crossplane.azure.container.lifecycleDays }}
+          - baseBlob:
+              deleteBlobAfterDaysSinceModificationGreaterThan: {{ .Values.crossplane.azure.container.lifecycleDays }}
   providerConfigRef:
     name: {{ .Values.crossplane.providerConfigRef }}
 {{- end }}
