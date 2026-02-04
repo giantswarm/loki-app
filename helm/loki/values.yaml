@@ -146,50 +146,59 @@ loki:
         type: RuntimeDefault
     # -- Gateway API Routes for loki-gateway
     route:
-      main:
-        # -- Enables or disables the route
+      # -- Enables or disables the route
+      enabled: false
+
+      # -- Set the route apiVersion, e.g. gateway.networking.k8s.io/v1 or gateway.networking.k8s.io/v1alpha2
+      apiVersion: gateway.networking.k8s.io/v1
+      # -- Set the route kind
+      # Valid options are GRPCRoute, HTTPRoute, TCPRoute, TLSRoute, UDPRoute
+      kind: HTTPRoute
+
+      annotations: {}
+      labels: {}
+
+      hostnames: []
+      # - my-filter.example.com
+      parentRefs: []
+      # - name: acme-gw
+
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+
+      ## Filters define the filters that are applied to requests that match this rule.
+      filters: []
+
+      ## Additional custom rules that can be added to the route
+      additionalRules: []
+
+      securityPolicy:
         enabled: false
-
-        # -- Set the route apiVersion, e.g. gateway.networking.k8s.io/v1 or gateway.networking.k8s.io/v1alpha2
-        apiVersion: gateway.networking.k8s.io/v1
-        # -- Set the route kind
-        # Valid options are GRPCRoute, HTTPRoute, TCPRoute, TLSRoute, UDPRoute
-        kind: HTTPRoute
-
         annotations: {}
         labels: {}
+        # basicAuth:
+        #   users:
+        #     name: <secret_name>
 
-        hostnames: []
-        # - my-filter.example.com
-        parentRefs: []
-        # - name: acme-gw
+      backendTrafficPolicy:
+        enabled: false
+        annotations: {}
+        labels: {}
+        timeout:
+          tcp:
+            connectTimeout: 60s
 
-        matches:
-          - path:
-              type: PathPrefix
-              value: /
-
-        ## Filters define the filters that are applied to requests that match this rule.
-        filters: []
-
-        ## Additional custom rules that can be added to the route
-        additionalRules: []
-
-        securityPolicy:
-          enabled: false
-          annotations: {}
-          labels: {}
-          # basicAuth:
-          #   users:
-          #     name: <secret_name>
-
-        backendTrafficPolicy:
-          enabled: false
-          annotations: {}
-          labels: {}
-          timeout:
-            tcp:
-              connectTimeout: 60s
+      httpRouteFilter:
+        enabled: false
+        annotations: {}
+        labels: {}
+        # directResponse:
+        #   body:
+        #     type: Inline
+        #     inline: "Not Found"
+        #   statusCode: 404
 
   backend:
     autoscaling:
