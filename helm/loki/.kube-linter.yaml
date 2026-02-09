@@ -29,3 +29,5 @@ checks:
   - "pdb-unhealthy-pod-eviction-policy"
   - "restart-policy"
   - "job-ttl-seconds-after-finished"
+  ignorePaths:
+  - helm/loki/charts/**
