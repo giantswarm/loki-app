@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Disable Loki Scaled Objects if Loki is disabled.
+
 ## [0.37.1] - 2026-02-05
 
 ### Added
