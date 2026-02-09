@@ -1,3 +1,4 @@
+{{- if .Values.loki.enabled }}
 {{- if .Values.loki.read.kedaAutoscaling.enabled }}
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
@@ -23,4 +24,5 @@ spec:
   fallback:
     {{- toYaml .Values.loki.read.kedaAutoscaling.fallback | nindent 4 }}
   {{- end }}
+{{- end }}
 {{- end }}
