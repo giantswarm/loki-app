@@ -3,16 +3,22 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: {{ include "loki.name" . }}-egress-coredns
-  namespace: {{ .Release.Namespace }}
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.backendSelectorLabels`)"
   labels:
     {{- include "loki.labels" . | nindent 4 }}
+  name: {{ include "loki.name" . }}-egress-coredns
+  namespace: {{ .Release.Namespace }}
 spec:
-  endpointSelector:
-    matchLabels:
-      {{- include "loki.selectorLabels" . | nindent 6 }}
   egress:
-  - toPorts:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: coredns
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: k8s-dns-node-cache
+    toPorts:
     - ports:
       - port: "53"
         protocol: UDP
@@ -22,12 +28,8 @@ spec:
         protocol: TCP
       - port: "1053"
         protocol: TCP
-    toEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: kube-system
-        k8s:k8s-app: coredns
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: kube-system
-        k8s:k8s-app: k8s-dns-node-cache
+  endpointSelector:
+    matchLabels:
+      {{- include "loki.selectorLabels" . | nindent 6 }}
 {{- end }}
 {{- end }}
