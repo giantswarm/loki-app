@@ -18,5 +18,5 @@ maintainers:
   - name: giantswarm/team-atlas
     email: team-atlas@giantswarm.io
 annotations:
-  application.giantswarm.io/team: atlas
+  io.giantswarm.application.team: atlas
   ui.giantswarm.io/logo: https://s.giantswarm.io/app-icons/grafana-loki/2/dark.svg

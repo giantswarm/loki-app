@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Change team annotation in `Chart.yaml` to OpenContainers format (`io.giantswarm.application.team`).
 - CI: kube-linter - ignore external chart dependencies
 
 ## [0.37.2] - 2026-02-09
