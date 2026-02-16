@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.37.3] - 2026-02-16
+
 ### Changed
 
 - Change team annotation in `Chart.yaml` to OpenContainers format (`io.giantswarm.application.team`).
@@ -765,7 +767,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.37.2...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.37.3...HEAD
+[0.37.3]: https://github.com/giantswarm/loki-app/compare/v0.37.2...v0.37.3
 [0.37.2]: https://github.com/giantswarm/loki-app/compare/v0.37.1...v0.37.2
 [0.37.1]: https://github.com/giantswarm/loki-app/compare/v0.37.0...v0.37.1
 [0.37.0]: https://github.com/giantswarm/loki-app/compare/v0.36.0...v0.37.0
