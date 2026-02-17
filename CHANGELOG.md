@@ -13,6 +13,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Azure: Storage Account and Blob Container creation with storage account key authentication
   - Azure: Private cluster support with Private Endpoint, Private DNS Zone, and VNet Link
   
+## [0.37.3] - 2026-02-16
+
+### Changed
+
+- Change team annotation in `Chart.yaml` to OpenContainers format (`io.giantswarm.application.team`).
+- CI: kube-linter - ignore external chart dependencies
+
+## [0.37.2] - 2026-02-09
+
+### Fixed
+
+- Disable Loki Scaled Objects if Loki is disabled.
+
+## [0.37.1] - 2026-02-05
+
+### Added
+
+- Add `HTTPRouteFilter` support for Gateway API routes.
+
+### Changed
+
+- Refactor loki-gateway HTTPRoute template to use loki's templating for naming.
+
 ## [0.37.0] - 2026-02-02
 
 ### Added
@@ -750,7 +773,10 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.37.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.37.3...HEAD
+[0.37.3]: https://github.com/giantswarm/loki-app/compare/v0.37.2...v0.37.3
+[0.37.2]: https://github.com/giantswarm/loki-app/compare/v0.37.1...v0.37.2
+[0.37.1]: https://github.com/giantswarm/loki-app/compare/v0.37.0...v0.37.1
 [0.37.0]: https://github.com/giantswarm/loki-app/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/giantswarm/loki-app/compare/v0.35.0...v0.36.0
 [0.35.0]: https://github.com/giantswarm/loki-app/compare/v0.34.0...v0.35.0

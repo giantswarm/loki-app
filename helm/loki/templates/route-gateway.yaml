@@ -1,14 +1,14 @@
-{{- if .Values.loki.gateway.enabled -}}
-{{- range $name, $route := .Values.loki.gateway.route }}
-  {{- if $route.enabled -}}
+{{- if .Values.loki.gateway.route.enabled -}}
+{{- $route := .Values.loki.gateway.route }}
+
 ---
-apiVersion: {{ $route.apiVersion | default "gateway.networking.k8s.io/v1" }}
+apiVersion: gateway.networking.k8s.io/v1
 kind: {{ $route.kind | default "HTTPRoute" }}
 metadata:
-  name: {{ include "loki.gatewayFullname" $ }}{{ if ne $name "main" }}-{{ $name }}{{ end }}
-  namespace: {{ $.Release.Namespace }}
+  name: {{ include "loki.gatewayFullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "loki.gatewayLabels" $ | nindent 4 }}
+    {{- include "loki.gatewayLabels" . | nindent 4 }}
     {{- with $route.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -23,15 +23,14 @@ spec:
   {{- end }}
   {{- with $route.hostnames }}
   hostnames:
-    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- tpl (toYaml .) . | nindent 4 }}
   {{- end }}
   rules:
     {{- if $route.additionalRules }}
-    {{- tpl (toYaml $route.additionalRules) $ | nindent 4 }}
+    {{- tpl (toYaml $route.additionalRules) . | nindent 4 }}
     {{- end }}
     - backendRefs:
-        - name: {{ include "loki.gatewayFullname" $ }}
-          {{- /* port: {{ $.Values.loki.service.port }} */}}
+        - name: {{ include "loki.gatewayFullname" . }}
           port: 80
       {{- with $route.filters }}
       filters:
@@ -41,16 +40,16 @@ spec:
       matches:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-  {{- end }}
-  {{- if and $route.enabled $route.securityPolicy.enabled }}
+
+{{- if and $route.securityPolicy $route.securityPolicy.enabled }}
 {{- $policy := $route.securityPolicy }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: {{ include "loki.gatewayFullname" $ }}
+  name: {{ include "loki.gatewayFullname" . }}
   labels:
-    {{- include "loki.gatewayLabels" $ | nindent 4 }}
+    {{- include "loki.gatewayLabels" . | nindent 4 }}
     {{- with $policy.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -62,39 +61,41 @@ spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: {{ $route.kind | default "HTTPRoute" }}
-      name: {{ $route.name | default (include "loki.gatewayFullname" $ ) }}
-  {{ with $policy.basicAuth }}
+      name: {{ $route.name | default (include "loki.gatewayFullname" . ) }}
+  {{- with $policy.basicAuth }}
   basicAuth:
     {{- toYaml . | nindent 4 }}
   {{ end }}
-  {{ with $policy.cors }}
+  {{- with $policy.cors }}
   cors:
     {{- toYaml . | nindent 4 }}
   {{ end }}
-  {{ with $policy.jwt }}
+  {{- with $policy.jwt }}
   jwt:
     {{- toYaml . | nindent 4 }}
   {{ end }}
-  {{ with $policy.oidc }}
+  {{- with $policy.oidc }}
   oidc:
     {{- toYaml . | nindent 4 }}
   {{ end }}
-  {{ with $policy.extAuth }}
+  {{- with $policy.extAuth }}
   extAuth:
     {{- toYaml . | nindent 4 }}
   {{ end }}
-  {{ with $policy.authorization }}
+  {{- with $policy.authorization }}
   authorization:
     {{- toYaml . | nindent 4 }}
   {{ end }}
-  {{- if and $route.enabled $route.backendTrafficPolicy.enabled }}
+{{ end }}
+
+{{- if and $route.backendTrafficPolicy $route.backendTrafficPolicy.enabled }}
 {{ $trafficPolicy := $route.backendTrafficPolicy }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
   labels:
-    {{- include "loki.gatewayLabels" $ | nindent 4 }}
+    {{- include "loki.gatewayLabels" . | nindent 4 }}
     {{- with $trafficPolicy.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -102,17 +103,40 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  name: {{ include "loki.gatewayFullname" $ }}
-  namespace: {{ $.Release.Namespace }}
+  name: {{ include "loki.gatewayFullname" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   targetRefs:
   - group: gateway.networking.k8s.io
     kind: {{ $route.kind | default "HTTPRoute" }}
-    name: {{ $route.name | default (include "loki.gatewayFullname" $ ) }}
+    name: {{ $route.name | default (include "loki.gatewayFullname" . ) }}
   timeout:
     tcp:
       connectTimeout: {{ $trafficPolicy.timeout.tcp.connectTimeout | default "60s" }}
 {{- end }}
+
+{{- if and $route.httpRouteFilter $route.httpRouteFilter.enabled }}
+{{ $filter := $route.httpRouteFilter }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: HTTPRouteFilter
+metadata:
+  labels:
+    {{- include "loki.gatewayLabels" . | nindent 4 }}
+    {{- with $filter.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $filter.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  name: {{ include "loki.gatewayFullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- with $filter.directResponse }}
+  directResponse:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 {{- end }}
-{{- end }}
+
 {{- end }}

@@ -1,31 +1,4 @@
 checks:
   addAllBuiltIn: true
-  exclude:
-  - "use-namespace"
-  - "unset-memory-requirements"
-  - "unset-cpu-requirements"
-  - "run-as-non-root"
-  - "required-label-owner"
-  - "required-annotation-email"
-  - "non-isolated-pod"
-  - "no-readiness-probe"
-  - "no-read-only-root-fs"
-  - "no-liveness-probe"
-  - "default-service-account"
-  - "no-rolling-update-strategy"
-  - "read-secret-from-env-var"
-  - "minimum-three-replicas"
-  - "access-to-secrets"
-  - "access-to-create-pods"
-  - "dangling-service"
-  - "no-node-affinity"
-  - "dnsconfig-options"
-  - "latest-tag"
-  - "hpa-minimum-three-replicas"
-  - "non-existent-service-account"
-  - "no-node-affinity"
-  - "dnsconfig-options"
-  - "latest-tag"
-  - "pdb-unhealthy-pod-eviction-policy"
-  - "restart-policy"
-  - "job-ttl-seconds-after-finished"
+  ignorePaths:
+  - helm/loki/charts/**
