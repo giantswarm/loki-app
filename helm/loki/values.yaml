@@ -365,6 +365,8 @@ loki:
 crossplane:
   # -- Enable automated storage provisioning via Crossplane
   enabled: false
+  # -- Whether the object storage should be private (no public endpoint, access via private endpoint only)
+  private: false
   # -- Cloud provider type: 'aws' for CAPA, 'azure' for CAPZ
   provider: aws
   # -- Crossplane ProviderConfig name
@@ -402,6 +404,10 @@ crossplane:
   azure:
     # -- Enable Azure resources (Storage Account, Container)
     enabled: false
+    # -- Azure Resource Group name
+    resourceGroup: ""
+    # -- Azure Subscription ID
+    subscriptionId: ""
     # -- Storage container configuration
     container:
       # -- Container name for Loki storage (used for chunks, ruler, and admin)

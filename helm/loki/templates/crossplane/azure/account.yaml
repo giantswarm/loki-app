@@ -2,7 +2,7 @@
 {{- $tags := include "loki.crossplane.tags" . | fromYaml }}
 {{- $containerName := .Values.crossplane.azure.container.name }}
 {{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" $containerName) }}
-{{- $isPrivate := include "loki.crossplane.azure.isPrivateCluster" . | eq "true" }}
+{{- $isPrivate := .Values.crossplane.private }}
 ---
 apiVersion: storage.azure.upbound.io/v1beta2
 kind: Account
@@ -22,7 +22,7 @@ spec:
     - "*"
     {{- end }}
   forProvider:
-    resourceGroupName: {{ include "loki.crossplane.azure.resourceGroup" . }}
+    resourceGroupName: {{ .Values.crossplane.azure.resourceGroup }}
     location: {{ .Values.crossplane.region }}
     accountKind: BlobStorage
     accountReplicationType: LRS
