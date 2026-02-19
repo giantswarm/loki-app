@@ -1,0 +1,129 @@
+# Example configuration for CAPZ (Azure) with Crossplane-managed Storage
+# This demonstrates the two-phase migration from manual storage management to Crossplane
+
+global:
+  dnsService: "coredns"
+  dnsNamespace: "kube-system"
+
+loki:
+  loki:
+    storage:
+      # Single container name for all Loki storage
+      # Note: On Azure, Crossplane creates both a Storage Account and a Blob Container.
+      # The storage account name is sanitized (alphanumeric, max 24 chars).
+      bucketNames:
+        chunks: giantswarm-my-installation-loki
+        ruler: giantswarm-my-installation-loki
+        admin: giantswarm-my-installation-loki
+      type: azure
+      azure:
+        # Storage account name will be auto-generated (sanitized version of container name)
+        # accountName: giantswarmmyinstallati (example - 24 char limit, alphanumeric only)
+        # Authentication via storage account keys (no workload identity needed)
+        accountName: ""  # Will be set by connection secret
+        accountKey: ""   # Will be set by connection secret
+        # Blob container name (matches the single container)
+        containerName: giantswarm-my-installation-loki
+
+  # Service account - no special annotations needed for Azure storage account keys
+  serviceAccount:
+    create: true
+    name: loki
+
+  # Network policies for CAPZ environments
+  networkPolicy:
+    enabled: true
+    flavor: cilium
+    egressWorld:
+      enabled: true
+    egressCoredns:
+      enabled: true
+    egressKubeApiserver:
+      enabled: true
+    egressMimir:
+      enabled: true
+
+  # Autoscaling configuration
+  gateway:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  backend:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  read:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  write:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetMemoryUtilizationPercentage: 90
+
+  # Caching configuration
+  chunksCache:
+    enabled: true
+  resultsCache:
+    enabled: true
+
+  # Monitoring
+  monitoring:
+    serviceMonitor:
+      enabled: true
+    selfMonitoring:
+      enabled: false
+
+  # Disable MinIO for production
+  minio:
+    enabled: false
+
+  # Disable test pods
+  test:
+    enabled: false
+
+## The chart automatically detects if your cluster is private by checking
+## the cluster user-values ConfigMap for global.connectivity.network.mode == "private"
+## For private clusters, it will:
+## - Disable public network access on storage accounts
+## - Create private endpoints
+## - Create private DNS zones (privatelink.blob.core.windows.net)
+## - Create virtual network links
+## - Link to your cluster's VNet and subnet
+crossplane:
+  enabled: true
+  provider: azure
+  # Azure location (e.g., westeurope, eastus, germanywestcentral)
+  region: westeurope
+  # MUST match your AzureCluster CR name
+  clusterName: "my-installation"
+  clusterNamespace: org-giantswarm
+  # Crossplane ProviderConfig for Azure
+  providerConfigRef: default
+  # Observe mode: Crossplane will only watch, not manage
+  observeOnly: true
+  # Additional tags to apply to all storage resources
+  tags:
+    - key: team
+      value: atlas
+    - key: environment
+      value: production
+
+  azure:
+    enabled: true
+    container:
+      # Single container name for all Loki storage
+      name: giantswarm-my-installation-loki
+      # Number of days to retain logs before expiration
+      lifecycleDays: 100

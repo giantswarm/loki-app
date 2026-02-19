@@ -1,0 +1,48 @@
+{{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled .Values.crossplane.private }}
+{{- $tags := include "loki.crossplane.tags" . | fromYaml }}
+{{- $containerName := .Values.crossplane.azure.container.name }}
+{{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" $containerName) }}
+---
+apiVersion: network.azure.upbound.io/v1beta1
+kind: PrivateEndpoint
+metadata:
+  name: {{ $containerName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+  annotations:
+    crossplane.io/external-name: {{ $containerName }}
+spec:
+  managementPolicies:
+    {{- if .Values.crossplane.observeOnly }}
+    - Observe
+    {{- else }}
+    - "*"
+    {{- end }}
+  forProvider:
+    location: {{ .Values.crossplane.region }}
+    resourceGroupName: {{ .Values.crossplane.azure.resourceGroup }}
+    subnetId: {{ printf "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/virtualNetworks/%s-vnet/subnets/node-subnet" .Values.crossplane.azure.subscriptionId .Values.crossplane.azure.resourceGroup .Values.crossplane.azure.resourceGroup }}
+    privateDnsZoneGroup:
+      - name: default
+        privateDnsZoneIdsRefs:
+          - name: {{ .Values.crossplane.clusterName }}-privatelink.blob.core.windows.net
+    privateServiceConnection:
+      - name: {{ $containerName }}
+        isManualConnection: false
+        privateConnectionResourceIdSelector:
+          matchLabels:
+            app.kubernetes.io/component: storage
+            app.kubernetes.io/name: {{ include "loki.name" . }}
+        subresourceNames:
+          - blob
+    {{- if $tags }}
+    tags:
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+  providerConfigRef:
+    name: {{ .Values.crossplane.providerConfigRef }}
+{{- end }}
