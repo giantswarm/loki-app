@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.38.0] - 2026-02-20
+
 ### Changed
 
 - Upgraded upstream chart from 6.49.0 to 6.53.0 - see [changelog](https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md) for more information.
@@ -772,7 +774,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.37.3...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.38.0...HEAD
+[0.38.0]: https://github.com/giantswarm/loki-app/compare/v0.37.3...v0.38.0
 [0.37.3]: https://github.com/giantswarm/loki-app/compare/v0.37.2...v0.37.3
 [0.37.2]: https://github.com/giantswarm/loki-app/compare/v0.37.1...v0.37.2
 [0.37.1]: https://github.com/giantswarm/loki-app/compare/v0.37.0...v0.37.1
