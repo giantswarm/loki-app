@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.39.1] - 2026-02-23
+
 ### Changed
 
 - CI: test loki disabled
@@ -790,7 +792,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.39.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.39.1...HEAD
+[0.39.1]: https://github.com/giantswarm/loki-app/compare/v0.39.0...v0.39.1
 [0.39.0]: https://github.com/giantswarm/loki-app/compare/v0.38.0...v0.39.0
 [0.38.0]: https://github.com/giantswarm/loki-app/compare/v0.37.3...v0.38.0
 [0.37.3]: https://github.com/giantswarm/loki-app/compare/v0.37.2...v0.37.3
