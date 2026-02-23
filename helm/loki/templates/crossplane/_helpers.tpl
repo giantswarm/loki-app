@@ -22,6 +22,17 @@ false
 {{- end -}}
 
 {{/*
+Crossplane is Azure/CAPZ
+*/}}
+{{- define "loki.crossplane.isAzure" -}}
+{{- if eq .Values.crossplane.provider "azure" -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Merge tags from cluster CR with user-provided tags
 Returns tags as a map: {foo: "bar"}
 */}}
@@ -35,6 +46,15 @@ Returns tags as a map: {foo: "bar"}
   {{- if $awsCluster -}}
     {{- if $awsCluster.spec.additionalTags -}}
       {{- range $key, $value := $awsCluster.spec.additionalTags -}}
+        {{- $_ := set $tags $key $value -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- else if eq $provider "azure" -}}
+  {{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+  {{- if $azureCluster -}}
+    {{- if $azureCluster.spec.additionalTags -}}
+      {{- range $key, $value := $azureCluster.spec.additionalTags -}}
         {{- $_ := set $tags $key $value -}}
       {{- end -}}
     {{- end -}}

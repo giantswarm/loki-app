@@ -370,11 +370,13 @@ loki:
   test:
     enabled: false
 
-# -- Crossplane configuration for automated infrastructure provisioning
+# -- Crossplane configuration for cloud resource provisioning
 crossplane:
-  # -- Enable Crossplane resources
+  # -- Enable automated storage provisioning via Crossplane
   enabled: false
-  # -- Crossplane provider (e.g., aws, azure)
+  # -- Whether the object storage should be private (no public endpoint, access via private endpoint only)
+  private: false
+  # -- Cloud provider type: 'aws' for CAPA, 'azure' for CAPZ
   provider: aws
   # -- Crossplane ProviderConfig name
   providerConfigRef: "default"
@@ -391,16 +393,33 @@ crossplane:
   tags: []
   # - key: team
   #   value: atlas
+
+  # -- AWS-specific configuration
   aws:
-    # -- Enable AWS Crossplane resources
+    # -- Enable AWS resources (S3, IAM)
     enabled: false
-    # -- Bucket configuration for Loki storage
+    # -- S3 Bucket configuration for Loki storage
     bucket:
       # -- Bucket name for Loki storage (used for chunks, ruler, and admin)
       name: ""
-      # -- Lifecycle expiration in days
+      # -- Number of days to retain logs before expiration
       lifecycleDays: 100
     # -- IAM Role configuration for IRSA
     iam:
       # -- Enable IAM role creation via Crossplane
       enabled: true
+
+  # -- Azure-specific configuration
+  azure:
+    # -- Enable Azure resources (Storage Account, Container)
+    enabled: false
+    # -- Azure Resource Group name
+    resourceGroup: ""
+    # -- Azure Subscription ID
+    subscriptionId: ""
+    # -- Storage container configuration
+    container:
+      # -- Container name for Loki storage (used for chunks, ruler, and admin)
+      name: ""
+      # -- Number of days to retain logs before expiration (optional, omit to disable lifecycle)
+      lifecycleDays: 100
