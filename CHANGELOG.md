@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- CI: test loki disabled
+
 ## [0.39.0] - 2026-02-23
 
 ### Added
@@ -14,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Crossplane support for automated storage provisioning on CAPZ (Azure) clusters
   - Azure: Storage Account and Blob Container creation with storage account key authentication
   - Azure: Private cluster support with Private Endpoint
-  
+
 ## [0.38.0] - 2026-02-20
 
 ### Changed
