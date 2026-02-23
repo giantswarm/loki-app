@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CI: test loki disabled
 
+### Fixed
+
+- Sanitize crossplane tags in Azure.
+
 ## [0.39.0] - 2026-02-23
 
 ### Added
