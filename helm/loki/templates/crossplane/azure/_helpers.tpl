@@ -12,4 +12,16 @@ Azure storage account names must be:
 {{- $sanitized | trunc 24 -}}
 {{- end -}}
 
-
+{{/*
+Get Azure Subscription ID from AzureCluster CR
+*/}}
+{{- define "loki.crossplane.azure.subscriptionId" -}}
+{{- $clusterName := .Values.crossplane.clusterName -}}
+{{- $clusterNamespace := .Values.crossplane.clusterNamespace -}}
+{{- $subscriptionId := "" -}}
+{{- $azureCluster := lookup "infrastructure.cluster.x-k8s.io/v1beta1" "AzureCluster" $clusterNamespace $clusterName -}}
+{{- if $azureCluster -}}
+  {{- $subscriptionId = $azureCluster.spec.subscriptionID -}}
+{{- end -}}
+{{- $subscriptionId -}}
+{{- end -}}

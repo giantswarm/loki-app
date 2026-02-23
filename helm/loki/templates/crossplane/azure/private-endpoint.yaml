@@ -23,7 +23,7 @@ spec:
   forProvider:
     location: {{ .Values.crossplane.region }}
     resourceGroupName: {{ .Values.crossplane.azure.resourceGroup }}
-    subnetId: {{ printf "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/virtualNetworks/%s-vnet/subnets/node-subnet" .Values.crossplane.azure.subscriptionId .Values.crossplane.azure.resourceGroup .Values.crossplane.azure.resourceGroup }}
+    subnetId: {{ printf "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/virtualNetworks/%s-vnet/subnets/node-subnet" (include "loki.crossplane.azure.subscriptionId" .) .Values.crossplane.azure.resourceGroup .Values.crossplane.azure.resourceGroup }}
     privateDnsZoneGroup:
       - name: default
         privateDnsZoneIdsRefs:
@@ -31,10 +31,7 @@ spec:
     privateServiceConnection:
       - name: {{ $containerName }}
         isManualConnection: false
-        privateConnectionResourceIdSelector:
-          matchLabels:
-            app.kubernetes.io/component: storage
-            app.kubernetes.io/name: {{ include "loki.name" . }}
+        privateConnectionResourceId: {{ printf "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Storage/storageAccounts/%s" (include "loki.crossplane.azure.subscriptionId" .) .Values.crossplane.azure.resourceGroup $storageAccountName }}
         subresourceNames:
           - blob
     {{- if $tags }}

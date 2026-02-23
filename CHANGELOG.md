@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade storage account from v1 to v2 as v1 are going away in October 2026.
+
 ## [0.39.1] - 2026-02-23
 
 ### Changed

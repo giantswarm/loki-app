@@ -415,8 +415,6 @@ crossplane:
     enabled: false
     # -- Azure Resource Group name
     resourceGroup: ""
-    # -- Azure Subscription ID
-    subscriptionId: ""
     # -- Storage container configuration
     container:
       # -- Container name for Loki storage (used for chunks, ruler, and admin)
