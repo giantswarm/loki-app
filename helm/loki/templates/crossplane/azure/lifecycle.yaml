@@ -2,7 +2,7 @@
 {{- $containerName := .Values.crossplane.azure.container.name }}
 {{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" $containerName) }}
 ---
-apiVersion: storage.azure.upbound.io/v1beta1
+apiVersion: storage.azure.upbound.io/v1beta2
 kind: ManagementPolicy
 metadata:
   name: {{ $storageAccountName }}
@@ -28,11 +28,11 @@ spec:
       - name: DeleteOldBlobs
         enabled: true
         filters:
-          - blobTypes:
-              - blockBlob
+          blobTypes:
+            - blockBlob
         actions:
-          - baseBlob:
-              - deleteBlobAfterDaysSinceModificationGreaterThan: {{ .Values.crossplane.azure.container.lifecycleDays }}
+          baseBlob:
+            deleteAfterDaysSinceModificationGreaterThan: {{ .Values.crossplane.azure.container.lifecycleDays }}
   providerConfigRef:
     name: {{ .Values.crossplane.providerConfigRef }}
 {{- end }}

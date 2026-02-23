@@ -69,5 +69,13 @@ Returns tags as a map: {foo: "bar"}
 {{- range $tag := $userTags -}}
   {{- $_ := set $tags (index $tag "key") (index $tag "value") -}}
 {{- end -}}
+{{- if eq $provider "azure" -}}
+  {{- $sanitizedTags := dict -}}
+  {{- range $key, $value := $tags -}}
+    {{- $sanitizedKey := $key | replace "-" "_" -}}
+    {{- $_ := set $sanitizedTags $sanitizedKey $value -}}
+  {{- end -}}
+  {{- $tags = $sanitizedTags -}}
+{{- end -}}
 {{- $tags | toYaml -}}
 {{- end -}}
