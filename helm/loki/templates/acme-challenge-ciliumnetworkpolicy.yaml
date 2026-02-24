@@ -3,10 +3,12 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: {{ include "loki.name" . }}-ingress-acme-challenge
-  namespace: {{ .Release.Namespace }}
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels`)"
   labels:
     {{- include "loki.labels" . | nindent 4 }}
+  name: {{ include "loki.name" . }}-ingress-acme-challenge
+  namespace: {{ .Release.Namespace }}
 spec:
   endpointSelector:
     matchLabels:

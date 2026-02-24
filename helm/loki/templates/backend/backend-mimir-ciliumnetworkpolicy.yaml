@@ -1,0 +1,36 @@
+{{- if .Values.loki.enabled }}
+{{- if and .Values.loki.networkPolicy.egressMimir.enabled (eq .Values.loki.networkPolicy.flavor "cilium") }}
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.backendSelectorLabels`)" 
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+  name: {{ include "loki.name" . }}-backend-mimir-egress
+  namespace: {{ .Release.Namespace }}
+spec:
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/component: gateway
+            app.kubernetes.io/instance: mimir
+            app.kubernetes.io/name: mimir
+            # Mimir runs in the mimir namespace
+            k8s:io.kubernetes.pod.namespace: mimir
+        - matchLabels:
+            app.kubernetes.io/component: alertmanager
+            app.kubernetes.io/instance: mimir
+            app.kubernetes.io/name: mimir
+            # Mimir runs in the mimir namespace
+            k8s:io.kubernetes.pod.namespace: mimir
+      toPorts:
+      - ports: 
+        - port: "8080"
+          protocol: TCP
+  endpointSelector:
+    matchLabels:
+      {{- include "loki.backendSelectorLabels" . | nindent 6 }}
+{{- end }}
+{{- end }}

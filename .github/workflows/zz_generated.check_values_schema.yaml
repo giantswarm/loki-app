@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/366c1c3aad2b9b02850a54854aba8108db3ce052/pkg/gen/input/workflows/internal/file/check_values_schema.yaml.template
+#    https://github.com/giantswarm/devctl/blob/87f30fd3b955a0daf6017834a776c222d93a207c/pkg/gen/input/workflows/internal/file/check_values_schema.yaml.template
 #
 
 name: 'Values and schema'
@@ -17,6 +17,10 @@ on:
       - 'helm/**/values.schema.json'  # schema
       - 'helm/**/ci/ci-values.yaml'   # overrides for CI (can contain required entries)
 
+permissions: {}
+
 jobs:
   check:
-    uses: giantswarm/github-workflows/.github/workflows/chart-values.yaml@897ce7c11f81fcd01f7cf38e839a42848a63c7e7
+    uses: giantswarm/github-workflows/.github/workflows/chart-values.yaml@main
+    permissions:
+      contents: read

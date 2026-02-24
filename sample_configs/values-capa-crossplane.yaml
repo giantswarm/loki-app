@@ -1,0 +1,114 @@
+# Example configuration for CAPA (AWS) with Crossplane-managed S3 storage
+# This demonstrates the two-phase migration from manual bucket management to Crossplane
+
+global:
+  dnsService: "coredns"
+  dnsNamespace: "kube-system"
+
+## Crossplane configuration
+crossplane:
+  enabled: true
+  observeOnly: true # Crossplane will only watch, not manage
+  provider: aws
+  region: "eu-west-1"
+  clusterName: "my-installation"  # MUST match your AWSCluster CR name
+  clusterNamespace: org-giantswarm
+  tags:
+    - key: team
+      value: atlas
+    - key: environment
+      value: production
+  aws:
+    enabled: true
+    bucket:
+      name: "giantswarm-my-installation-loki"
+      lifecycleDays: 100
+    iam:
+      enabled: true
+
+loki:
+  loki:
+    storage:
+      # Bucket names - use the same bucket name for all three
+      bucketNames:
+        chunks: giantswarm-my-installation-loki
+        ruler: giantswarm-my-installation-loki
+        admin: giantswarm-my-installation-loki
+      type: s3
+      s3:
+        region: eu-west-1
+        # No credentials needed - IRSA handles authentication via IAM role
+
+  # Service account - IAM role ARN annotation is managed by Loki subchart
+  # when crossplane is enabled, it will use the IAM role created by Crossplane
+  serviceAccount:
+    create: true
+    name: loki
+    annotations:
+      # This role ARN is created by Crossplane when aws.iam.enabled: true
+      # Replace ${AWS_ACCOUNT_ID} with your actual AWS account ID
+      # Or use the pattern: giantswarm-{installationName}-loki-storage
+      eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/giantswarm-my-installation-loki-storage"
+
+  # Network policies for CAPA environments
+  networkPolicy:
+    enabled: true
+    flavor: cilium
+    egressWorld:
+      enabled: true
+    egressCoredns:
+      enabled: true
+    egressKubeApiserver:
+      enabled: true
+    egressMimir:
+      enabled: true
+
+  # Autoscaling configuration
+  gateway:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  backend:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  read:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+
+  write:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetMemoryUtilizationPercentage: 90
+
+  # Caching configuration
+  chunksCache:
+    enabled: true
+  resultsCache:
+    enabled: true
+
+  # Monitoring
+  monitoring:
+    serviceMonitor:
+      enabled: true
+    selfMonitoring:
+      enabled: false
+
+  # Disable MinIO for production
+  minio:
+    enabled: false
+
+  # Disable test pods
+  test:
+    enabled: false

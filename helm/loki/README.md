@@ -52,7 +52,7 @@ Helm chart for Grafana Loki in simple, scalable mode
 | loki.gateway.extraContainers[0].args[2] | string | `"--hostsfile=/etc/hosts"` |  |
 | loki.gateway.extraContainers[0].args[3] | string | `"--enable-search"` |  |
 | loki.gateway.extraContainers[0].args[4] | string | `"--verbose"` |  |
-| loki.gateway.extraContainers[0].image | string | `"giantswarm/go-dnsmasq:release-1.0.7"` |  |
+| loki.gateway.extraContainers[0].image | string | `"gsoci.azurecr.io/giantswarm/go-dnsmasq:release-1.0.7"` |  |
 | loki.gateway.extraContainers[0].imagePullPolicy | string | `"IfNotPresent"` |  |
 | loki.gateway.extraContainers[0].name | string | `"dnsmasq"` |  |
 | loki.gateway.extraContainers[0].resources.limits.memory | string | `"100Mi"` |  |
@@ -96,7 +96,7 @@ Helm chart for Grafana Loki in simple, scalable mode
 | loki.serviceAccount.imagePullSecrets | list | `[]` | Image pull secrets for the service account |
 | loki.serviceAccount.labels | object | `{}` | Labels for the service account |
 | loki.serviceAccount.name | string | `"loki"` | The name of the ServiceAccount to use. If not set and create is true, a name is generated using the fullname template |
-| loki.sidecar.image.repository | string | `"giantswarm/k8s-sidecar"` |  |
+| loki.sidecar.image.repository | string | `"gsoci.azurecr.io/giantswarm/k8s-sidecar"` |  |
 | loki.sidecar.resources.limits.cpu | string | `"100m"` |  |
 | loki.sidecar.resources.limits.memory | string | `"100Mi"` |  |
 | loki.sidecar.resources.requests.cpu | string | `"50m"` |  |
@@ -112,27 +112,5 @@ Helm chart for Grafana Loki in simple, scalable mode
 | loki.write.resources.limits.memory | string | `"4Gi"` |  |
 | loki.write.resources.requests.cpu | string | `"500m"` |  |
 | loki.write.resources.requests.memory | string | `"3Gi"` |  |
-| multiTenantAuth.autoscaling.enabled | bool | `true` | Enable autoscaling for the multi-tenant proxy |
-| multiTenantAuth.autoscaling.maxReplicas | int | `4` | Maximum autoscaling replicas for the multi-tenant proxy |
-| multiTenantAuth.autoscaling.minReplicas | int | `2` | Minimum autoscaling replicas for the multi-tenant proxy |
-| multiTenantAuth.autoscaling.targetCPUUtilizationPercentage | int | `90` | Target CPU utilisation percentage for the multi-tenant proxy |
-| multiTenantAuth.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Target memory utilisation percentage for the multi-tenant proxy |
-| multiTenantAuth.configReloader.containerSecurityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context to apply to the config reloader containers. |
-| multiTenantAuth.configReloader.image.repository | string | `"giantswarm/configmap-reload"` | Repository to get config reloader image from. |
-| multiTenantAuth.configReloader.image.tag | string | `"v0.9.0"` | Tag of image to use for config reloading. |
-| multiTenantAuth.configReloader.resources | object | `{"requests":{"cpu":"1m","memory":"5Mi"}}` | Resource requests and limits to apply to the config reloader containers. |
-| multiTenantAuth.containerSecurityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"seccompProfile":{"type":"RuntimeDefault"}}` | The SecurityContext for Loki containers |
-| multiTenantAuth.credentials | string | `"users:\n  - username: Tenant1\n    password: 1tnaneT\n    orgid: tenant-1\n  - username: Tenant2\n    password: 2tnaneT\n    orgid: tenant-2"` |  |
-| multiTenantAuth.deployCredentials | bool | `true` |  |
-| multiTenantAuth.enabled | bool | `false` | Specifies whether the multi-tenant proxy should be enabled |
-| multiTenantAuth.image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"repository":"giantswarm/grafana-multi-tenant-proxy","tag":"0.5.0"}` | ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy |
-| multiTenantAuth.image.repository | string | `"giantswarm/grafana-multi-tenant-proxy"` | Repository to get multi-tenant proxy image from. |
-| multiTenantAuth.podSecurityContext.fsGroup | int | `10001` |  |
-| multiTenantAuth.podSecurityContext.runAsGroup | int | `10001` |  |
-| multiTenantAuth.podSecurityContext.runAsNonRoot | bool | `true` |  |
-| multiTenantAuth.podSecurityContext.runAsUser | int | `10001` |  |
-| multiTenantAuth.podSecurityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
-| multiTenantAuth.replicas | int | `3` | Number of replicas for the multi-tenant proxy |
-| multiTenantAuth.resources | object | `{"limits":{"memory":"500Mi"},"requests":{"cpu":"50m","memory":"50Mi"}}` | Resource requests and limits for the write |
-| multiTenantAuth.write.enforceOrgId | bool | `true` | disabling this allows write requests to set whatever orgid they want |
+
 

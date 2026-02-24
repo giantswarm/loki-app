@@ -1,3 +1,4 @@
+{{- if .Values.loki.enabled }}
 {{- if .Values.loki.read.kedaAutoscaling.enabled }}
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
@@ -18,12 +19,10 @@ spec:
   minReplicaCount: {{ .Values.loki.read.kedaAutoscaling.minReplicas }}
   maxReplicaCount: {{ .Values.loki.read.kedaAutoscaling.maxReplicas }}
   triggers:
-  - type: memory
-    metricType: Utilization
-    metadata:
-      value: {{ .Values.loki.read.kedaAutoscaling.targetMemoryUtilizationPercentage | quote }}
-  - type: cpu
-    metricType: Utilization
-    metadata:
-      value: {{ .Values.loki.read.kedaAutoscaling.targetCPUUtilizationPercentage | quote }}
+    {{- toYaml .Values.loki.read.kedaAutoscaling.triggers | nindent 2 }}
+  {{- if .Values.loki.read.kedaAutoscaling.fallback }}
+  fallback:
+    {{- toYaml .Values.loki.read.kedaAutoscaling.fallback | nindent 4 }}
+  {{- end }}
+{{- end }}
 {{- end }}

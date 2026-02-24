@@ -5,23 +5,9 @@
 # global:
 #   dnsService: "coredns"
 
-multiTenantAuth:
-  enabled: true
-  replicas: 3
-  credentials: |-
-    users:
-      - username: Tenant1
-        password: 1tnaneT
-        orgid: tenant-1
-      - username: Tenant2
-        password: 2tnaneT
-        orgid: tenant-2
-
 loki:
   # By default, Loki offers no authentication. It just expects the `X-Scope-OrgID`
-  # HTTP header to be set to indicate which tenant's logs are these. To enable
-  # minimal security, you can configure the gateway to route traffic through multi-tenant-proxy
-  # to do HTTP basicAuth and overwriting the tenant id header
+  # HTTP header to be set to indicate which tenant's logs are these.
   loki:
     compactor:
       retention_enabled: true
@@ -68,10 +54,6 @@ loki:
             # host name assigned to your loki instance (must be registered in DNS)
             - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
           secretName: loki-ingress-cert
-    nginxConfig:
-      customReadUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
-      customWriteUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3101
-      customBackendUrl: http://loki-multi-tenant-proxy.default.svc.cluster.local:3100
 
   _shared_config: &shared-conf
     podAnnotations:
