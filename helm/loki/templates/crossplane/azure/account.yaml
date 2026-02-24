@@ -24,7 +24,7 @@ spec:
   forProvider:
     resourceGroupName: {{ .Values.crossplane.azure.resourceGroup }}
     location: {{ .Values.crossplane.region }}
-    accountKind: BlobStorage
+    accountKind: StorageV2
     accountReplicationType: LRS
     accountTier: Standard
     allowBlobPublicAccess: false

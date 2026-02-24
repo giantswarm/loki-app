@@ -1090,9 +1090,6 @@
                         "resourceGroup": {
                             "type": "string"
                         },
-                        "subscriptionId": {
-                            "type": "string"
-                        },
                         "container": {
                             "type": "object",
                             "properties": {
