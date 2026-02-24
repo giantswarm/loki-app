@@ -1,0 +1,31 @@
+{{- if .Values.loki.backend.kedaAutoscaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "loki.backendFullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: {{ include "loki.backendFullname" . }}
+  {{- if .Values.loki.backend.kedaAutoscaling.horizontalPodAutoscalerConfig }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        {{- toYaml .Values.loki.backend.kedaAutoscaling.horizontalPodAutoscalerConfig | nindent 8 }}
+  {{- end }}
+  pollingInterval: {{ .Values.loki.backend.kedaAutoscaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.loki.backend.kedaAutoscaling.cooldownPeriod }}
+  minReplicaCount: {{ .Values.loki.backend.kedaAutoscaling.minReplicas }}
+  maxReplicaCount: {{ .Values.loki.backend.kedaAutoscaling.maxReplicas }}
+  triggers:
+  - type: memory
+    metricType: Utilization
+    metadata:
+      value: {{ .Values.loki.backend.kedaAutoscaling.targetMemoryUtilizationPercentage | quote }}
+  - type: cpu
+    metricType: Utilization
+    metadata:
+      value: {{ .Values.loki.backend.kedaAutoscaling.targetCPUUtilizationPercentage | quote }}
+{{- end }}
