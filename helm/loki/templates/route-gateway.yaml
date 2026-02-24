@@ -1,4 +1,4 @@
-{{- if .Values.loki.gateway.route.enabled -}}
+{{- if and .Values.loki.enabled .Values.loki.gateway.route.enabled -}}
 {{- $route := .Values.loki.gateway.route }}
 
 ---
