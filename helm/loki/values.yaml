@@ -394,8 +394,11 @@ crossplane:
   enabled: false
   # -- Whether the object storage should be private (no public endpoint, access via private endpoint only)
   private: false
-  # -- Cloud provider type: 'aws' for CAPA, 'azure' for CAPZ
+  # -- Cloud provider type for storage: 'aws' for S3, 'azure' for Azure Storage
   provider: aws
+  # -- Cluster provider type (optional, defaults to provider value): 'aws', 'azure', 'vsphere', 'vcd'
+  # Use this when cluster provider differs from storage provider (e.g., vsphere cluster with azure storage)
+  clusterProvider: ""
   # -- Crossplane ProviderConfig name
   providerConfigRef: "default"
   # -- Cloud region for resources
@@ -433,6 +436,8 @@ crossplane:
     enabled: false
     # -- Azure Resource Group name
     resourceGroup: ""
+    # -- Azure Subscription ID (optional, will be looked up from AzureCluster CR if not provided)
+    subscriptionId: ""
     # -- Storage container configuration
     container:
       # -- Container name for Loki storage (used for chunks, ruler, and admin)

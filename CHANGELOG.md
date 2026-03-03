@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `ScaledObject` resources for `loki-write` and `loki-backend`.
+- Add support for extracting tags from VsphereCluster and VCDCluster CRs in Crossplane
+- Add `clusterProvider` field to support scenarios where cluster provider differs from storage provider (e.g., vsphere cluster with azure storage)
+- Make Azure subscription ID overridable via `crossplane.azure.subscriptionId` value (falls back to AzureCluster CR lookup if not provided)
 
 ### Changed
 
