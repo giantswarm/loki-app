@@ -2,6 +2,93 @@
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
     "properties": {
+        "crossplane": {
+            "type": "object",
+            "properties": {
+                "aws": {
+                    "type": "object",
+                    "properties": {
+                        "bucket": {
+                            "type": "object",
+                            "properties": {
+                                "lifecycleDays": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "iam": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                },
+                "azure": {
+                    "type": "object",
+                    "properties": {
+                        "container": {
+                            "type": "object",
+                            "properties": {
+                                "lifecycleDays": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "resourceGroup": {
+                            "type": "string"
+                        },
+                        "subscriptionId": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "clusterName": {
+                    "type": "string"
+                },
+                "clusterNamespace": {
+                    "type": "string"
+                },
+                "clusterProvider": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "observeOnly": {
+                    "type": "boolean"
+                },
+                "private": {
+                    "type": "boolean"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "providerConfigRef": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array"
+                }
+            }
+        },
         "global": {
             "type": "object",
             "properties": {
@@ -349,95 +436,104 @@
                         "route": {
                             "type": "object",
                             "properties": {
-                                "main": {
+                                "additionalRules": {
+                                    "type": "array"
+                                },
+                                "annotations": {
+                                    "type": "object"
+                                },
+                                "apiVersion": {
+                                    "type": "string"
+                                },
+                                "backendTrafficPolicy": {
                                     "type": "object",
                                     "properties": {
-                                        "additionalRules": {
-                                            "type": "array"
-                                        },
                                         "annotations": {
                                             "type": "object"
-                                        },
-                                        "apiVersion": {
-                                            "type": "string"
-                                        },
-                                        "backendTrafficPolicy": {
-                                            "type": "object",
-                                            "properties": {
-                                                "annotations": {
-                                                    "type": "object"
-                                                },
-                                                "enabled": {
-                                                    "type": "boolean"
-                                                },
-                                                "labels": {
-                                                    "type": "object"
-                                                },
-                                                "timeout": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "tcp": {
-                                                            "type": "object",
-                                                            "properties": {
-                                                                "connectTimeout": {
-                                                                    "type": "string"
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
                                         },
                                         "enabled": {
                                             "type": "boolean"
                                         },
-                                        "filters": {
-                                            "type": "array"
-                                        },
-                                        "hostnames": {
-                                            "type": "array"
-                                        },
-                                        "kind": {
-                                            "type": "string"
-                                        },
                                         "labels": {
                                             "type": "object"
                                         },
-                                        "matches": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "path": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "type": {
-                                                                "type": "string"
-                                                            },
-                                                            "value": {
-                                                                "type": "string"
-                                                            }
+                                        "timeout": {
+                                            "type": "object",
+                                            "properties": {
+                                                "tcp": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "connectTimeout": {
+                                                            "type": "string"
                                                         }
                                                     }
                                                 }
                                             }
+                                        }
+                                    }
+                                },
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "filters": {
+                                    "type": "array"
+                                },
+                                "hostnames": {
+                                    "type": "array"
+                                },
+                                "httpRouteFilter": {
+                                    "type": "object",
+                                    "properties": {
+                                        "annotations": {
+                                            "type": "object"
                                         },
-                                        "parentRefs": {
-                                            "type": "array"
+                                        "enabled": {
+                                            "type": "boolean"
                                         },
-                                        "securityPolicy": {
-                                            "type": "object",
-                                            "properties": {
-                                                "annotations": {
-                                                    "type": "object"
-                                                },
-                                                "enabled": {
-                                                    "type": "boolean"
-                                                },
-                                                "labels": {
-                                                    "type": "object"
+                                        "labels": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "kind": {
+                                    "type": "string"
+                                },
+                                "labels": {
+                                    "type": "object"
+                                },
+                                "matches": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "path": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "value": {
+                                                        "type": "string"
+                                                    }
                                                 }
                                             }
+                                        }
+                                    }
+                                },
+                                "parentRefs": {
+                                    "type": "array"
+                                },
+                                "securityPolicy": {
+                                    "type": "object",
+                                    "properties": {
+                                        "annotations": {
+                                            "type": "object"
+                                        },
+                                        "enabled": {
+                                            "type": "boolean"
+                                        },
+                                        "labels": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1005,99 +1101,6 @@
                                             "type": "string"
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "crossplane": {
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "type": "boolean"
-                },
-                "provider": {
-                    "type": "string"
-                },
-                "region": {
-                    "type": "string"
-                },
-                "clusterName": {
-                    "type": "string"
-                },
-                "clusterNamespace": {
-                    "type": "string"
-                },
-                "providerConfigRef": {
-                    "type": "string"
-                },
-                "observeOnly": {
-                    "type": "boolean"
-                },
-                "private": {
-                    "type": "boolean"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "key": {
-                                "type": "string"
-                            },
-                            "value": {
-                                "type": "string"
-                            }
-                        },
-                        "required": ["key", "value"]
-                    }
-                },
-                "aws": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean"
-                        },
-                        "bucket": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string"
-                                },
-                                "lifecycleDays": {
-                                    "type": "integer"
-                                }
-                            }
-                        },
-                        "iam": {
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "type": "boolean"
-                                }
-                            }
-                        }
-                    }
-                },
-                "azure": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean"
-                        },
-                        "resourceGroup": {
-                            "type": "string"
-                        },
-                        "container": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string"
-                                },
-                                "lifecycleDays": {
-                                    "type": "integer"
                                 }
                             }
                         }
