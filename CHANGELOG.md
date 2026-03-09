@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.41.0] - 2026-03-09
+
 ### Added
 
 - Add `ScaledObject` resources for `loki-write` and `loki-backend`.
@@ -809,7 +811,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.40.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.41.0...HEAD
+[0.41.0]: https://github.com/giantswarm/loki-app/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/giantswarm/loki-app/compare/v0.39.1...v0.40.0
 [0.39.1]: https://github.com/giantswarm/loki-app/compare/v0.39.0...v0.39.1
 [0.39.0]: https://github.com/giantswarm/loki-app/compare/v0.38.0...v0.39.0
