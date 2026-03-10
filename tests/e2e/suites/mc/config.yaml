@@ -1,0 +1,6 @@
+appName: loki
+repoName: loki-app
+appCatalog: default
+providers:
+- capa
+isMCTest: true

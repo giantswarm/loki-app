@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add MC E2E test suite using `apptest-framework`, verifying all core Loki components (write, backend, read, gateway) are ready on the management cluster.
+
+### Removed
+
+- Remove ATS (Python/pytest) test infrastructure in favour of `apptest-framework`.
+
 ## [0.41.0] - 2026-03-09
 
 ### Added

@@ -1,0 +1,12 @@
+# Enable minio as a self-contained object store backend for testing.
+# This avoids requiring external cloud storage credentials.
+loki:
+  minio:
+    enabled: true
+  loki:
+    storage:
+      type: s3
+      bucketNames:
+        chunks: chunks
+        ruler: ruler
+        admin: admin
