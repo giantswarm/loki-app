@@ -194,11 +194,12 @@ loki:
         enabled: false
         annotations: {}
         labels: {}
-        # directResponse:
-        #   body:
-        #     type: Inline
-        #     inline: "Not Found"
-        #   statusCode: 404
+        directResponse:
+          contentType: text/plain
+          statusCode: 400
+          body:
+            type: Inline
+            inline: "Bad Request"
 
   backend:
     autoscaling:
