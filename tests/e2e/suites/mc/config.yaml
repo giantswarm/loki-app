@@ -1,6 +1,6 @@
 appName: loki
 repoName: loki-app
-appCatalog: default
+appCatalog: control-plane
 providers:
 - capa
 isMCTest: true
