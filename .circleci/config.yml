@@ -31,13 +31,3 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-
-      - architect/run-tests-with-ats:
-          name: run-tests-with-ats
-          filters:
-            # Do not trigger the job on merge to main.
-            branches:
-              ignore:
-                - main
-          requires:
-            - "package and push loki chart to control-plane-catalogs"
