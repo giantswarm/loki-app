@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Pre-configure `httpRouteFilter.directResponse` default (400 Bad Request) so that enabling `httpRouteFilter` returns a meaningful response without requiring callers to specify the response body.
+
 ## [0.41.0] - 2026-03-09
 
 ### Added
