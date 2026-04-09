@@ -11,7 +11,7 @@ sources:
 icon: https://s.giantswarm.io/app-icons/loki-stack/1/dark.svg
 dependencies:
   - name: loki
-    version: 7.0.0
+    version: 8.1.3
     repository: https://grafana-community.github.io/helm-charts
     condition: loki.enabled
 maintainers:
