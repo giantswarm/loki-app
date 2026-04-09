@@ -20,6 +20,10 @@ loki:
       retention_enabled: true
       delete_request_store: s3
     storage:
+      bucketNames:
+        chunks: chunks
+        ruler: ruler
+        admin: admin
       type: s3
       s3:
         s3: null
