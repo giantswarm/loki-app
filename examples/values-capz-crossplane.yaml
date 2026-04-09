@@ -82,9 +82,6 @@ loki:
   monitoring:
     serviceMonitor:
       enabled: true
-    selfMonitoring:
-      enabled: false
-
   # Disable MinIO for production
   minio:
     enabled: false
