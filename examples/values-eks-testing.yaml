@@ -43,9 +43,6 @@ loki:
       - name: admin
         policy: none
         purge: false
-  rbac:
-    # PSP are disabled for most recent Kubernetes clusters.
-    pspEnabled: false
 
   ## When using Crossplane storage provisioning with IAM, uncomment and configure:
   # serviceAccount:
