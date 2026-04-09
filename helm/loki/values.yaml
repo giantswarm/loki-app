@@ -203,8 +203,6 @@ loki:
     replicas: 3
     # -- Image to use for loki canary
     image:
-      # -- The Docker registry
-      registry: gsoci.azurecr.io
       # -- Docker image repository
       repository: giantswarm/loki-canary
     # -- The SecurityContext for Loki pods
@@ -222,6 +220,7 @@ loki:
         drop:
           - ALL
       allowPrivilegeEscalation: false
+
   # -- Configuration of monitoring components
   monitoring:
     serviceMonitor:
@@ -243,12 +242,6 @@ loki:
     egressMimir:
       # -- Enable additional cilium egress rules to Mimir for backend.
       enabled: true
-
-  # -- Configuration of Loki's service account
-  serviceAccount:
-    # -- The name of the ServiceAccount to use.
-    # If not set and create is true, a name is generated using the fullname template
-    name: loki
 
   sidecar:
     image:

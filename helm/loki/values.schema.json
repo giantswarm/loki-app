@@ -532,9 +532,6 @@
                         "image": {
                             "type": "object",
                             "properties": {
-                                "registry": {
-                                    "type": "string"
-                                },
                                 "repository": {
                                     "type": "string"
                                 }
@@ -585,9 +582,6 @@
                             }
                         }
                     }
-                },
-                "nameOverride": {
-                    "type": "string"
                 },
                 "networkPolicy": {
                     "type": "object",
@@ -681,14 +675,6 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                },
-                "serviceAccount": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string"
                         }
                     }
                 },
@@ -815,6 +801,9 @@
                             }
                         }
                     }
+                },
+                "nameOverride": {
+                    "type": "string"
                 }
             }
         },
