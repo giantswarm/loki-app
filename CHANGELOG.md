@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated Loki Helm chart dependency to use `grafana-community/helm-charts` repository.
+- Upgrade upstream loki helm chart from v6 (6.53.0) to v7 (7.0.0), bumping Loki app version from 3.6.5 to 3.6.7.
 
 ## [0.42.0] - 2026-03-12
 
