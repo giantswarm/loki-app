@@ -1,5 +1,4 @@
 # Example configuration for CAPA (AWS) with Crossplane-managed S3 storage
-
 crossplane:
   enabled: true
   observeOnly: true # Crossplane will only watch, not manage
