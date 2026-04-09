@@ -678,6 +678,14 @@
                         }
                     }
                 },
+                "serviceAccount": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "sidecar": {
                     "type": "object",
                     "properties": {
