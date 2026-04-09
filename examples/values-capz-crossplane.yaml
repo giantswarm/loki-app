@@ -1,0 +1,39 @@
+# Example configuration for CAPZ (Azure) with Crossplane-managed Storage
+#
+# The chart automatically detects if your cluster is private by checking
+# the cluster user-values ConfigMap for global.connectivity.network.mode == "private"
+# For private clusters, it will:
+# - Disable public network access on storage accounts
+# - Create private endpoints and private DNS zones (privatelink.blob.core.windows.net)
+# - Create virtual network links to your cluster's VNet
+crossplane:
+  enabled: true
+  provider: azure
+  observeOnly: true
+  region: westeurope
+  clusterName: "my-installation"  # MUST match your AzureCluster CR name
+  tags:
+    - key: team
+      value: atlas
+    - key: environment
+      value: production
+  azure:
+    enabled: true
+    container:
+      name: giantswarm-my-installation-loki
+
+loki:
+  loki:
+    storage:
+      # Note: On Azure, Crossplane creates both a Storage Account and a Blob Container.
+      # The storage account name is sanitized (alphanumeric, max 24 chars).
+      bucketNames:
+        chunks: giantswarm-my-installation-loki
+        ruler: giantswarm-my-installation-loki
+        admin: giantswarm-my-installation-loki
+      type: azure
+      azure:
+        # Authentication via storage account keys (no workload identity needed)
+        accountName: ""  # Will be set by connection secret
+        accountKey: ""   # Will be set by connection secret
+        containerName: giantswarm-my-installation-loki

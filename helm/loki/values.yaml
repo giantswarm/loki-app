@@ -25,23 +25,6 @@ loki:
     image:
       repository: giantswarm/loki
 
-    # -- The SecurityContext for Loki pods
-    podSecurityContext:
-      fsGroup: 10001
-      runAsGroup: 10001
-      runAsNonRoot: true
-      runAsUser: 10001
-      seccompProfile:
-        type: RuntimeDefault
-    # -- The SecurityContext for Loki containers
-    containerSecurityContext:
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-      allowPrivilegeEscalation: false
-      seccompProfile:
-        type: RuntimeDefault
     # -- Loki Storage schema configuration
     #    Loki 3 requires a schema to be configured so we configure v13, the latest.
     #    Doc is here: https://grafana.com/docs/loki/latest/configure/storage/#schema-config
@@ -100,25 +83,6 @@ loki:
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
       targetMemoryUtilizationPercentage: 90
-    kedaAutoscaling:
-      enabled: false
-      horizontalPodAutoscalerConfig: {}
-      pollingInterval: 30
-      cooldownPeriod: 300
-      minReplicas: 2
-      maxReplicas: 10
-      fallback: {}
-      triggers:
-      - type: memory
-        metricType: Utilization
-        metadata:
-           # equivalent of targetMemoryUtilizationPercentage in HPA
-          value: "90"
-      - type: cpu
-        metricType: Utilization
-        metadata:
-          # equivalent of targetCPUUtilizationPercentage in HPA
-          value: "90"
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:
@@ -132,23 +96,6 @@ loki:
       requests:
         memory: 50Mi
         cpu: 50m
-    # -- The SecurityContext for gateway containers
-    podSecurityContext:
-      fsGroup: 101
-      runAsGroup: 101
-      runAsNonRoot: true
-      runAsUser: 101
-      seccompProfile:
-        type: RuntimeDefault
-    # -- The SecurityContext for gateway containers
-    containerSecurityContext:
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-      allowPrivilegeEscalation: false
-      seccompProfile:
-        type: RuntimeDefault
     # -- Gateway API Routes for loki-gateway
     route:
       # -- Enables or disables the route
@@ -212,15 +159,6 @@ loki:
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
       targetMemoryUtilizationPercentage: 90
-    kedaAutoscaling:
-      enabled: false
-      horizontalPodAutoscalerConfig: {}
-      pollingInterval: 30
-      cooldownPeriod: 300
-      minReplicas: 2
-      maxReplicas: 10
-      targetCPUUtilizationPercentage: 90
-      targetMemoryUtilizationPercentage: 90
     resources:
       limits:
         memory: 3Gi
@@ -234,25 +172,6 @@ loki:
       minReplicas: 2
       targetCPUUtilizationPercentage: 90
       targetMemoryUtilizationPercentage: 90
-    kedaAutoscaling:
-      enabled: false
-      horizontalPodAutoscalerConfig: {}
-      pollingInterval: 30
-      cooldownPeriod: 300
-      minReplicas: 2
-      maxReplicas: 10
-      fallback: {}
-      triggers:
-      - type: memory
-        metricType: Utilization
-        metadata:
-           # equivalent of targetMemoryUtilizationPercentage in HPA
-          value: "90"
-      - type: cpu
-        metricType: Utilization
-        metadata:
-          # equivalent of targetCPUUtilizationPercentage in HPA
-          value: "90"
     resources:
       limits:
         memory: 3Gi
@@ -268,27 +187,12 @@ loki:
       minReplicas: 2
       maxReplicas: 10
       targetMemoryUtilizationPercentage: 90
-    kedaAutoscaling:
-      enabled: false
-      horizontalPodAutoscalerConfig: {}
-      pollingInterval: 30
-      cooldownPeriod: 300
-      minReplicas: 2
-      maxReplicas: 10
-      targetCPUUtilizationPercentage: 90
-      targetMemoryUtilizationPercentage: 90
     resources:
       limits:
         memory: 4Gi
       requests:
         memory: 3Gi
         cpu: 500m
-
-  # -- Caching configuration
-  chunksCache:
-    enabled: true
-  resultsCache:
-    enabled: true
 
   # -- Canary configuration
   # The Loki canary pushes logs to and queries from this loki installation to test
@@ -299,8 +203,6 @@ loki:
     replicas: 3
     # -- Image to use for loki canary
     image:
-      # -- The Docker registry
-      registry: gsoci.azurecr.io
       # -- Docker image repository
       repository: giantswarm/loki-canary
     # -- The SecurityContext for Loki pods
@@ -318,26 +220,11 @@ loki:
         drop:
           - ALL
       allowPrivilegeEscalation: false
-    # -- Update strategy for the `loki-canary` Daemonset pods
-    updateStrategy:
-      type: RollingUpdate
-      rollingUpdate:
-        maxUnavailable: 1
 
   # -- Configuration of monitoring components
   monitoring:
-    dashboards:
-      enabled: false
-    rules:
-      enabled: false
-    alerts:
-      enabled: false
     serviceMonitor:
       enabled: true
-    selfMonitoring:
-      enabled: false
-      grafanaAgent:
-        installOperator: false
 
   # -- Configuration of Loki's network policy
   networkPolicy:
@@ -358,19 +245,10 @@ loki:
 
   # -- Configuration of Loki's service account
   serviceAccount:
-    # -- Specifies whether a ServiceAccount should be created
-    create: true
     # -- The name of the ServiceAccount to use.
-    # If not set and create is true, a name is generated using the fullname template
+    # Pinned to "loki" to ensure a stable name regardless of release name,
+    # which is required for IRSA/workload identity annotations.
     name: loki
-    # -- Image pull secrets for the service account
-    imagePullSecrets: []
-    # -- Annotations for the service account
-    annotations: {}
-    # -- Labels for the service account
-    labels: {}
-    # -- Set this toggle to false to opt out of automounting API credentials for the service account
-    automountServiceAccountToken: true
 
   sidecar:
     image:

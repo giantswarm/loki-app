@@ -1,0 +1,32 @@
+# Example configuration for CAPA (AWS) with Crossplane-managed S3 storage
+crossplane:
+  enabled: true
+  observeOnly: true # Crossplane will only watch, not manage
+  region: "eu-west-1"
+  clusterName: "my-installation"  # MUST match your AWSCluster CR name
+  tags:
+    - key: team
+      value: atlas
+    - key: environment
+      value: production
+  aws:
+    enabled: true
+    bucket:
+      name: "giantswarm-my-installation-loki"
+
+loki:
+  loki:
+    storage:
+      bucketNames:
+        chunks: giantswarm-my-installation-loki
+        ruler: giantswarm-my-installation-loki
+        admin: giantswarm-my-installation-loki
+      type: s3
+      s3:
+        region: eu-west-1
+        # No credentials needed - IRSA handles authentication via IAM role
+
+  # IAM role ARN is created by Crossplane when aws.iam.enabled: true
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/giantswarm-my-installation-loki-storage"

@@ -1,18 +1,16 @@
 global:
-  # For imported eks clusters only. Remove this field for CAPI EKS clusters.
+  # For imported EKS clusters only. Remove this for CAPI EKS clusters.
   dnsService: "kube-dns"
 
 ciliumNetworkPolicy:
-  # For imported eks clusters : false. For capi eks clusters : true.
+  # For imported EKS clusters: false. For CAPI EKS clusters: true.
   enabled: false
 
 loki:
   ruler:
     enabled: false
   networkPolicy:
-    enabled: true
-    # Loki pods need to be able to access the loki-memberlist service which acts as 
-    # as the service discovery.
+    # Loki pods need to reach the loki-memberlist service for discovery.
     discovery:
       port: 7946
       namespaceSelector:
@@ -31,31 +29,11 @@ loki:
         s3: null
         endpoint: http://loki-minio.kube-system.svc.cluster.local:9000
         region: null
-        # The key pair needed to access minio storage needs to be created directly on the minio console.
+        # The key pair needed to access minio needs to be created in the minio console.
         secretAccessKey: adminSecretKey
         accessKeyId: adminKey
         s3ForcePathStyle: true
         insecure: true
-      ## Crossplane Storage Provisioning Configuration (recommended over MinIO for production)
-      ## Uncomment and configure for automated S3 bucket provisioning via Crossplane
-      # provisioning:
-      #   enabled: false
-      #   observeOnly: true
-      #   provider: aws
-      #   clusterName: "my-cluster"  # Must match AWSCluster CR name
-      #   clusterNamespace: org-giantswarm
-      #   region: eu-west-1
-      #   lifecycle:
-      #     enabled: true
-      #     retentionDays: 100
-      #   iam:
-      #     enabled: true
-      #   tags:
-      #     - key: team
-      #       value: atlas
-      #     - key: environment
-      #       value: production
-      #
   # Object storage mocking
   minio:
     enabled: true
@@ -69,11 +47,7 @@ loki:
       - name: admin
         policy: none
         purge: false
-  rbac:
-    # psp are disabled for most recent kubernetes clusters.
-    pspEnabled: false
 
-  ## Service Account Configuration
   ## When using Crossplane storage provisioning with IAM, uncomment and configure:
   # serviceAccount:
   #   annotations:

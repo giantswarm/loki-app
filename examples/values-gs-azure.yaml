@@ -1,0 +1,42 @@
+loki:
+  loki:
+    compactor:
+      retention_enabled: true
+      delete_request_store: azure
+    storage:
+      type: azure
+      bucketNames:
+        # 'Blob service' 'Container' name
+        chunks: my-container-name
+        ruler: my-container-name
+        admin: my-container-name
+      azure:
+        # 'Storage account' name
+        accountName: my-account-name
+        # 'Storage account' 'Access key'
+        accountKey: my-account-key
+
+  gateway:
+    replicas: 3
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+      hosts:
+        - host: loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            - loki.ofrv5.k8s.gremlin.germanywestcentral.azure.gigantic.io
+          secretName: loki-ingress-cert
+
+  # key _shared_config does not exist in values.yaml — used here via YAML anchors
+  _shared_config: &shared-conf
+    persistence:
+      storageClass: default
+
+  write: *shared-conf
+  read: *shared-conf

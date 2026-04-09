@@ -1,0 +1,46 @@
+# /!\ Disclaimer: this example is not tested at each update, we don't guarantee it works with the latest Loki charts
+#
+# If your cluster DNS is kube-dns, override it:
+# global:
+#   dnsService: "kube-dns"
+
+loki:
+  loki:
+    compactor:
+      retention_enabled: true
+      delete_request_store: s3
+    storage:
+      type: s3
+      bucketNames:
+        chunks: gs-loki-storage-m2h60
+        ruler: gs-loki-storage-m2h60
+        admin: gs-loki-storage-m2h60
+      s3:
+        region: eu-west-1
+
+  gateway:
+    replicas: 3
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+      hosts:
+        - host: loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            - loki.m2h60.k8s.gauss.eu-west-1.aws.gigantic.io
+          secretName: loki-ingress-cert
+
+  # key _shared_config does not exist in values.yaml — used here via YAML anchors
+  _shared_config: &shared-conf
+    podAnnotations:
+      # KIAM annotation — pods with this annotation use the IAM role for S3 access
+      iam.amazonaws.com/role: gs-loki-storage-m2h60-role
+
+  write: *shared-conf
+  read: *shared-conf
+  backend: *shared-conf

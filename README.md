@@ -129,7 +129,7 @@ Most notable changes:
   * with `loki-app` v0.4.x:
     * [upstream values (loki-distributed 0.48.5)](https://github.com/grafana/helm-charts/blob/loki-distributed-0.48.5/charts/loki-distributed/values.yaml)
     * [default giantswarm values](https://github.com/giantswarm/loki-app/blob/3d777f261a7f820721c6732295aab56c809f4281/helm/loki/values.yaml)
-    * [giantswarm sample configs](https://github.com/giantswarm/loki-app/blob/3d777f261a7f820721c6732295aab56c809f4281/sample_configs/values-gs.yaml)
+    * [giantswarm sample configs](https://github.com/giantswarm/loki-app/blob/3d777f261a7f820721c6732295aab56c809f4281/examples/values-gs.yaml)
   * with `loki-app` v0.5.x:
     * [upstream values (official loki 3.2.1)](https://github.com/grafana/loki/blob/helm-loki-3.2.1/production/helm/loki/values.yaml)
     * [giantswarm default values](https://github.com/giantswarm/loki-app/blob/release-v0.5.x/helm/loki/values.yaml)
@@ -158,7 +158,7 @@ However, because of multi-tenancy, seeing logs that were stored with the new ver
 
 As this application is build upon the Grafana loki upstream chart as a dependency, most of the values to override can be found [here](https://github.com/grafana/loki/blob/helm-loki-6.5.2/production/helm/loki/values.yaml).
 
-Some samples can be found [here](./sample_configs/)
+Some samples can be found [here](./examples/)
 
 ### General recommendations
 
@@ -168,8 +168,8 @@ If you reduce the number of `replicas` below the default recommended values, exp
 ### Prepare config file
 
 1. Create app config file
-Grab the included [sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs.yaml)
-or [azure sample config file](https://github.com/giantswarm/loki-app/blob/master/sample_configs/values-gs-azure.yaml),
+Grab the included [sample config file](https://github.com/giantswarm/loki-app/blob/master/examples/values-gs.yaml)
+or [azure sample config file](https://github.com/giantswarm/loki-app/blob/master/examples/values-gs-azure.yaml),
 read the comments for options and adjust to your needs. To check all available
 options, please consult the [full `values.yaml` file](https://github.com/giantswarm/loki-app/blob/master/helm/loki/values.yaml).
 
@@ -495,7 +495,7 @@ You might find yourself in a situation where you want to deploy Loki on a new cl
 
 Then you should consider deploying Loki with [MinIO](https://min.io/) as an object storage solution. To put it in a nutshell, `MinIO` is an object storage solution with a S3-like API which uses the nodes' volumes to store its data. Thus, when used for testing purposes, one can mock an S3 bucket behavior to have quick and simple object storage access for Loki without the need for complex access permissions.
 
-The good news is that the Loki chart directly provides a `minio` field where one can configure a `minio` deployment to serve as object storage for the Loki pods. Such a configuration is displayed in the `sample_configs/values-eks-testing.yaml` file.
+The good news is that the Loki chart directly provides a `minio` field where one can configure a `minio` deployment to serve as object storage for the Loki pods. Such a configuration is displayed in the `examples/values-eks-testing.yaml` file.
 
 #### Creating access keys for MinIO access
 

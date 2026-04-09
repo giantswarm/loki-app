@@ -23,7 +23,7 @@ spec:
   {{- end }}
   {{- with $route.hostnames }}
   hostnames:
-    {{- tpl (toYaml .) . | nindent 4 }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
   rules:
     {{- if $route.additionalRules }}
