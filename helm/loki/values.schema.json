@@ -110,7 +110,10 @@
                     }
                 },
                 "priorityClassName": {
-                    "type": ["string", "null"]
+                    "type": [
+                        "string",
+                        "null"
+                    ]
                 }
             }
         },
@@ -160,14 +163,6 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                },
-                "chunksCache": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean"
                         }
                     }
                 },
@@ -575,52 +570,12 @@
                         },
                         "replicas": {
                             "type": "integer"
-                        },
-                        "updateStrategy": {
-                            "type": "object",
-                            "properties": {
-                                "rollingUpdate": {
-                                    "type": "object",
-                                    "properties": {
-                                        "maxUnavailable": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                },
-                                "type": {
-                                    "type": "string"
-                                }
-                            }
                         }
                     }
                 },
                 "monitoring": {
                     "type": "object",
                     "properties": {
-                        "alerts": {
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "type": "boolean"
-                                }
-                            }
-                        },
-                        "dashboards": {
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "type": "boolean"
-                                }
-                            }
-                        },
-                        "rules": {
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "type": "boolean"
-                                }
-                            }
-                        },
                         "serviceMonitor": {
                             "type": "object",
                             "properties": {
@@ -729,32 +684,9 @@
                         }
                     }
                 },
-                "resultsCache": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean"
-                        }
-                    }
-                },
                 "serviceAccount": {
                     "type": "object",
                     "properties": {
-                        "annotations": {
-                            "type": "object"
-                        },
-                        "automountServiceAccountToken": {
-                            "type": "boolean"
-                        },
-                        "create": {
-                            "type": "boolean"
-                        },
-                        "imagePullSecrets": {
-                            "type": "array"
-                        },
-                        "labels": {
-                            "type": "object"
-                        },
                         "name": {
                             "type": "string"
                         }
