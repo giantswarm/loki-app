@@ -6,7 +6,6 @@
 # - Disable public network access on storage accounts
 # - Create private endpoints and private DNS zones (privatelink.blob.core.windows.net)
 # - Create virtual network links to your cluster's VNet
-
 crossplane:
   enabled: true
   provider: azure
