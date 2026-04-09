@@ -88,6 +88,11 @@ loki:
           requests:
             cpu: 10m
             memory: 10Mi
+    # -- Gateway access log exporter (introduced in v9). Disabled by default
+    # as the image (ghcr.io/jkroepke/access-log-exporter) is not mirrored
+    # in gsoci.azurecr.io. Enable and configure a mirrored image to use it.
+    metrics:
+      enabled: false
     nginxConfig:
       resolver: "127.0.0.1:8053 valid=60s"
     autoscaling:
