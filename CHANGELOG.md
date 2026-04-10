@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated Loki Helm chart dependency to use `grafana-community/helm-charts` repository.
-- Upgrade upstream loki helm chart from v6 (6.53.0) to v11 (11.4.2), Loki app version 3.6.5 → 3.7.1.
+- Upgrade upstream loki helm chart from v6 (6.53.0) to v11 (11.4.6), Loki app version 3.6.5 → 3.7.1.
 - Remove custom ScaledObject wrapper templates (backend, gateway, read, write); upstream v11 ships native ScaledObject support, keeping both caused duplicate resources.
 - Remove `kedaAutoscaling` value blocks consumed only by the deleted wrapper templates.
 - Remove `selfMonitoring` dead code; removed from upstream prior to v11.

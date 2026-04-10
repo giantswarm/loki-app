@@ -205,21 +205,6 @@ loki:
     image:
       # -- Docker image repository
       repository: giantswarm/loki-canary
-    # -- The SecurityContext for Loki pods
-    podSecurityContext:
-      fsGroup: 10001
-      runAsGroup: 10001
-      runAsNonRoot: true
-      runAsUser: 10001
-      seccompProfile:
-        type: RuntimeDefault
-    # -- The SecurityContext for Loki containers
-    containerSecurityContext:
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-      allowPrivilegeEscalation: false
 
   # -- Configuration of monitoring components
   monitoring:
@@ -253,14 +238,6 @@ loki:
   sidecar:
     image:
       repository: giantswarm/k8s-sidecar
-    securityContext:
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-      allowPrivilegeEscalation: false
-      seccompProfile:
-        type: RuntimeDefault
     resources:
       limits:
         cpu: 100m
