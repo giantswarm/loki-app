@@ -1,3 +1,4 @@
+{{- $root := . }}
 {{- if and .Values.loki.enabled .Values.loki.gateway.route.enabled -}}
 {{- $route := .Values.loki.gateway.route }}
 
@@ -23,11 +24,11 @@ spec:
   {{- end }}
   {{- with $route.hostnames }}
   hostnames:
-    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- tpl (toYaml .) $root | nindent 4 }}
   {{- end }}
   rules:
-    {{- if $route.additionalRules }}
-    {{- tpl (toYaml $route.additionalRules) . | nindent 4 }}
+    {{- with $route.additionalRules }}
+    {{- tpl (toYaml .) $root | nindent 4 }}
     {{- end }}
     - backendRefs:
         - name: {{ include "loki.gatewayFullname" . }}
