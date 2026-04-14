@@ -2,9 +2,10 @@
 {{- range $name, $route := .Values.loki.gateway.route -}}
 {{- if $route.enabled -}}
 {{- $routeName := ternary (include "loki.gatewayFullname" $) (printf "%s-%s" (include "loki.gatewayFullname" $) $name) (eq $name "main") -}}
+{{- $extensions := index $.Values.loki.gateway.envoyExtensions $name | default dict -}}
 
-{{- if and $route.securityPolicy $route.securityPolicy.enabled }}
-{{- $policy := $route.securityPolicy }}
+{{- if and (index $extensions "securityPolicy") (index $extensions "securityPolicy" "enabled") }}
+{{- $policy := index $extensions "securityPolicy" }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
@@ -51,8 +52,8 @@ spec:
   {{- end }}
 {{- end }}
 
-{{- if and $route.backendTrafficPolicy $route.backendTrafficPolicy.enabled }}
-{{- $trafficPolicy := $route.backendTrafficPolicy }}
+{{- if and (index $extensions "backendTrafficPolicy") (index $extensions "backendTrafficPolicy" "enabled") }}
+{{- $trafficPolicy := index $extensions "backendTrafficPolicy" }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
@@ -78,8 +79,8 @@ spec:
       connectTimeout: {{ $trafficPolicy.timeout.tcp.connectTimeout | default "60s" }}
 {{- end }}
 
-{{- if and $route.httpRouteFilter $route.httpRouteFilter.enabled }}
-{{- $filter := $route.httpRouteFilter }}
+{{- if and (index $extensions "httpRouteFilter") (index $extensions "httpRouteFilter" "enabled") }}
+{{- $filter := index $extensions "httpRouteFilter" }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: HTTPRouteFilter

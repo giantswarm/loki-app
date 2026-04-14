@@ -131,6 +131,11 @@ loki:
         ## Additional custom rules that can be added to the route
         additionalRules: []
 
+    # -- Envoy Gateway extensions keyed by route name (parallel to gateway.route).
+    # Kept separate from gateway.route entries because the upstream chart schema
+    # (gatewayRouteEntry) uses additionalProperties: false and would reject these fields.
+    envoyExtensions:
+      main:
         # -- Envoy Gateway SecurityPolicy attached to this route.
         securityPolicy:
           enabled: false
