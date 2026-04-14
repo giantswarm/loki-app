@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Disabled per-component serviceaccounts so we rely on a central serviceaccount that has proper IRSA annotation.
+
 ## [0.43.0] - 2026-04-13
 
 ### Changed

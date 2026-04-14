@@ -154,6 +154,10 @@ loki:
             inline: "Bad Request"
 
   backend:
+    # -- Disable per-component service account so backend uses the shared
+    # top-level "loki" service account (required for IRSA annotations to apply).
+    serviceAccount:
+      create: false
     autoscaling:
       enabled: true
       minReplicas: 2
@@ -167,6 +171,10 @@ loki:
         cpu: 200m
 
   read:
+    # -- Disable per-component service account so read uses the shared
+    # top-level "loki" service account (required for IRSA annotations to apply).
+    serviceAccount:
+      create: false
     autoscaling:
       enabled: true
       minReplicas: 2
@@ -182,6 +190,10 @@ loki:
       - -querier.multi-tenant-queries-enabled
 
   write:
+    # -- Disable per-component service account so write uses the shared
+    # top-level "loki" service account (required for IRSA annotations to apply).
+    serviceAccount:
+      create: false
     autoscaling:
       enabled: true
       minReplicas: 2
