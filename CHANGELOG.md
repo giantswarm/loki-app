@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.43.1] - 2026-04-14
+
 ### Fixed
 
 - Disabled per-component serviceaccounts so we rely on a central serviceaccount that has proper IRSA annotation.
@@ -833,7 +835,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.43.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.43.1...HEAD
+[0.43.1]: https://github.com/giantswarm/loki-app/compare/v0.43.0...v0.43.1
 [0.43.0]: https://github.com/giantswarm/loki-app/compare/v0.42.0...v0.43.0
 [0.42.0]: https://github.com/giantswarm/loki-app/compare/v0.41.0...v0.42.0
 [0.41.0]: https://github.com/giantswarm/loki-app/compare/v0.40.0...v0.41.0
