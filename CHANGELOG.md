@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade upstream loki helm chart from v11 (11.6.4) to v12 (12.0.0).
+
 ## [0.43.1] - 2026-04-14
 
 ### Fixed

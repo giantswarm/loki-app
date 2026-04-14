@@ -18,6 +18,8 @@ loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
 
+  deploymentMode: SimpleScalable
+
   # -- Override the name of the loki subchart
   nameOverride: ""
 
