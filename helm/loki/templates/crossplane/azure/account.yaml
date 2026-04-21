@@ -19,7 +19,10 @@ spec:
     {{- if .Values.crossplane.observeOnly }}
     - Observe
     {{- else }}
-    - "*"
+    - "Create"
+    - "Delete"
+    - "LateInitialize"
+    - "Observe"
     {{- end }}
   forProvider:
     resourceGroupName: {{ .Values.crossplane.azure.resourceGroup }}
