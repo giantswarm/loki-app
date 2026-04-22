@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Make sure crossplane cannot delete Crossplane azure storage accounts/containers and s3 buckets.
+
 ## [0.43.1] - 2026-04-14
 
 ### Fixed
