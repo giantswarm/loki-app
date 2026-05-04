@@ -1,6 +1,6 @@
 {{- $root := . }}
-{{- if and .Values.loki.enabled .Values.loki.gateway.route.enabled -}}
-{{- $route := .Values.loki.gateway.route }}
+{{- if and .Values.loki.enabled .Values.gatewayRoute.enabled -}}
+{{- $route := .Values.gatewayRoute }}
 
 ---
 apiVersion: gateway.networking.k8s.io/v1
