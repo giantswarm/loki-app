@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade upstream loki helm chart from v11 (11.6.4) to v13 (13.5.0). Loki app version unchanged at 3.7.1.
 - Pin `loki.deploymentMode` to `SimpleScalable` in `values.yaml`. Upstream v13 changed the default to `Monolithic`; this preserves the existing backend/read/write topology.
 - Move gateway route configuration from `loki.gateway.route` to top-level `gatewayRoute`. Upstream v13 redefined `gateway.route` as a strict-schema map of named routes that rejected our flat structure. Consumers overriding `loki.gateway.route.*` must rename to `gatewayRoute.*`.
+    - Note: It's better if you use the upstream `loki.gateway.route`. The `gatewayRoute` section is here for compatibility, and keeping a few extra features we had added.
 
 ### Notable upstream changes
 
