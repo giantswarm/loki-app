@@ -1,0 +1,30 @@
+{{- if .Values.loki.enabled }}
+{{- if and .Values.loki.networkPolicy.egressKubeApiserver.enabled (eq .Values.loki.networkPolicy.flavor "kubernetes") }}
+---
+# The upstream chart only renders a kube-apiserver egress rule for the "cilium"
+# flavor. The "kubernetes" flavor has no equivalent, so the backend's k8s-sidecar (rules watcher)
+# cannot reach the API server once a CNI enforces NetworkPolicies.
+# This wrapper template fills that gap.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.backendSelectorLabels`)"
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+  name: {{ include "loki.name" . }}-backend-kubeapiserver-egress
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "loki.backendSelectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - port: 443
+          protocol: TCP
+        - port: 6443
+          protocol: TCP
+{{- end }}
+{{- end }}
