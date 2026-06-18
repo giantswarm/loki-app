@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Add a `kubernetes`-flavor NetworkPolicy granting the backend pods egress to the kube-apiserver (TCP 443/6443) to fix standalone platforms and CI tests.
+- Fix ABS config to not override AppVersion in Chart.yaml
 
 ## [0.45.0] - 2026-05-07
 
