@@ -27,3 +27,23 @@ Get Azure Subscription ID from values or AzureCluster CR
 {{- end -}}
 {{- $subscriptionId -}}
 {{- end -}}
+
+{{/*
+Name of the User-Assigned Managed Identity used for workload identity.
+Derived from the container name. Azure identity names allow up to 128 chars.
+*/}}
+{{- define "loki.crossplane.azure.identityName" -}}
+{{- printf "%s-identity" .containerName | trunc 128 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Full Azure resource ID of the Loki storage account. Used as the scope for the
+storage Blob role assignment. Deterministic from subscription + resource group +
+sanitized storage account name.
+*/}}
+{{- define "loki.crossplane.azure.storageAccountId" -}}
+{{- $subscriptionId := include "loki.crossplane.azure.subscriptionId" . -}}
+{{- $resourceGroup := .Values.crossplane.azure.resourceGroup -}}
+{{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" .Values.crossplane.azure.container.name) -}}
+{{- printf "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Storage/storageAccounts/%s" $subscriptionId $resourceGroup $storageAccountName -}}
+{{- end -}}

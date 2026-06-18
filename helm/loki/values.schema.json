@@ -54,6 +54,23 @@
                         },
                         "subscriptionId": {
                             "type": "string"
+                        },
+                        "workloadIdentity": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "oidcIssuerUrl": {
+                                    "type": "string"
+                                },
+                                "principalId": {
+                                    "type": "string"
+                                },
+                                "roleDefinitionName": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 },
