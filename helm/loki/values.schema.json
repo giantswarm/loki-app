@@ -58,14 +58,33 @@
                         "workloadIdentity": {
                             "type": "object",
                             "properties": {
+                                "clientIdSecretName": {
+                                    "type": "string"
+                                },
                                 "enabled": {
                                     "type": "boolean"
                                 },
                                 "oidcIssuerUrl": {
                                     "type": "string"
                                 },
-                                "principalId": {
-                                    "type": "string"
+                                "providerKubernetes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "providerConfigRef": {
+                                            "type": "string"
+                                        },
+                                        "serviceAccount": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "namespace": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
                                 },
                                 "roleDefinitionName": {
                                     "type": "string"
