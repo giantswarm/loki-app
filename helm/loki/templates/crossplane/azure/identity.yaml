@@ -24,6 +24,7 @@ spec:
     - "Observe"
     {{- end }}
   forProvider:
+    name: {{ $identityName }}
     location: {{ .Values.crossplane.region }}
     resourceGroupName: {{ .Values.crossplane.azure.resourceGroup }}
     {{- if $tags }}
@@ -34,10 +35,6 @@ spec:
     {{- end }}
   providerConfigRef:
     name: {{ .Values.crossplane.providerConfigRef }}
-  # The connection secret exposes the generated clientId, principalId and tenantId.
-  # clientId   -> loki.serviceAccount.annotations."azure.workload.identity/client-id"
-  # principalId -> crossplane.azure.workloadIdentity.principalId (for the role assignment)
-  writeConnectionSecretToRef:
-    name: {{ $identityName }}
-    namespace: {{ .Release.Namespace }}
 {{- end }}
+# The generated clientId and principalId are read from status.atProvider by the
+# Objects in client-id-secret.yaml and role-assignment.yaml respectively.
