@@ -1,0 +1,43 @@
+{{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled .Values.crossplane.azure.workloadIdentity.enabled }}
+{{- $tags := include "loki.crossplane.tags" . | fromYaml }}
+{{- $containerName := .Values.crossplane.azure.container.name }}
+{{- $identityName := include "loki.crossplane.azure.identityName" (dict "containerName" $containerName) }}
+---
+apiVersion: managedidentity.azure.upbound.io/v1beta1
+kind: UserAssignedIdentity
+metadata:
+  name: {{ $identityName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: identity
+  annotations:
+    crossplane.io/external-name: {{ $identityName }}
+spec:
+  managementPolicies:
+    {{- if .Values.crossplane.observeOnly }}
+    - Observe
+    {{- else }}
+    - "Create"
+    - "Update"
+    - "LateInitialize"
+    - "Observe"
+    {{- end }}
+  forProvider:
+    location: {{ .Values.crossplane.region }}
+    resourceGroupName: {{ .Values.crossplane.azure.resourceGroup }}
+    {{- if $tags }}
+    tags:
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+  providerConfigRef:
+    name: {{ .Values.crossplane.providerConfigRef }}
+  # The connection secret exposes the generated clientId, principalId and tenantId.
+  # clientId   -> loki.serviceAccount.annotations."azure.workload.identity/client-id"
+  # principalId -> crossplane.azure.workloadIdentity.principalId (for the role assignment)
+  writeConnectionSecretToRef:
+    name: {{ $identityName }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
