@@ -489,6 +489,30 @@ az storage account keys list \
 
 * Install the app using your values.
 
+#### Using Azure Workload Identity instead of a storage account key
+
+When the object storage is provisioned by Crossplane (`crossplane.azure.enabled: true`), Loki can authenticate to Blob storage with an Azure Workload Identity federated token instead of a static storage account key. This removes the long-lived secret and scopes blob access to Loki's ServiceAccount only.
+
+**Prerequisites** (already present on Giant Swarm CAPZ management clusters):
+
+* the Azure Workload Identity webhook, and the cluster's OIDC issuer is exposed via the kube-apiserver `--service-account-issuer`;
+* `provider-kubernetes` with an in-cluster `ProviderConfig` (used to copy the identity's generated client ID and principal ID into place, so the install is single-pass).
+
+**Enable it** under `crossplane.azure.workloadIdentity`:
+
+```yaml
+crossplane:
+  azure:
+    workloadIdentity:
+      enabled: true
+      # kube-apiserver --service-account-issuer of the cluster
+      oidcIssuerUrl: "https://oidcissuerXXXXXXXX.blob.core.windows.net/oidc-test/"
+```
+
+This provisions a User-Assigned Managed Identity, a Federated Identity Credential bound to the `loki` ServiceAccount, and a `Storage Blob Data Contributor` role assignment on the storage account, and ships a `ClusterRole` letting `provider-kubernetes` manage them. You also need to set `loki.loki.storage.azure.useFederatedToken: true` (and drop `accountKey`) and inject the federated-token environment on the storage-facing pods. A complete configuration is in [`examples/values-capz-workload-identity.yaml`](./examples/values-capz-workload-identity.yaml).
+
+It is disabled by default; existing storage-account-key deployments are unaffected.
+
 ### Deploying on a new cluster for testing purposes
 
 You might find yourself in a situation where you want to deploy Loki on a new cluster for testing purposes only. Depending on the testing requirements, you might need to avoid creating an object storage with a cloud-provider and manage its access permissions for your Loki pods.
