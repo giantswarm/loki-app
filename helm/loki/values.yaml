@@ -339,10 +339,9 @@ crossplane:
       # assignment and client-id Secret.
       enabled: false
       # -- Cluster OIDC issuer URL (the kube-apiserver --service-account-issuer).
-      # Find it with:
-      #   kubectl -n kube-system get pod -l component=kube-apiserver \
-      #     -o jsonpath='{.items[0].spec.containers[0].command}' \
-      #     | tr ',' '\n' | grep service-account-issuer
+      # Leave empty to auto-detect it from kube-system/kubeadm-config. Set explicitly
+      # only on non-kubeadm clusters where auto-detection cannot find it. On a reachable
+      # cluster, an unresolvable issuer fails the release rather than silently skipping.
       oidcIssuerUrl: ""
       # -- Azure built-in role granted to the identity on the storage account.
       roleDefinitionName: "Storage Blob Data Contributor"
