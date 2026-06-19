@@ -27,8 +27,10 @@ crossplane:
       name: giantswarm-my-installation-loki
     workloadIdentity:
       enabled: true
-      # kube-apiserver --service-account-issuer of the cluster.
-      oidcIssuerUrl: "https://oidcissuerXXXXXXXX.blob.core.windows.net/oidc-test/"
+      # oidcIssuerUrl is auto-detected from the cluster's kube-apiserver
+      # --service-account-issuer (kube-system/kubeadm-config). Set it explicitly
+      # only on non-kubeadm clusters where auto-detection cannot find it:
+      # oidcIssuerUrl: "https://oidcissuerXXXXXXXX.blob.core.windows.net/oidc-test/"
       roleDefinitionName: "Storage Blob Data Contributor"
       clientIdSecretName: loki-azure-identity
       # Defaults shown; override only if your provider-kubernetes differs.

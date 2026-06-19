@@ -505,9 +505,9 @@ crossplane:
   azure:
     workloadIdentity:
       enabled: true
-      # kube-apiserver --service-account-issuer of the cluster
-      oidcIssuerUrl: "https://oidcissuerXXXXXXXX.blob.core.windows.net/oidc-test/"
 ```
+
+The cluster's OIDC issuer is auto-detected from the kube-apiserver `--service-account-issuer` (read from `kube-system/kubeadm-config`), so no per-cluster value is needed. On a non-kubeadm cluster where auto-detection fails, set `crossplane.azure.workloadIdentity.oidcIssuerUrl` explicitly — on a reachable cluster an unresolvable issuer fails the release rather than silently skipping.
 
 This provisions a User-Assigned Managed Identity, a Federated Identity Credential bound to the `loki` ServiceAccount, and a `Storage Blob Data Contributor` role assignment on the storage account, and ships a `ClusterRole` letting `provider-kubernetes` manage them. You also need to set `loki.loki.storage.azure.useFederatedToken: true` (and drop `accountKey`) and inject the federated-token environment on the storage-facing pods. A complete configuration is in [`examples/values-capz-workload-identity.yaml`](./examples/values-capz-workload-identity.yaml).
 

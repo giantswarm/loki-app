@@ -47,3 +47,27 @@ sanitized storage account name.
 {{- $storageAccountName := include "loki.crossplane.azure.storageAccountName" (dict "containerName" .Values.crossplane.azure.container.name) -}}
 {{- printf "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Storage/storageAccounts/%s" $subscriptionId $resourceGroup $storageAccountName -}}
 {{- end -}}
+
+{{/*
+OIDC issuer URL for the Federated Identity Credential. Prefers the explicit
+crossplane.azure.workloadIdentity.oidcIssuerUrl value; otherwise auto-detects the
+cluster's kube-apiserver --service-account-issuer from kube-system/kubeadm-config
+(handles both the kubeadm v1beta4 list form and the older map form of extraArgs).
+Returns empty if it cannot be resolved (e.g. during `helm template` with no cluster).
+*/}}
+{{- define "loki.crossplane.azure.oidcIssuer" -}}
+{{- $issuer := .Values.crossplane.azure.workloadIdentity.oidcIssuerUrl | default "" -}}
+{{- if not $issuer -}}
+  {{- $cm := lookup "v1" "ConfigMap" "kube-system" "kubeadm-config" -}}
+  {{- if and $cm $cm.data -}}
+    {{- $cc := get $cm.data "ClusterConfiguration" | fromYaml -}}
+    {{- $args := dig "apiServer" "extraArgs" list $cc -}}
+    {{- if kindIs "slice" $args -}}
+      {{- range $a := $args -}}{{- if eq (dig "name" "" $a) "service-account-issuer" -}}{{- $issuer = $a.value -}}{{- end -}}{{- end -}}
+    {{- else if kindIs "map" $args -}}
+      {{- $issuer = dig "service-account-issuer" "" $args -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $issuer -}}
+{{- end -}}
