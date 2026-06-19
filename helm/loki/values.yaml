@@ -373,7 +373,9 @@ crossplane:
     # to have the Azure Workload Identity webhook and provider-kubernetes installed.
     workloadIdentity:
       # -- Enable creation of the managed identity, federated credential, role
-      # assignment and client-id Secret.
+      # assignment and client-id Secret. Must be paired with
+      # loki.loki.storage.azure.useFederatedToken=true (else loki crashloops / the
+      # identity goes unused).
       enabled: false
       # -- Cluster OIDC issuer URL (the kube-apiserver --service-account-issuer).
       # Leave empty to auto-detect it from kube-system/kubeadm-config. Set explicitly
