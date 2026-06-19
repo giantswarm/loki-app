@@ -11,8 +11,9 @@ metadata:
   labels:
     {{- include "loki.labels" . | nindent 4 }}
     app.kubernetes.io/component: identity
-  annotations:
-    crossplane.io/external-name: {{ $identityName }}
+  # No crossplane.io/external-name: the managedidentity provider expects it to be the
+  # full Azure resource ID, so we let it default and the provider builds the ID from
+  # forProvider.name on create.
 spec:
   # Fully managed, including Delete. Unlike the storage Account/Container (which omit
   # Delete to protect data), the identity is a recreatable access resource holding no
