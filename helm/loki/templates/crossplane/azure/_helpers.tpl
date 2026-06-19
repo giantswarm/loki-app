@@ -49,6 +49,16 @@ sanitized storage account name.
 {{- end -}}
 
 {{/*
+Full Azure resource ID of the Loki blob container. Used as the (container-scoped)
+role assignment scope, so the identity only gets blob access to Loki's own container
+rather than the whole storage account.
+*/}}
+{{- define "loki.crossplane.azure.containerId" -}}
+{{- $accountId := include "loki.crossplane.azure.storageAccountId" . -}}
+{{- printf "%s/blobServices/default/containers/%s" $accountId .Values.crossplane.azure.container.name -}}
+{{- end -}}
+
+{{/*
 OIDC issuer URL for the Federated Identity Credential. Prefers the explicit
 crossplane.azure.workloadIdentity.oidcIssuerUrl value; otherwise auto-detects the
 cluster's kube-apiserver --service-account-issuer from kube-system/kubeadm-config
