@@ -63,7 +63,8 @@ Returns empty if it cannot be resolved (e.g. during `helm template` with no clus
     {{- $cc := get $cm.data "ClusterConfiguration" | fromYaml -}}
     {{- $args := dig "apiServer" "extraArgs" list $cc -}}
     {{- if kindIs "slice" $args -}}
-      {{- range $a := $args -}}{{- if eq (dig "name" "" $a) "service-account-issuer" -}}{{- $issuer = $a.value -}}{{- end -}}{{- end -}}
+      {{- /* take the first service-account-issuer: it is the primary (OIDC) issuer */ -}}
+      {{- range $a := $args -}}{{- if and (not $issuer) (eq (dig "name" "" $a) "service-account-issuer") -}}{{- $issuer = $a.value -}}{{- end -}}{{- end -}}
     {{- else if kindIs "map" $args -}}
       {{- $issuer = dig "service-account-issuer" "" $args -}}
     {{- end -}}
