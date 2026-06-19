@@ -11,6 +11,43 @@ global:
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
 
+  # Azure Workload Identity federated-token wiring, applied to all components.
+  # The clientId/tenantId come from the chart-managed `loki-azure-identity` secret
+  # (see crossplane.azure.workloadIdentity); the secret refs are optional, so these
+  # are inert on non-Azure clusters and when workload identity is disabled (the
+  # secret simply doesn't exist and the env stays unset). Consumed only when
+  # loki.loki.storage.azure.useFederatedToken is true.
+  extraEnv:
+    - name: AZURE_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: loki-azure-identity
+          key: AZURE_CLIENT_ID
+          optional: true
+    - name: AZURE_TENANT_ID
+      valueFrom:
+        secretKeyRef:
+          name: loki-azure-identity
+          key: AZURE_TENANT_ID
+          optional: true
+    - name: AZURE_FEDERATED_TOKEN_FILE
+      value: /var/run/secrets/azure/tokens/azure-identity-token
+    - name: AZURE_AUTHORITY_HOST
+      value: https://login.microsoftonline.com/
+  extraVolumes:
+    - name: azure-identity-token
+      projected:
+        defaultMode: 420
+        sources:
+          - serviceAccountToken:
+              path: azure-identity-token
+              expirationSeconds: 3600
+              audience: api://AzureADTokenExchange
+  extraVolumeMounts:
+    - name: azure-identity-token
+      mountPath: /var/run/secrets/azure/tokens
+      readOnly: true
+
 # -- Override the name of the chart
 nameOverride: ""
 

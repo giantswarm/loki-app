@@ -53,36 +53,7 @@ loki:
         # No accountKey — authentication uses the federated token.
         useFederatedToken: true
 
-  # Federated-token wiring for the components that talk to object storage.
-  # AZURE_CLIENT_ID comes from the chart-populated Secret; the rest is static.
-  # The projected token replaces what the workload-identity webhook would inject.
-  _wiConfig: &wi-config
-    extraEnv:
-      - name: AZURE_CLIENT_ID
-        valueFrom:
-          secretKeyRef:
-            name: loki-azure-identity
-            key: AZURE_CLIENT_ID
-      - name: AZURE_TENANT_ID
-        value: "31f75bf9-3d8c-4691-95c0-83dd71613db8"
-      - name: AZURE_FEDERATED_TOKEN_FILE
-        value: /var/run/secrets/azure/tokens/azure-identity-token
-      - name: AZURE_AUTHORITY_HOST
-        value: https://login.microsoftonline.com/
-    extraVolumes:
-      - name: azure-identity-token
-        projected:
-          defaultMode: 420
-          sources:
-            - serviceAccountToken:
-                path: azure-identity-token
-                expirationSeconds: 3600
-                audience: api://AzureADTokenExchange
-    extraVolumeMounts:
-      - name: azure-identity-token
-        mountPath: /var/run/secrets/azure/tokens
-        readOnly: true
-
-  backend: *wi-config
-  read: *wi-config
-  write: *wi-config
+  # The federated-token environment (AZURE_CLIENT_ID/AZURE_TENANT_ID from the
+  # chart-managed loki-azure-identity secret, plus the projected token volume) is
+  # applied to all components by the chart's global.extraEnv/extraVolumes defaults,
+  # so nothing per-component is needed here.
