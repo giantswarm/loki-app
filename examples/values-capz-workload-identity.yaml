@@ -32,7 +32,6 @@ crossplane:
       # only on non-kubeadm clusters where auto-detection cannot find it:
       # oidcIssuerUrl: "https://oidcissuerXXXXXXXX.blob.core.windows.net/oidc-test/"
       roleDefinitionName: "Storage Blob Data Contributor"
-      clientIdSecretName: loki-azure-identity
       # Defaults shown; override only if your provider-kubernetes differs.
       providerKubernetes:
         providerConfigRef: in-cluster

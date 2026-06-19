@@ -382,10 +382,6 @@ crossplane:
       oidcIssuerUrl: ""
       # -- Azure built-in role granted to the identity on the storage account.
       roleDefinitionName: "Storage Blob Data Contributor"
-      # -- Name of the Secret (created in the release namespace) that is populated
-      # with the identity's clientId as key AZURE_CLIENT_ID. The Loki pods consume
-      # it via extraEnv (see examples/values-capz-workload-identity.yaml).
-      clientIdSecretName: loki-azure-identity
       # -- provider-kubernetes is used to copy the generated clientId/principalId
       # (only known after the identity reconciles) into the Secret and the role
       # assignment.

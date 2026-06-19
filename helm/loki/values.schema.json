@@ -58,9 +58,6 @@
                         "workloadIdentity": {
                             "type": "object",
                             "properties": {
-                                "clientIdSecretName": {
-                                    "type": "string"
-                                },
                                 "enabled": {
                                     "type": "boolean"
                                 },
