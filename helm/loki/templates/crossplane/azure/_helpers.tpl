@@ -68,15 +68,15 @@ Returns empty if it cannot be resolved (e.g. during `helm template` with no clus
 {{- define "loki.crossplane.azure.oidcIssuer" -}}
 {{- $issuer := .Values.crossplane.azure.workloadIdentity.oidcIssuerUrl | default "" -}}
 {{- if not $issuer -}}
-  {{- $cm := lookup "v1" "ConfigMap" "kube-system" "kubeadm-config" -}}
-  {{- if and $cm $cm.data -}}
-    {{- $cc := get $cm.data "ClusterConfiguration" | fromYaml -}}
-    {{- $args := dig "apiServer" "extraArgs" list $cc -}}
-    {{- if kindIs "slice" $args -}}
+  {{- $kubeadmConfig := lookup "v1" "ConfigMap" "kube-system" "kubeadm-config" -}}
+  {{- if and $kubeadmConfig $kubeadmConfig.data -}}
+    {{- $clusterConfiguration := get $kubeadmConfig.data "ClusterConfiguration" | fromYaml -}}
+    {{- $apiServerArgs := dig "apiServer" "extraArgs" list $clusterConfiguration -}}
+    {{- if kindIs "slice" $apiServerArgs -}}
       {{- /* take the first service-account-issuer: it is the primary (OIDC) issuer */ -}}
-      {{- range $a := $args -}}{{- if and (not $issuer) (eq (dig "name" "" $a) "service-account-issuer") -}}{{- $issuer = $a.value -}}{{- end -}}{{- end -}}
-    {{- else if kindIs "map" $args -}}
-      {{- $issuer = dig "service-account-issuer" "" $args -}}
+      {{- range $arg := $apiServerArgs -}}{{- if and (not $issuer) (eq (dig "name" "" $arg) "service-account-issuer") -}}{{- $issuer = $arg.value -}}{{- end -}}{{- end -}}
+    {{- else if kindIs "map" $apiServerArgs -}}
+      {{- $issuer = dig "service-account-issuer" "" $apiServerArgs -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
