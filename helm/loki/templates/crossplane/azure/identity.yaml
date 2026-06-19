@@ -33,5 +33,5 @@ spec:
   providerConfigRef:
     name: {{ .Values.crossplane.providerConfigRef }}
 {{- end }}
-# The generated clientId and principalId are read from status.atProvider by the
-# Objects in client-id-secret.yaml and role-assignment.yaml respectively.
+{{- /* The generated clientId and principalId are read from status.atProvider by the
+       Objects in client-id-secret.yaml and role-assignment.yaml respectively. */ -}}
