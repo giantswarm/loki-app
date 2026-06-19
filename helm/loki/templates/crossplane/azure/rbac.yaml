@@ -1,5 +1,5 @@
 {{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled .Values.crossplane.azure.workloadIdentity.enabled }}
-{{- $wi := .Values.crossplane.azure.workloadIdentity }}
+{{- $workloadIdentity := .Values.crossplane.azure.workloadIdentity }}
 ---
 # Grants the in-cluster provider-kubernetes ServiceAccount the rights it needs to
 # bridge the generated identity into the role assignment: manage the (cluster-scoped)
@@ -33,6 +33,6 @@ roleRef:
   name: {{ include "loki.fullname" . }}-crossplane-azure-identity
 subjects:
   - kind: ServiceAccount
-    name: {{ $wi.providerKubernetes.serviceAccount.name }}
-    namespace: {{ $wi.providerKubernetes.serviceAccount.namespace }}
+    name: {{ $workloadIdentity.providerKubernetes.serviceAccount.name }}
+    namespace: {{ $workloadIdentity.providerKubernetes.serviceAccount.namespace }}
 {{- end }}
