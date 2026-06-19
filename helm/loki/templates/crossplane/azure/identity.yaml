@@ -14,15 +14,12 @@ metadata:
   annotations:
     crossplane.io/external-name: {{ $identityName }}
 spec:
+  # Fully managed, including Delete. Unlike the storage Account/Container (which omit
+  # Delete to protect data), the identity is a recreatable access resource holding no
+  # data, so disabling/uninstalling should clean it up. It is also always net-new, so
+  # observeOnly (a storage-migration concept) does not apply to it.
   managementPolicies:
-    {{- if .Values.crossplane.observeOnly }}
-    - Observe
-    {{- else }}
-    - "Create"
-    - "Update"
-    - "LateInitialize"
-    - "Observe"
-    {{- end }}
+    - "*"
   forProvider:
     name: {{ $identityName }}
     location: {{ .Values.crossplane.region }}
