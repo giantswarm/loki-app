@@ -17,7 +17,7 @@ rules:
     resources: ["roleassignments", "roleassignments/status"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: ["managedidentity.azure.upbound.io"]
-    resources: ["userassignedidentities", "federatedidentitycredentials"]
+    resources: ["userassignedidentities"]
     verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
