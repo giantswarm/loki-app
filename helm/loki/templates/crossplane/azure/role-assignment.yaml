@@ -1,7 +1,7 @@
 {{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled .Values.crossplane.azure.workloadIdentity.enabled }}
 {{- $containerName := .Values.crossplane.azure.container.name }}
 {{- $identityName := include "loki.crossplane.azure.identityName" (dict "containerName" $containerName) }}
-{{- $storageAccountId := include "loki.crossplane.azure.storageAccountId" . }}
+{{- $containerId := include "loki.crossplane.azure.containerId" . }}
 {{- $wi := .Values.crossplane.azure.workloadIdentity }}
 ---
 # The upbound RoleAssignment has no selector for principalId, and the identity's
@@ -41,7 +41,7 @@ spec:
       spec:
         forProvider:
           roleDefinitionName: {{ $wi.roleDefinitionName | quote }}
-          scope: {{ $storageAccountId | quote }}
+          scope: {{ $containerId | quote }}
           principalType: ServicePrincipal
           # principalId is injected by the reference above once the identity reconciles.
         providerConfigRef:
