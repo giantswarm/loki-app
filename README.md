@@ -514,6 +514,37 @@ This provisions a User-Assigned Managed Identity, a Federated Identity Credentia
 
 It is disabled by default; existing storage-account-key deployments are unaffected.
 
+##### What gets created
+
+With `crossplane.azure.workloadIdentity.enabled: true` the chart renders the following (names assume a blob container `giantswarm-<installation>-loki`, so the identity is named `giantswarm-<installation>-loki-identity`; the RBAC objects use the Helm release name):
+
+| Resource | `kubectl get` kind | Example name | Purpose |
+|----------|--------------------|--------------|---------|
+| Managed identity | `userassignedidentity` (`managedidentity.azure.upbound.io`) | `giantswarm-<installation>-loki-identity` | The Azure User-Assigned Managed Identity. Azure generates its `clientId`, `tenantId` and `principalId` and exposes them on `status.atProvider`. |
+| Federated credential | `federatedidentitycredential` (`managedidentity.azure.upbound.io`) | `giantswarm-<installation>-loki-identity` | Trusts tokens from the cluster OIDC issuer for subject `system:serviceaccount:<namespace>:loki`, letting the loki ServiceAccount federate into the identity. |
+| Client-ID bridge | `object` (`kubernetes.crossplane.io`) | `giantswarm-<installation>-loki-identity-client-id` | Wraps the `loki-azure-identity` Secret and patches the identity's `clientId`/`tenantId` from `status.atProvider` into it. |
+| Role-assignment bridge | `object` (`kubernetes.crossplane.io`) | `giantswarm-<installation>-loki-identity-role-assignment` | Wraps a `roleassignment` (`authorization.azure.upbound.io`) that grants the identity's `principalId` the `Storage Blob Data Contributor` role, scoped to the loki blob container. |
+| Provider RBAC | `clusterrole` / `clusterrolebinding` | `<release>-crossplane-azure-identity` | Lets the in-cluster `provider-kubernetes` ServiceAccount manage the `roleassignment` and read the identity status. |
+| Result Secret | `secret` | `loki-azure-identity` | Populated by the client-ID bridge; consumed by the loki pods as `AZURE_CLIENT_ID`/`AZURE_TENANT_ID`. |
+
+The relationship between them (everything hangs off the managed identity, which is the only resource Azure assigns the generated IDs to):
+
+```text
+UserAssignedIdentity ── Azure generates ──> status.atProvider.{clientId, tenantId, principalId}
+  │
+  ├─ FederatedIdentityCredential ── trusts ──> loki ServiceAccount (system:serviceaccount:<ns>:loki)
+  │
+  ├─ Object "…-client-id" ── patches clientId/tenantId ──> Secret loki-azure-identity
+  │                                                          └─> loki pods (global.extraEnv → AZURE_CLIENT_ID/AZURE_TENANT_ID)
+  │
+  └─ Object "…-role-assignment" ── patches principalId ──> RoleAssignment (Storage Blob Data Contributor, container scope)
+
+loki pods (labelled azure.workload.identity/use=true)
+  └─ Azure Workload Identity webhook injects ──> projected token volume + AZURE_FEDERATED_TOKEN_FILE + AZURE_AUTHORITY_HOST
+```
+
+To inspect a live install: `kubectl -n <namespace> get userassignedidentity,federatedidentitycredential,object,roleassignment`.
+
 > **First enablement:** the managed identity's client ID is published to a Secret only after Crossplane reconciles it (~30s). Loki reads that Secret at startup and fails fast if it isn't there yet, so on the first rollout the loki pods may `CrashLoopBackOff` for up to a few minutes (CrashLoopBackOff backoff) until the identity is ready and the Secret is populated — then they recover on their own. No manual restart is needed.
 
 ### Deploying on a new cluster for testing purposes
