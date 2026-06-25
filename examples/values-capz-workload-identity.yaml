@@ -7,12 +7,16 @@
 # copies the identity's generated clientId into a Secret that the pods consume.
 #
 # Prerequisites on the cluster:
+#   - the Azure Workload Identity webhook (installed by default on Giant Swarm CAPZ
+#     management clusters) — it injects the projected federated token,
+#     AZURE_FEDERATED_TOKEN_FILE and AZURE_AUTHORITY_HOST into the loki pods, which
+#     this chart triggers via the `azure.workload.identity/use` pod label.
 #   - provider-kubernetes with an in-cluster ProviderConfig
 #   - the ClusterRole/binding shipped by this chart (templates/crossplane/azure/rbac.yaml)
 #
-# Note: this does NOT rely on the Azure Workload Identity webhook. The AZURE_*
-# environment and the projected token volume are set explicitly below, and
-# AZURE_CLIENT_ID is read from the Secret the chart populates.
+# Note: the dynamic identity values (AZURE_CLIENT_ID/AZURE_TENANT_ID) are still read
+# from the Secret the chart populates from the Crossplane-created identity; the
+# webhook leaves them untouched because it never overrides an env var already set.
 
 crossplane:
   enabled: true
@@ -52,7 +56,8 @@ loki:
         # No accountKey — authentication uses the federated token.
         useFederatedToken: true
 
-  # The federated-token environment (AZURE_CLIENT_ID/AZURE_TENANT_ID from the
-  # chart-managed loki-azure-identity secret, plus the projected token volume) is
-  # applied to all components by the chart's global.extraEnv/extraVolumes defaults,
-  # so nothing per-component is needed here.
+  # AZURE_CLIENT_ID/AZURE_TENANT_ID (from the chart-managed loki-azure-identity
+  # secret) are applied to all components by the chart's global.extraEnv default, and
+  # the `azure.workload.identity/use` pod label (set by the chart) makes the webhook
+  # inject the projected token volume and the remaining AZURE_* environment. Nothing
+  # per-component is needed here.
