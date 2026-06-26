@@ -1,0 +1,63 @@
+# Example: CAPZ (Azure) with Crossplane-managed storage and Workload Identity.
+#
+# Loki authenticates to Blob storage with a federated token (Azure Workload
+# Identity) instead of a static storage account key. This is a single-pass
+# install: Crossplane provisions the storage, a User-Assigned Managed Identity,
+# a Federated Identity Credential and a role assignment, and provider-kubernetes
+# copies the identity's generated clientId into a Secret that the pods consume.
+#
+# Prerequisites on the cluster:
+#   - the Azure Workload Identity webhook (installed by default on Giant Swarm CAPZ
+#     management clusters) — it injects the projected federated token,
+#     AZURE_FEDERATED_TOKEN_FILE and AZURE_AUTHORITY_HOST into the loki pods, which
+#     this chart triggers via the `azure.workload.identity/use` pod label.
+#   - provider-kubernetes with an in-cluster ProviderConfig
+#   - the ClusterRole/binding shipped by this chart (templates/crossplane/azure/rbac.yaml)
+#
+# Note: the dynamic identity values (AZURE_CLIENT_ID/AZURE_TENANT_ID) are still read
+# from the Secret the chart populates from the Crossplane-created identity; the
+# webhook leaves them untouched because it never overrides an env var already set.
+
+crossplane:
+  enabled: true
+  provider: azure
+  region: westeurope
+  clusterName: "my-installation"  # MUST match your AzureCluster CR name
+  resourceGroup: "my-installation"
+  azure:
+    enabled: true
+    resourceGroup: "my-installation"
+    container:
+      name: giantswarm-my-installation-loki
+    workloadIdentity:
+      enabled: true
+      # oidcIssuerUrl is auto-detected from the cluster's kube-apiserver
+      # --service-account-issuer (kube-system/kubeadm-config). Set it explicitly
+      # only on non-kubeadm clusters where auto-detection cannot find it:
+      # oidcIssuerUrl: "https://oidcissuerXXXXXXXX.blob.core.windows.net/oidc-test/"
+      roleDefinitionName: "Storage Blob Data Contributor"
+      # Defaults shown; override only if your provider-kubernetes differs.
+      providerKubernetes:
+        providerConfigRef: in-cluster
+        serviceAccount:
+          name: upbound-contrib-provider-kubernetes
+          namespace: crossplane
+
+loki:
+  loki:
+    storage:
+      type: azure
+      bucketNames:
+        chunks: giantswarm-my-installation-loki
+        ruler: giantswarm-my-installation-loki
+        admin: giantswarm-my-installation-loki
+      azure:
+        accountName: ""  # storage account name (sanitized container name, max 24 chars)
+        # No accountKey — authentication uses the federated token.
+        useFederatedToken: true
+
+  # AZURE_CLIENT_ID/AZURE_TENANT_ID (from the chart-managed loki-azure-identity
+  # secret) are applied to all components by the chart's global.extraEnv default, and
+  # the `azure.workload.identity/use` pod label (set by the chart) makes the webhook
+  # inject the projected token volume and the remaining AZURE_* environment. Nothing
+  # per-component is needed here.

@@ -1,0 +1,38 @@
+{{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled .Values.crossplane.azure.workloadIdentity.enabled }}
+{{- $tags := include "loki.crossplane.tags" . | fromYaml }}
+{{- $containerName := .Values.crossplane.azure.container.name }}
+{{- $identityName := include "loki.crossplane.azure.identityName" (dict "containerName" $containerName) }}
+---
+apiVersion: managedidentity.azure.upbound.io/v1beta1
+kind: UserAssignedIdentity
+metadata:
+  name: {{ $identityName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: identity
+  # No crossplane.io/external-name: the managedidentity provider expects it to be the
+  # full Azure resource ID, so we let it default and the provider builds the ID from
+  # forProvider.name on create.
+spec:
+  # Fully managed, including Delete. Unlike the storage Account/Container (which omit
+  # Delete to protect data), the identity is a recreatable access resource holding no
+  # data, so disabling/uninstalling should clean it up. It is also always net-new, so
+  # observeOnly (a storage-migration concept) does not apply to it.
+  managementPolicies:
+    - "*"
+  forProvider:
+    name: {{ $identityName }}
+    location: {{ .Values.crossplane.region }}
+    resourceGroupName: {{ .Values.crossplane.azure.resourceGroup }}
+    {{- if $tags }}
+    tags:
+      {{- range $key, $value := $tags }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+  providerConfigRef:
+    name: {{ .Values.crossplane.providerConfigRef }}
+{{- end }}
+{{- /* The generated clientId and principalId are read from status.atProvider by the
+       Objects in client-id-secret.yaml and role-assignment.yaml respectively. */ -}}

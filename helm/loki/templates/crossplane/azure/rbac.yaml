@@ -1,0 +1,38 @@
+{{- if and .Values.loki.enabled .Values.crossplane.enabled (include "loki.crossplane.isAzure" .) .Values.crossplane.azure.enabled .Values.crossplane.azure.workloadIdentity.enabled }}
+{{- $workloadIdentity := .Values.crossplane.azure.workloadIdentity }}
+---
+# Grants the in-cluster provider-kubernetes ServiceAccount the rights it needs to
+# bridge the generated identity into the role assignment: manage the (cluster-scoped)
+# RoleAssignment custom resource and read the identity status. Writing the client-id
+# Secret is already covered by the provider's built-in permission over Secrets.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "loki.fullname" . }}-crossplane-azure-identity
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: identity
+rules:
+  - apiGroups: ["authorization.azure.upbound.io"]
+    resources: ["roleassignments", "roleassignments/status"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["managedidentity.azure.upbound.io"]
+    resources: ["userassignedidentities"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "loki.fullname" . }}-crossplane-azure-identity
+  labels:
+    {{- include "loki.labels" . | nindent 4 }}
+    app.kubernetes.io/component: identity
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "loki.fullname" . }}-crossplane-azure-identity
+subjects:
+  - kind: ServiceAccount
+    name: {{ $workloadIdentity.providerKubernetes.serviceAccount.name }}
+    namespace: {{ $workloadIdentity.providerKubernetes.serviceAccount.namespace }}
+{{- end }}
