@@ -536,25 +536,27 @@ The relationship between them (everything hangs off the managed identity, which 
 
 ```mermaid
 graph TD
-    UAI["UserAssignedIdentity<br/>Azure generates clientId, tenantId, principalId<br/>on status.atProvider"]
+    UAI[UserAssignedIdentity]
+    IDS["status.atProvider: clientId, tenantId, principalId"]
     FIC[FederatedIdentityCredential]
-    SA["loki ServiceAccount<br/>system:serviceaccount:&lt;ns&gt;:loki"]
+    SA["ServiceAccount loki"]
     OBJC["Object …-client-id"]
-    SEC[Secret loki-azure-identity]
+    SEC["Secret loki-azure-identity"]
     OBJR["Object …-role-assignment"]
-    RA["RoleAssignment<br/>Storage Blob Data Contributor<br/>container scope"]
-    PODS["loki pods<br/>labelled azure.workload.identity/use=true"]
+    RA["RoleAssignment: Storage Blob Data Contributor, container-scoped"]
+    PODS["loki pods: read, write, backend"]
     WH[Azure Workload Identity webhook]
 
+    UAI -->|Azure generates| IDS
     UAI --> FIC
-    FIC -->|trusts| SA
+    FIC -->|"trusts system:serviceaccount:&lt;ns&gt;:loki"| SA
     UAI --> OBJC
-    OBJC -->|patches clientId/tenantId| SEC
-    SEC -->|AZURE_CLIENT_ID / AZURE_TENANT_ID| PODS
+    OBJC -->|"patches clientId and tenantId into"| SEC
+    SEC -->|"AZURE_CLIENT_ID, AZURE_TENANT_ID"| PODS
     UAI --> OBJR
-    OBJR -->|patches principalId| RA
-    PODS -.->|label triggers| WH
-    WH -->|"injects projected token volume,<br/>AZURE_FEDERATED_TOKEN_FILE,<br/>AZURE_AUTHORITY_HOST"| PODS
+    OBJR -->|"patches principalId into"| RA
+    PODS -.->|"labelled azure.workload.identity/use"| WH
+    WH -->|"injects token volume + AZURE_FEDERATED_TOKEN_FILE + AZURE_AUTHORITY_HOST"| PODS
 ```
 
 To inspect a live install: `kubectl -n <namespace> get userassignedidentity,federatedidentitycredential,object,roleassignment`.
