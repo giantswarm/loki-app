@@ -495,24 +495,29 @@ When the object storage is provisioned by Crossplane (`crossplane.azure.enabled:
 
 **Prerequisites** (already present on Giant Swarm CAPZ management clusters):
 
-* the [Azure Workload Identity webhook](https://github.com/giantswarm/azure-workload-identity-webhook-app) — required: it injects the projected federated token, `AZURE_FEDERATED_TOKEN_FILE` and `AZURE_AUTHORITY_HOST` into the loki pods (triggered by the `azure.workload.identity/use` pod label this chart sets);
+* the [Azure Workload Identity webhook](https://github.com/giantswarm/azure-workload-identity-webhook-app) — required: it injects the projected federated token, `AZURE_FEDERATED_TOKEN_FILE` and `AZURE_AUTHORITY_HOST` into the loki pods (triggered by the `azure.workload.identity/use` pod label you set, see below);
 * the cluster's OIDC issuer is exposed via the kube-apiserver `--service-account-issuer`;
 * `provider-kubernetes` with an in-cluster `ProviderConfig` (used to copy the identity's generated client ID and principal ID into place, so the install is single-pass).
 
-**Enable it** under `crossplane.azure.workloadIdentity`:
+**Enable it** with:
 
 ```yaml
 crossplane:
   azure:
     workloadIdentity:
       enabled: true
+loki:
+  loki:
+    storage:
+      azure:
+        useFederatedToken: true  # and drop accountKey
 ```
+
+plus the `loki.defaults.podLabels` / `loki.defaults.extraEnv` blocks that label the loki pods and pass the identity's `AZURE_CLIENT_ID`/`AZURE_TENANT_ID` — the complete configuration is in [`examples/values-capz-workload-identity.yaml`](./examples/values-capz-workload-identity.yaml). Those two blocks are deliberately *not* chart defaults: the webhook mutates every pod carrying `azure.workload.identity/use: "true"` on any cluster where it runs, whether or not Loki uses a federated token, so they must be set together with `workloadIdentity.enabled` (from shared-configs, for Giant Swarm installations). They are scoped to `defaults` rather than `global`/`loki.podLabels` so the gateway and memcached pods — which never talk to object storage — stay untouched.
 
 The cluster's OIDC issuer is auto-detected from the kube-apiserver `--service-account-issuer` (read from `kube-system/kubeadm-config`), so no per-cluster value is needed. On a non-kubeadm cluster where auto-detection fails, set `crossplane.azure.workloadIdentity.oidcIssuerUrl` explicitly — on a reachable cluster an unresolvable issuer fails the release rather than silently skipping.
 
-This provisions a User-Assigned Managed Identity, a Federated Identity Credential bound to the `loki` ServiceAccount, and a `Storage Blob Data Contributor` role assignment on the storage account, and ships a `ClusterRole` letting `provider-kubernetes` manage them. The chart labels the loki pods with `azure.workload.identity/use: "true"`, so the cluster's Azure Workload Identity webhook injects the projected federated token, `AZURE_FEDERATED_TOKEN_FILE` and `AZURE_AUTHORITY_HOST`; the chart itself only supplies the identity's generated `AZURE_CLIENT_ID`/`AZURE_TENANT_ID` (via `global.extraEnv`, from the bridged Secret). The only other thing to set is `loki.loki.storage.azure.useFederatedToken: true` (and drop `accountKey`). A complete configuration is in [`examples/values-capz-workload-identity.yaml`](./examples/values-capz-workload-identity.yaml).
-
-It is disabled by default; existing storage-account-key deployments are unaffected.
+The feature is disabled by default and nothing is labelled or injected until you opt in, so existing storage-account-key deployments are unaffected.
 
 ##### What gets created
 
@@ -529,18 +534,27 @@ With `crossplane.azure.workloadIdentity.enabled: true` the chart renders the fol
 
 The relationship between them (everything hangs off the managed identity, which is the only resource Azure assigns the generated IDs to):
 
-```text
-UserAssignedIdentity ── Azure generates ──> status.atProvider.{clientId, tenantId, principalId}
-  │
-  ├─ FederatedIdentityCredential ── trusts ──> loki ServiceAccount (system:serviceaccount:<ns>:loki)
-  │
-  ├─ Object "…-client-id" ── patches clientId/tenantId ──> Secret loki-azure-identity
-  │                                                          └─> loki pods (global.extraEnv → AZURE_CLIENT_ID/AZURE_TENANT_ID)
-  │
-  └─ Object "…-role-assignment" ── patches principalId ──> RoleAssignment (Storage Blob Data Contributor, container scope)
+```mermaid
+graph TD
+    UAI["UserAssignedIdentity<br/>Azure generates clientId, tenantId, principalId<br/>on status.atProvider"]
+    FIC[FederatedIdentityCredential]
+    SA["loki ServiceAccount<br/>system:serviceaccount:&lt;ns&gt;:loki"]
+    OBJC["Object …-client-id"]
+    SEC[Secret loki-azure-identity]
+    OBJR["Object …-role-assignment"]
+    RA["RoleAssignment<br/>Storage Blob Data Contributor<br/>container scope"]
+    PODS["loki pods<br/>labelled azure.workload.identity/use=true"]
+    WH[Azure Workload Identity webhook]
 
-loki pods (labelled azure.workload.identity/use=true)
-  └─ Azure Workload Identity webhook injects ──> projected token volume + AZURE_FEDERATED_TOKEN_FILE + AZURE_AUTHORITY_HOST
+    UAI --> FIC
+    FIC -->|trusts| SA
+    UAI --> OBJC
+    OBJC -->|patches clientId/tenantId| SEC
+    SEC -->|AZURE_CLIENT_ID / AZURE_TENANT_ID| PODS
+    UAI --> OBJR
+    OBJR -->|patches principalId| RA
+    PODS -.->|label triggers| WH
+    WH -->|"injects projected token volume,<br/>AZURE_FEDERATED_TOKEN_FILE,<br/>AZURE_AUTHORITY_HOST"| PODS
 ```
 
 To inspect a live install: `kubectl -n <namespace> get userassignedidentity,federatedidentitycredential,object,roleassignment`.
