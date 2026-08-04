@@ -1,22 +1,13 @@
 # Example: CAPZ (Azure) with Crossplane-managed storage and Workload Identity.
 #
-# Loki authenticates to Blob storage with a federated token (Azure Workload
-# Identity) instead of a static storage account key. This is a single-pass
-# install: Crossplane provisions the storage, a User-Assigned Managed Identity,
-# a Federated Identity Credential and a role assignment, and provider-kubernetes
-# copies the identity's generated clientId into a Secret that the pods consume.
+# Loki authenticates to Blob storage with a federated token (Azure Workload Identity)
+# instead of a static storage account key. See "Using Azure Workload Identity instead of
+# a storage account key" in the README for what gets created and how it fits together.
 #
-# Prerequisites on the cluster:
-#   - the Azure Workload Identity webhook (installed by default on Giant Swarm CAPZ
-#     management clusters) — it injects the projected federated token,
-#     AZURE_FEDERATED_TOKEN_FILE and AZURE_AUTHORITY_HOST into the loki pods, which
-#     this chart triggers via the `azure.workload.identity/use` pod label.
+# Prerequisites on the cluster (all present on Giant Swarm CAPZ management clusters):
+#   - the Azure Workload Identity webhook (giantswarm/azure-workload-identity-webhook-app)
 #   - provider-kubernetes with an in-cluster ProviderConfig
 #   - the ClusterRole/binding shipped by this chart (templates/crossplane/azure/rbac.yaml)
-#
-# Note: the dynamic identity values (AZURE_CLIENT_ID/AZURE_TENANT_ID) are still read
-# from the Secret the chart populates from the Crossplane-created identity; the
-# webhook leaves them untouched because it never overrides an env var already set.
 
 crossplane:
   enabled: true
@@ -44,20 +35,41 @@ crossplane:
           namespace: crossplane
 
 loki:
+  # Applies to the loki pods (read/write/backend) only — the gateway and memcached
+  # never talk to object storage. The label makes the webhook inject the projected
+  # federated token, AZURE_FEDERATED_TOKEN_FILE and AZURE_AUTHORITY_HOST; the secret
+  # refs carry the identity's generated clientId/tenantId, which Crossplane bridges
+  # into the `loki-azure-identity` secret (the webhook never overrides an env var that
+  # is already set). Optional refs, so pods still start while the identity reconciles.
+  defaults:
+    podLabels:
+      azure.workload.identity/use: "true"
+    extraEnv:
+      - name: AZURE_CLIENT_ID
+        valueFrom:
+          secretKeyRef:
+            name: loki-azure-identity
+            key: AZURE_CLIENT_ID
+            optional: true
+      - name: AZURE_TENANT_ID
+        valueFrom:
+          secretKeyRef:
+            name: loki-azure-identity
+            key: AZURE_TENANT_ID
+            optional: true
+
   loki:
     storage:
       type: azure
+      # 'Blob service' 'Container' name. Sharing one container for all three is the
+      # convention in this repo (see values-capz-crossplane.yaml): Loki keeps chunks,
+      # index and rules apart by object prefix.
       bucketNames:
         chunks: giantswarm-my-installation-loki
         ruler: giantswarm-my-installation-loki
         admin: giantswarm-my-installation-loki
       azure:
-        accountName: ""  # storage account name (sanitized container name, max 24 chars)
+        # 'Storage account' name (sanitized container name, max 24 chars)
+        accountName: ""
         # No accountKey — authentication uses the federated token.
         useFederatedToken: true
-
-  # AZURE_CLIENT_ID/AZURE_TENANT_ID (from the chart-managed loki-azure-identity
-  # secret) are applied to all components by the chart's global.extraEnv default, and
-  # the `azure.workload.identity/use` pod label (set by the chart) makes the webhook
-  # inject the projected token volume and the remaining AZURE_* environment. Nothing
-  # per-component is needed here.
