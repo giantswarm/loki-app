@@ -219,6 +219,25 @@ gatewayRoute:
   # -- Enables or disables the route
   enabled: false
 
+  # -- Mirror matched requests to a second backend, in addition to the primary one.
+  # Fire-and-forget: Envoy always ignores the mirror's response, so this cannot slow
+  # down or break the primary path. It also means mirrored requests are never retried
+  # -- if the mirror backend is unavailable they are dropped silently.
+  # Applied to `additionalRules` only, not to the default rule.
+  requestMirror:
+    # -- Enables or disables mirroring
+    enabled: false
+    # -- Percentage of requests to mirror, 0-100. Unset mirrors all of them.
+    # Useful for ramping onto a busy installation.
+    percent: null
+    # -- Backend receiving the mirrored requests. A cross-namespace reference also
+    # requires a ReferenceGrant in the target namespace, without which the route
+    # reports ResolvedRefs=False.
+    backendRef: {}
+    #   name: alloy-logexporter
+    #   namespace: monitoring
+    #   port: 3100
+
   # -- Set the route apiVersion, e.g. gateway.networking.k8s.io/v1 or gateway.networking.k8s.io/v1alpha2
   apiVersion: gateway.networking.k8s.io/v1
   # -- Set the route kind
