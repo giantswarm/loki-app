@@ -27,8 +27,16 @@ spec:
     {{- tpl (toYaml .) $root | nindent 4 }}
   {{- end }}
   rules:
-    {{- with $route.additionalRules }}
-    {{- tpl (toYaml .) $root | nindent 4 }}
+    {{- $mirror := $route.requestMirror | default dict }}
+    {{- range $rule := ($route.additionalRules | default list) }}
+    {{- $r := deepCopy $rule }}
+    {{- if $mirror.enabled }}
+    {{- /* Not on $route.filters: those feed the default rule, which rejects requests
+           without an X-Scope-OrgID header. deepCopy: $rule is shared values. */}}
+    {{- $requestMirror := dict "backendRef" $mirror.backendRef }}
+    {{- $_ := set $r "filters" (append (default list $r.filters) (dict "type" "RequestMirror" "requestMirror" $requestMirror)) }}
+    {{- end }}
+    {{- tpl (toYaml (list $r)) $root | nindent 4 }}
     {{- end }}
     - backendRefs:
         - name: {{ include "loki.gatewayFullname" . }}
