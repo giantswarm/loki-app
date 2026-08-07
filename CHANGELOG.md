@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `gatewayRoute.requestMirror`, which mirrors matched requests to a second backend in addition to the primary one. Disabled by default, so rendered output is unchanged unless it is switched on. Mirroring is fire-and-forget: Envoy always ignores the mirror's response, so it cannot slow down or break the primary path, and mirrored requests are never retried. Supports `percent` for ramping onto a busy installation. Applied to `additionalRules` only, since `gatewayRoute.filters` feeds the default rule that rejects requests without an `X-Scope-OrgID` header.
+- Add `gatewayRoute.requestMirror`, an optional `RequestMirror` filter on `gatewayRoute.additionalRules`. Disabled by default.
 
 ### Fixed
 
