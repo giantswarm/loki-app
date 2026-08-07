@@ -20,7 +20,7 @@ storage must be ensured for the chart to work.
 - [Pull Requests tests](#pull-requests-tests)
 - [Limitations](#limitations)
 - [Links](#links)
-- [Credit](#credits)
+- [Credit](#credit)
 
 ## Requirements
 
