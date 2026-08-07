@@ -264,9 +264,6 @@ gatewayRoute:
   requestMirror:
     # -- Enables or disables mirroring
     enabled: false
-    # -- Percentage of requests to mirror, 0-100. Unset mirrors all of them.
-    # Useful for ramping onto a busy installation.
-    percent: null
     # -- Backend receiving the mirrored requests. A cross-namespace reference also
     # requires a ReferenceGrant in the target namespace, without which the route
     # reports ResolvedRefs=False.
