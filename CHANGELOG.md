@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for Azure Workload Identity
+
+### Changed
+
+- Move the AWS and Azure deployment instructions out of the README into `docs/deploying-on-aws.md` and `docs/deploying-on-azure.md`.
+
 ### Fixed
 
 - Add a `kubernetes`-flavor NetworkPolicy granting the backend pods egress to the kube-apiserver (TCP 443/6443) to fix standalone platforms and CI tests.
