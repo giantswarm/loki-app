@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The ServiceMonitor is no longer gated on the prometheus-operator CRD being present: set `loki.monitoring.serviceMonitor.enabled: false` on clusters without it.
 - The built-in MinIO subchart is deprecated upstream: `loki.minio.enabled` now also needs `loki.ignoreMinioDeprecation: true`, and goes away on 2026-10-31.
 
+### Added
+
+- Add `gatewayRoute.requestMirror`, which mirrors matched requests to a second backend in addition to the primary one. Disabled by default, so rendered output is unchanged unless it is switched on. Mirroring is fire-and-forget: Envoy always ignores the mirror's response, so it cannot slow down or break the primary path, and mirrored requests are never retried. Supports `percent` for ramping onto a busy installation. Applied to `additionalRules` only, since `gatewayRoute.filters` feeds the default rule that rejects requests without an `X-Scope-OrgID` header.
+
 ## [0.46.1] - 2026-08-12
 
 ### Changed
