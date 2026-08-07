@@ -2,7 +2,8 @@
 #
 # Loki authenticates to Blob storage with a federated token (Azure Workload Identity)
 # instead of a static storage account key. See "Using Azure Workload Identity instead of
-# a storage account key" in the README for what gets created and how it fits together.
+# a storage account key" in docs/deploying-on-azure.md for what gets created and how it
+# fits together.
 #
 # Prerequisites on the cluster (all present on Giant Swarm CAPZ management clusters):
 #   - the Azure Workload Identity webhook (giantswarm/azure-workload-identity-webhook-app)

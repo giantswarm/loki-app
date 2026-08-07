@@ -34,7 +34,7 @@ loki:
   # webhook mutate every labelled pod on any cluster where the webhook runs (all Giant
   # Swarm CAPZ management clusters), whether or not Loki uses a federated token. Set
   # them from wherever crossplane.azure.workloadIdentity.enabled is set — see
-  # examples/values-capz-workload-identity.yaml and the README.
+  # examples/values-capz-workload-identity.yaml and docs/deploying-on-azure.md.
   # defaults:
   #   podLabels:
   #     azure.workload.identity/use: "true"
