@@ -42,9 +42,6 @@ spec:
       deepCopy first: $rule is shared values, and set would otherwise mutate them.
     */}}
     {{- $requestMirror := dict "backendRef" $mirror.backendRef }}
-    {{- with $mirror.percent }}
-    {{- $_ := set $requestMirror "percent" . }}
-    {{- end }}
     {{- $_ := set $r "filters" (append (default list $r.filters) (dict "type" "RequestMirror" "requestMirror" $requestMirror)) }}
     {{- end }}
     {{- tpl (toYaml (list $r)) $root | nindent 4 }}
