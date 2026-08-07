@@ -31,16 +31,8 @@ spec:
     {{- range $rule := ($route.additionalRules | default list) }}
     {{- $r := deepCopy $rule }}
     {{- if $mirror.enabled }}
-    {{- /*
-      Mirror requests to a second backend, fire-and-forget: Envoy always ignores the
-      mirror's response, so this cannot affect the primary write path.
-
-      It goes on the additionalRules, not on $route.filters, because those feed the
-      default rule -- the one that rejects requests without an X-Scope-OrgID header.
-      Mirroring there would copy only rejected requests.
-
-      deepCopy first: $rule is shared values, and set would otherwise mutate them.
-    */}}
+    {{- /* Not on $route.filters: those feed the default rule, which rejects requests
+           without an X-Scope-OrgID header. deepCopy: $rule is shared values. */}}
     {{- $requestMirror := dict "backendRef" $mirror.backendRef }}
     {{- $_ := set $r "filters" (append (default list $r.filters) (dict "type" "RequestMirror" "requestMirror" $requestMirror)) }}
     {{- end }}
