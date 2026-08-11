@@ -50,6 +50,30 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
+{{- $mirrorBackend := $mirror.backendRef | default dict }}
+{{- if and $mirror.enabled $mirrorBackend.namespace (ne $mirrorBackend.namespace .Release.Namespace) }}
+---
+# A cross-namespace backendRef is ignored without a grant in the backend's
+# namespace, and the mirror is fire-and-forget, so the only symptom would be
+# logs that never arrive. v1beta1: v1 needs Gateway API >= v1.5.0.
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: {{ include "loki.gatewayFullname" . }}-mirror
+  namespace: {{ $mirrorBackend.namespace }}
+  labels:
+    {{- include "loki.gatewayLabels" . | nindent 4 }}
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: {{ $route.kind | default "HTTPRoute" }}
+    namespace: {{ .Release.Namespace }}
+  to:
+  - group: ""
+    kind: Service
+    name: {{ $mirrorBackend.name }}
+{{- end }}
+
 {{- if and $route.securityPolicy $route.securityPolicy.enabled }}
 {{- $policy := $route.securityPolicy }}
 ---

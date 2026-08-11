@@ -261,8 +261,8 @@ gatewayRoute:
   requestMirror:
     # -- Enables or disables mirroring
     enabled: false
-    # -- Backend receiving the mirrored requests. A cross-namespace reference needs a
-    # ReferenceGrant in the target namespace.
+    # -- Backend receiving the mirrored requests. When `namespace` differs from the
+    # release namespace, the chart also creates the ReferenceGrant the reference needs.
     backendRef: {}
     #   name: alloy-logexporter
     #   namespace: monitoring

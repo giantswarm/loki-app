@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `gatewayRoute.requestMirror`, an optional `RequestMirror` filter on `gatewayRoute.additionalRules`. Disabled by default.
+- Add `gatewayRoute.requestMirror`, an optional `RequestMirror` filter on `gatewayRoute.additionalRules`, plus the `ReferenceGrant` a cross-namespace `backendRef` needs. Disabled by default.
 
 ## [0.46.1] - 2026-08-12
 
