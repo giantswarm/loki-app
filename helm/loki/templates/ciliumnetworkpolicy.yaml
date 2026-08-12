@@ -11,6 +11,8 @@ own these policies now; see `ciliumNetworkPolicy.enabled` in values.yaml.
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-namespace-only
   namespace: {{ .Release.Namespace }}
   labels:
@@ -28,6 +30,8 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-egress-dns
   namespace: {{ .Release.Namespace }}
   labels:
@@ -50,6 +54,8 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-ingress
   namespace: {{ .Release.Namespace }}
   labels:
@@ -86,6 +92,8 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-ingress-metrics
   namespace: {{ .Release.Namespace }}
   labels:
@@ -118,6 +126,8 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-egress-alertmanager
   namespace: {{ .Release.Namespace }}
   labels:
@@ -146,6 +156,8 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-egress-external-storage
   namespace: {{ .Release.Namespace }}
   labels:
@@ -181,6 +193,8 @@ spec:
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-{{ $component }}-world-egress
   namespace: {{ .Release.Namespace }}
 spec:
@@ -200,6 +214,8 @@ spec:
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-backend-kubeapiserver-egress
   namespace: {{ .Release.Namespace }}
 spec:
@@ -219,6 +235,8 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   name: {{ include "loki.name" . }}-egress-discovery
   namespace: {{ .Release.Namespace }}
   labels:
