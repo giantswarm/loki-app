@@ -1,10 +1,10 @@
 {{- if .Values.loki.enabled }}
-{{- if and .Values.loki.networkPolicy.egressCoredns.enabled (eq .Values.loki.networkPolicy.flavor "cilium") }}
+{{- if and .Values.loki.networkPolicy.egressCoredns.enabled (eq (include "loki.ciliumPolicies" .) "true") }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   annotations:
-    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.backendSelectorLabels`)"
+    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   labels:
     {{- include "loki.labels" . | nindent 4 }}
   name: {{ include "loki.name" . }}-egress-coredns
