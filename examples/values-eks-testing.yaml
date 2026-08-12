@@ -34,7 +34,9 @@ loki:
         accessKeyId: adminKey
         s3ForcePathStyle: true
         insecure: true
-  # Object storage mocking
+  # Object storage mocking. The built-in MinIO subchart is deprecated upstream and
+  # removed on 2026-10-31, so opt out of the hard failure for as long as it lasts.
+  ignoreMinioDeprecation: true
   minio:
     enabled: true
     buckets:
