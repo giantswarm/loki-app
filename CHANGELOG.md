@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.46.1] - 2026-08-12
+
 ### Changed
 
 - Upgrade upstream loki helm chart from v13.5.0 to v13.7.2. Loki app version goes from 3.7.1 to 3.7.2 (CVE fixes, ruler panic fix, S3 SDK bump).
@@ -878,7 +880,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.46.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.46.1...HEAD
+[0.46.1]: https://github.com/giantswarm/loki-app/compare/v0.46.0...v0.46.1
 [0.46.0]: https://github.com/giantswarm/loki-app/compare/v0.45.0...v0.46.0
 [0.45.0]: https://github.com/giantswarm/loki-app/compare/v0.44.0...v0.45.0
 [0.44.0]: https://github.com/giantswarm/loki-app/compare/v0.43.1...v0.44.0
