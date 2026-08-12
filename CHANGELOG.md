@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade upstream loki helm chart from v13.5.0 to v13.7.2. Loki app version goes from 3.7.1 to 3.7.2 (CVE fixes, ruler panic fix, S3 SDK bump).
+- `k8s-sidecar` bumped 2.7.1 → 2.7.3.
+
 ## [0.46.0] - 2026-08-12
 
 ### Added
