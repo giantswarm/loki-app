@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Upgrade upstream loki helm chart from v13 (13.7.2) to v18 (18.8.0). Loki app version goes from 3.7.2 to 3.7.6.
+- Upgrade upstream loki helm chart from v13 (13.7.2) to v18 (18.10.1). Loki app version goes from 3.7.2 to 3.7.6.
 - **Breaking:** `loki.networkPolicy.flavor` is gone. Upstream dropped Cilium network policy support, so this chart renders the `CiliumNetworkPolicy` resources itself, switched by the new top-level `ciliumNetworkPolicy.enabled` (default `true`). Set it to `false` where you used `flavor: kubernetes`. The standard `NetworkPolicy` resources now render alongside them.
 - The ServiceMonitor is no longer gated on the prometheus-operator CRD being present: set `loki.monitoring.serviceMonitor.enabled: false` on clusters without it.
 - The built-in MinIO subchart is deprecated upstream: `loki.minio.enabled` now also needs `loki.ignoreMinioDeprecation: true`, and goes away on 2026-10-31.
