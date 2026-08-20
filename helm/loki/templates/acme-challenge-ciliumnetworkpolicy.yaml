@@ -1,5 +1,5 @@
 {{- if .Values.loki.enabled }}
-{{- if and .Values.loki.networkPolicy.enabled (eq .Values.loki.networkPolicy.flavor "cilium") }}
+{{- if and .Values.loki.networkPolicy.enabled (eq (include "loki.ciliumPolicies" .) "true") }}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:

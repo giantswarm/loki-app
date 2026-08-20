@@ -14,6 +14,13 @@ global:
 # -- Override the name of the chart
 nameOverride: ""
 
+# -- Cilium-specific network policies. The upstream chart dropped its
+# `networkPolicy.flavor` switch in v15, so this chart renders the
+# CiliumNetworkPolicies itself now. Set to false on clusters without Cilium: the
+# standard NetworkPolicies from `loki.networkPolicy` are rendered either way.
+ciliumNetworkPolicy:
+  enabled: true
+
 loki:
   # You can make the whole chart ineffective by setting this one to "false"
   enabled: true
@@ -206,7 +213,6 @@ loki:
   # -- Configuration of Loki's network policy
   networkPolicy:
     enabled: true
-    flavor: cilium
     egressWorld:
       # -- Enable additional cilium egress rules to external world for write, read and backend.
       enabled: true

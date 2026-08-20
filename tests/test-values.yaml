@@ -6,11 +6,14 @@ global:
   podSecurityStandards:
     enforced: true
 ciliumNetworkPolicy:
-  coredns:
-    enabled: false
+  # The ATS kind cluster does not run Cilium, so it has no CiliumNetworkPolicy CRD.
+  enabled: false
 loki:
   minio:
     enabled: true
+  # The built-in MinIO subchart is deprecated upstream and removed on 2026-10-31;
+  # until the tests get a real object storage backend, opt out of the hard failure.
+  ignoreMinioDeprecation: true
   backend:
     affinity:
       nodeAffinity:
@@ -38,7 +41,6 @@ loki:
   enabled: true
   networkPolicy:
     enabled: true
-    flavor: kubernetes
     discovery:
       port: 3100
   gateway:
@@ -122,7 +124,9 @@ loki:
       enabled: "false"
   monitoring:
     serviceMonitor:
-      enabled: true
+      # Upstream dropped the CRD capability check in chart v18, so this would render a
+      # ServiceMonitor the ATS kind cluster has no CRD for.
+      enabled: false
   read:
     replicas: 2 # Overrides the default value of 3 from upstream as keda scaling does not work in ATS
     extraArgs:

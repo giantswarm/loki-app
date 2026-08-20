@@ -7,6 +7,18 @@ Expand the name of the chart.
 {{- end }}
 
 {{/*
+Whether to render Cilium-specific policies. The upstream chart removed
+`networkPolicy.flavor` in its v15, so the switch lives at the top level now.
+`loki.networkPolicy.flavor: kubernetes` is still honoured as an opt-out for values files
+written against loki-app 0.46.x and earlier.
+Returns a string, so compare it: `eq (include "loki.ciliumPolicies" .) "true"`.
+*/}}
+{{- define "loki.ciliumPolicies" -}}
+{{- $legacyKubernetesFlavor := eq (dig "networkPolicy" "flavor" "" .Values.loki) "kubernetes" -}}
+{{- and .Values.ciliumNetworkPolicy.enabled (not $legacyKubernetesFlavor) -}}
+{{- end }}
+
+{{/*
 Common labels
 */}}
 {{- define "loki.labels" -}}
