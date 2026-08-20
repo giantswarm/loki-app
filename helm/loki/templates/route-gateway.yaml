@@ -27,13 +27,14 @@ spec:
     {{- tpl (toYaml .) $root | nindent 4 }}
   {{- end }}
   rules:
-    {{- $mirror := $route.requestMirror | default dict }}
-    {{- range $rule := ($route.additionalRules | default list) }}
+    {{- range $rule := $route.additionalRules }}
+    {{- /* Copy first — `set` would write the filter into .Values. Outside the
+           `if`: an $r declared inside is undefined at `tpl` (parse-time scope). */}}
     {{- $r := deepCopy $rule }}
-    {{- if $mirror.enabled }}
-    {{- /* Not on $route.filters: those feed the default rule, which rejects requests
-           without an X-Scope-OrgID header. deepCopy: $rule is shared values. */}}
-    {{- $requestMirror := dict "backendRef" $mirror.backendRef }}
+    {{- if $route.requestMirror.enabled }}
+    {{- /* Not $route.filters: those feed the default rule, which rejects
+           requests missing X-Scope-OrgID — only rejections would be copied. */}}
+    {{- $requestMirror := dict "backendRef" $route.requestMirror.backendRef }}
     {{- $_ := set $r "filters" (append (default list $r.filters) (dict "type" "RequestMirror" "requestMirror" $requestMirror)) }}
     {{- end }}
     {{- tpl (toYaml (list $r)) $root | nindent 4 }}
@@ -50,8 +51,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
-{{- $mirrorBackend := $mirror.backendRef | default dict }}
-{{- if and $mirror.enabled $mirrorBackend.namespace (ne $mirrorBackend.namespace .Release.Namespace) }}
+{{- $backendRef := $route.requestMirror.backendRef }}
+{{- if and $route.requestMirror.enabled $backendRef.namespace (ne $backendRef.namespace .Release.Namespace) }}
 ---
 # A cross-namespace backendRef is ignored without a grant in the backend's
 # namespace, and the mirror is fire-and-forget, so the only symptom would be
@@ -60,7 +61,7 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
   name: {{ include "loki.gatewayFullname" . }}-mirror
-  namespace: {{ $mirrorBackend.namespace }}
+  namespace: {{ $backendRef.namespace }}
   labels:
     {{- include "loki.gatewayLabels" . | nindent 4 }}
 spec:
@@ -71,7 +72,7 @@ spec:
   to:
   - group: ""
     kind: Service
-    name: {{ $mirrorBackend.name }}
+    name: {{ $backendRef.name }}
 {{- end }}
 
 {{- if and $route.securityPolicy $route.securityPolicy.enabled }}
