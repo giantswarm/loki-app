@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The ServiceMonitor is no longer gated on the prometheus-operator CRD being present: set `loki.monitoring.serviceMonitor.enabled: false` on clusters without it.
 - The built-in MinIO subchart is deprecated upstream: `loki.minio.enabled` now also needs `loki.ignoreMinioDeprecation: true`, and goes away on 2026-10-31.
 
+### Added
+
+- Add `gatewayRoute.requestMirror`, an optional `RequestMirror` filter on `gatewayRoute.additionalRules`, plus the `ReferenceGrant` a cross-namespace `backendRef` needs. Disabled by default.
+
 ## [0.46.1] - 2026-08-12
 
 ### Changed

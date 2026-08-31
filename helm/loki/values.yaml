@@ -256,6 +256,18 @@ gatewayRoute:
   # -- Enables or disables the route
   enabled: false
 
+  # -- Mirror `additionalRules` requests to a second backend, fire-and-forget:
+  # responses are ignored and mirrored requests are never retried.
+  requestMirror:
+    # -- Enables or disables mirroring
+    enabled: false
+    # -- Backend receiving the mirrored requests. When `namespace` differs from the
+    # release namespace, the chart also creates the ReferenceGrant the reference needs.
+    backendRef:
+      name: alloy-logexporter
+      namespace: monitoring
+      port: 3100
+
   # -- Set the route apiVersion, e.g. gateway.networking.k8s.io/v1 or gateway.networking.k8s.io/v1alpha2
   apiVersion: gateway.networking.k8s.io/v1
   # -- Set the route kind
