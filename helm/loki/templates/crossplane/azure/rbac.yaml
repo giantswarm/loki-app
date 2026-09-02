@@ -5,10 +5,15 @@
 # bridge the generated identity into the role assignment: manage the (cluster-scoped)
 # RoleAssignment custom resource and read the identity status. Writing the client-id
 # Secret is already covered by the provider's built-in permission over Secrets.
+# Kept on uninstall: provider-kubernetes resolves the Objects' references while
+# removing their finalizers, so deleting this RBAC alongside them deadlocks the
+# uninstall. Helm adopts both back on the next install.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ include "loki.fullname" . }}-crossplane-azure-identity
+  annotations:
+    helm.sh/resource-policy: keep
   labels:
     {{- include "loki.labels" . | nindent 4 }}
     app.kubernetes.io/component: identity
@@ -24,6 +29,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: {{ include "loki.fullname" . }}-crossplane-azure-identity
+  annotations:
+    helm.sh/resource-policy: keep
   labels:
     {{- include "loki.labels" . | nindent 4 }}
     app.kubernetes.io/component: identity

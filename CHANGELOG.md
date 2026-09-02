@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Keep the `provider-kubernetes` identity RBAC on uninstall, so the crossplane `Object`s can drop their finalizers instead of hanging.
+
 ## [0.47.0] - 2026-08-24
 
 ### Changed
