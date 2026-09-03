@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.48.0] - 2026-09-03
+
 ### Fixed
 
 - Keep the `provider-kubernetes` identity RBAC on uninstall, so the crossplane `Object`s can drop their finalizers instead of hanging.
+
+### Added
+
+- Add `gatewayRoute.requestMirror`, an optional `RequestMirror` filter on `gatewayRoute.additionalRules`, plus the `ReferenceGrant` a cross-namespace `backendRef` needs. Disabled by default.
 
 ## [0.47.0] - 2026-08-24
 
@@ -19,10 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking:** `loki.networkPolicy.flavor` is gone. Upstream dropped Cilium network policy support, so this chart renders the `CiliumNetworkPolicy` resources itself, switched by the new top-level `ciliumNetworkPolicy.enabled` (default `true`). Set it to `false` where you used `flavor: kubernetes`. The standard `NetworkPolicy` resources now render alongside them.
 - The ServiceMonitor is no longer gated on the prometheus-operator CRD being present: set `loki.monitoring.serviceMonitor.enabled: false` on clusters without it.
 - The built-in MinIO subchart is deprecated upstream: `loki.minio.enabled` now also needs `loki.ignoreMinioDeprecation: true`, and goes away on 2026-10-31.
-
-### Added
-
-- Add `gatewayRoute.requestMirror`, an optional `RequestMirror` filter on `gatewayRoute.additionalRules`, plus the `ReferenceGrant` a cross-namespace `backendRef` needs. Disabled by default.
 
 ## [0.46.1] - 2026-08-12
 
@@ -897,7 +899,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.47.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.48.0...HEAD
+[0.48.0]: https://github.com/giantswarm/loki-app/compare/v0.47.0...v0.48.0
 [0.47.0]: https://github.com/giantswarm/loki-app/compare/v0.46.1...v0.47.0
 [0.46.1]: https://github.com/giantswarm/loki-app/compare/v0.46.0...v0.46.1
 [0.46.0]: https://github.com/giantswarm/loki-app/compare/v0.45.0...v0.46.0
