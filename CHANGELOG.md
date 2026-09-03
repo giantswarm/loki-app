@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.48.0] - 2026-09-03
+
 ### Fixed
 
 - Keep the `provider-kubernetes` identity RBAC on uninstall, so the crossplane `Object`s can drop their finalizers instead of hanging.
@@ -897,7 +899,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.47.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.48.0...HEAD
+[0.48.0]: https://github.com/giantswarm/loki-app/compare/v0.47.0...v0.48.0
 [0.47.0]: https://github.com/giantswarm/loki-app/compare/v0.46.1...v0.47.0
 [0.46.1]: https://github.com/giantswarm/loki-app/compare/v0.46.0...v0.46.1
 [0.46.0]: https://github.com/giantswarm/loki-app/compare/v0.45.0...v0.46.0
