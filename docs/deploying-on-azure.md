@@ -105,7 +105,7 @@ With `crossplane.azure.workloadIdentity.enabled: true` the chart renders the fol
 | Federated credential | `federatedidentitycredential` (`managedidentity.azure.upbound.io`) | `giantswarm-<installation>-loki-identity` | Trusts tokens from the cluster OIDC issuer for subject `system:serviceaccount:<namespace>:loki`, letting the loki ServiceAccount federate into the identity. |
 | Client-ID bridge | `object` (`kubernetes.crossplane.io`) | `giantswarm-<installation>-loki-identity-client-id` | Wraps the `loki-azure-identity` Secret and patches the identity's `clientId`/`tenantId` from `status.atProvider` into it. |
 | Role-assignment bridge | `object` (`kubernetes.crossplane.io`) | `giantswarm-<installation>-loki-identity-role-assignment` | Wraps a `roleassignment` (`authorization.azure.upbound.io`) that grants the identity's `principalId` the `Storage Blob Data Contributor` role, scoped to the loki blob container. |
-| Provider RBAC | `clusterrole` / `clusterrolebinding` | `<release>-crossplane-azure-identity` | Lets the in-cluster `provider-kubernetes` ServiceAccount manage the `roleassignment` and read the identity status. |
+| Provider RBAC | `clusterrole` / `clusterrolebinding` | `<release>-crossplane-azure-identity` | Lets the in-cluster `provider-kubernetes` ServiceAccount manage the `roleassignment` and read the identity status. Kept on uninstall (`helm.sh/resource-policy: keep`); delete it by hand if you are removing the app for good. |
 | Result Secret | `secret` | `loki-azure-identity` | Populated by the client-ID bridge; consumed by the loki pods as `AZURE_CLIENT_ID`/`AZURE_TENANT_ID`. |
 
 The relationship between them (everything hangs off the managed identity, which is the only resource Azure assigns the generated IDs to):
