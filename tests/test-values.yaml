@@ -11,6 +11,14 @@ ciliumNetworkPolicy:
 loki:
   minio:
     enabled: true
+    # MinIO withdrew its public images from Docker Hub and quay.io; the subchart's
+    # quay.io defaults return 401. The Pigsty fork is a drop-in replacement.
+    image:
+      repository: docker.io/pgsty/silo
+      tag: RELEASE.2026-09-03T13-18-01Z
+    mcImage:
+      repository: docker.io/pgsty/mc
+      tag: RELEASE.2026-09-13T00-00-00Z
   # The built-in MinIO subchart is deprecated upstream and removed on 2026-10-31;
   # until the tests get a real object storage backend, opt out of the hard failure.
   ignoreMinioDeprecation: true
