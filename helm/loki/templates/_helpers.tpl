@@ -31,3 +31,23 @@ application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.appli
 giantswarm.io/service-type: "managed"
 helm.sh/chart: {{ include "loki.chart" . }}
 {{- end }}
+
+{{/*
+`gatewayRoute.additionalRules`, with the `requestMirror` filter appended to each rule when enabled.
+*/}}
+{{- define "loki.gatewayRoute.additionalRules" -}}
+{{- $route := .Values.gatewayRoute }}
+{{- $rules := list }}
+{{- range $rule := $route.additionalRules }}
+{{- /* Copy first — `set` would write the filter into .Values. */}}
+{{- $r := deepCopy $rule }}
+{{- if $route.requestMirror.enabled }}
+{{- /* Not $route.filters: those feed the default rule, which rejects
+       requests missing X-Scope-OrgID — only rejections would be copied. */}}
+{{- $requestMirror := dict "backendRef" $route.requestMirror.backendRef }}
+{{- $_ := set $r "filters" (append (default list $r.filters) (dict "type" "RequestMirror" "requestMirror" $requestMirror)) }}
+{{- end }}
+{{- $rules = append $rules $r }}
+{{- end }}
+{{- with $rules }}{{ tpl (toYaml .) $ }}{{ end }}
+{{- end }}
