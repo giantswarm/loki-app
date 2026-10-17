@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The memcached and memcached-exporter images resolve to `gsoci.azurecr.io/giantswarm/`.
+
+### Changed
+
+- Disable the chunks and results caches by default.
+
 ## [0.48.0] - 2026-09-03
 
 ### Fixed
