@@ -22,9 +22,12 @@ loki:
         ruler: giantswarm-my-installation-loki
         admin: giantswarm-my-installation-loki
       type: s3
-      s3:
-        region: eu-west-1
-        # No credentials needed - IRSA handles authentication via IAM role
+      object_store:
+        type: s3
+        s3:
+          endpoint: s3.eu-west-1.amazonaws.com
+          region: eu-west-1
+          # No credentials needed - IRSA handles authentication via IAM role
 
   # IAM role ARN is created by Crossplane when aws.iam.enabled: true
   serviceAccount:

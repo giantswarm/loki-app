@@ -15,8 +15,11 @@ loki:
         chunks: gs-loki-storage-m2h60
         ruler: gs-loki-storage-m2h60
         admin: gs-loki-storage-m2h60
-      s3:
-        region: eu-west-1
+      object_store:
+        type: s3
+        s3:
+          endpoint: s3.eu-west-1.amazonaws.com
+          region: eu-west-1
 
   gateway:
     replicas: 3

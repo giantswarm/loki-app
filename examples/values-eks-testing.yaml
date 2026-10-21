@@ -25,15 +25,14 @@ loki:
         ruler: ruler
         admin: admin
       type: s3
-      s3:
-        s3: null
-        endpoint: http://loki-minio.kube-system.svc.cluster.local:9000
-        region: null
-        # The key pair needed to access minio needs to be created in the minio console.
-        secretAccessKey: adminSecretKey
-        accessKeyId: adminKey
-        s3ForcePathStyle: true
-        insecure: true
+      object_store:
+        type: s3
+        s3:
+          endpoint: loki-minio.kube-system.svc.cluster.local:9000
+          # The key pair needed to access minio needs to be created in the minio console.
+          secret_access_key: adminSecretKey
+          access_key_id: adminKey
+          insecure: true
   # Object storage mocking. The built-in MinIO subchart is deprecated upstream and
   # removed on 2026-10-31, so opt out of the hard failure for as long as it lasts.
   ignoreMinioDeprecation: true
