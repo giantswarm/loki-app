@@ -88,6 +88,10 @@ loki:
         chunks: chunks
         ruler: ruler
         admin: admin
+      # -- Use the thanos objstore client. Configure the store in `object_store`
+      #    (type, s3, azure, gcs). Loki ignores the `storage.s3` and `storage.azure` blocks.
+      #    Doc is here: https://grafana.com/docs/loki/latest/setup/migrate/migrate-storage-clients/
+      use_thanos_objstore: true
 
   gateway:
     extraContainers:
@@ -394,10 +398,10 @@ crossplane:
     # to have the Azure Workload Identity webhook and provider-kubernetes installed.
     workloadIdentity:
       # -- Enable creation of the managed identity, federated credential, role
-      # assignment and client-id Secret. Must be paired with
-      # loki.loki.storage.azure.useFederatedToken=true and the loki.defaults
-      # podLabels/extraEnv blocks documented above (else loki crashloops / the
-      # identity goes unused).
+      # assignment and client-id Secret. Must be paired with a
+      # loki.loki.storage.object_store.azure block without account_key and the
+      # loki.defaults podLabels/extraEnv blocks documented above (else loki
+      # crashloops / the identity goes unused).
       enabled: false
       # -- Cluster OIDC issuer URL (the kube-apiserver --service-account-issuer).
       # Leave empty to auto-detect it from kube-system/kubeadm-config. Set explicitly
