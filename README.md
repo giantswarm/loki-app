@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/giantswarm/loki-app.svg?style=shield)](https://circleci.com/gh/giantswarm/loki-app)
 
-Giant Swarm offers Loki as a [managed app](https://docs.giantswarm.io/changes/managed-apps/). This chart provides a distributed loki setup based on this
+Giant Swarm offers Loki as a [managed app](https://docs.giantswarm.io/overview/fleet-management/app-management/). This chart provides a distributed loki setup based on this
 [upstream chart](https://github.com/grafana/loki/tree/main/production/helm/loki).
 It tunes some options from upstream to make the chart easier to deploy.
 
@@ -35,9 +35,9 @@ storage must be ensured for the chart to work.
 
 There are several ways to install this app onto a workload cluster.
 
-- [Using GitOps to instantiate the App](https://docs.giantswarm.io/advanced/gitops/#installing-managed-apps)
-- [Using our web interface](https://docs.giantswarm.io/ui-api/web/app-platform/#installing-an-app).
-- By creating an [App resource](https://docs.giantswarm.io/ui-api/management-api/crd/apps.application.giantswarm.io/) in the management cluster as explained in [Getting started with App Platform](https://docs.giantswarm.io/app-platform/getting-started/).
+- [Using GitOps to instantiate the App](https://docs.giantswarm.io/tutorials/continuous-deployment/apps/add-appcr/)
+- [Using our web interface](https://docs.giantswarm.io/overview/developer-portal/).
+- By creating an [App resource](https://docs.giantswarm.io/reference/platform-api/crd/apps.application.giantswarm.io/) in the management cluster as explained in [Getting started with App Platform](https://docs.giantswarm.io/getting-started/install-an-application/).
 
 ## Upgrading
 
@@ -129,7 +129,7 @@ Most notable changes:
   * with `loki-app` v0.4.x:
     * [upstream values (loki-distributed 0.48.5)](https://github.com/grafana/helm-charts/blob/loki-distributed-0.48.5/charts/loki-distributed/values.yaml)
     * [default giantswarm values](https://github.com/giantswarm/loki-app/blob/3d777f261a7f820721c6732295aab56c809f4281/helm/loki/values.yaml)
-    * [giantswarm sample configs](https://github.com/giantswarm/loki-app/blob/3d777f261a7f820721c6732295aab56c809f4281/examples/values-gs.yaml)
+    * [giantswarm sample configs](https://github.com/giantswarm/loki-app/blob/3d777f261a7f820721c6732295aab56c809f4281/sample_configs/values-gs.yaml)
   * with `loki-app` v0.5.x:
     * [upstream values (official loki 3.2.1)](https://github.com/grafana/loki/blob/helm-loki-3.2.1/production/helm/loki/values.yaml)
     * [giantswarm default values](https://github.com/giantswarm/loki-app/blob/release-v0.5.x/helm/loki/values.yaml)
@@ -343,7 +343,7 @@ If you want to use it for any other scenario, know that you might need to adjust
 - [Loki demo for Giant Swarm customers (YouTube)](https://www.youtube.com/watch?v=KeJwfOiVA7o)
 - [Part 1: How the Cloud-Native Stack Helps Writing Minimal Microservices (blog series)](https://www.giantswarm.io/blog/how-the-cloud-native-stack-helps-writing-minimal-microservices/)
 - [Achieving cloud-native observability with open-source (on demand demo and slides)](https://www.giantswarm.io/on-demand-webinar-achieving-cloud-native-observability-with-open-source)
-- [The radical way Giant Swarm handles Service Level Objectives](https://www.giantswarm.io/blog/the-radical-way-giant-swarm-handles-service-level-objectives)
+- [The radical way Giant Swarm handles Service Level Objectives](https://web.archive.org/web/20250119055543/https://www.giantswarm.io/blog/the-radical-way-giant-swarm-handles-service-level-objectives)
 
 ## Credit
 
