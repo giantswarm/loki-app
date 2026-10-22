@@ -209,6 +209,20 @@ loki:
       # -- Docker image repository
       repository: giantswarm/loki-canary
 
+  # -- Memcached caches. Disabled by default.
+  chunksCache:
+    enabled: false
+  resultsCache:
+    enabled: false
+
+  memcached:
+    image:
+      repository: giantswarm/memcached
+
+  memcachedExporter:
+    image:
+      repository: giantswarm/memcached-exporter
+
   # -- Configuration of monitoring components
   monitoring:
     serviceMonitor:

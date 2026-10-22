@@ -7,12 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The memcached and memcached-exporter images resolve to `gsoci.azurecr.io/giantswarm/`.
+
 ### Changed
 
 - **Breaking:** Loki now uses the thanos objstore client (`loki.loki.storage.use_thanos_objstore: true`). Configure the store in `loki.loki.storage.object_store` (`type`, `s3`, `azure`, `gcs`). Loki ignores `loki.loki.storage.s3` and `loki.loki.storage.azure`. Set `use_thanos_objstore: false` to keep the previous client.
   - S3 needs `object_store.s3.endpoint`, for example `s3.eu-west-1.amazonaws.com`.
   - Azure Workload Identity: drop `useFederatedToken` and leave `object_store.azure.account_key` empty.
   - Bucket and container names still come from `loki.loki.storage.bucketNames`. Stored data stays readable: object paths do not change.
+- Disable the chunks and results caches by default.
 
 ### Added
 
