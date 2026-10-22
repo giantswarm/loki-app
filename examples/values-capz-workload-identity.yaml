@@ -69,8 +69,10 @@ loki:
         chunks: giantswarm-my-installation-loki
         ruler: giantswarm-my-installation-loki
         admin: giantswarm-my-installation-loki
-      azure:
-        # 'Storage account' name (sanitized container name, max 24 chars)
-        accountName: ""
-        # No accountKey — authentication uses the federated token.
-        useFederatedToken: true
+      object_store:
+        type: azure
+        azure:
+          # 'Storage account' name (sanitized container name, max 24 chars)
+          account_name: ""
+          # No account_key, connection_string or user_assigned_id: the client falls
+          # back to DefaultAzureCredential, which uses the federated token.

@@ -45,9 +45,9 @@ az storage container create \
 ```
 
 3. Go to the 'Access keys' page of your 'Storage account'
-    * Use the 'Storage account name' for `azure_storage.account_name`
-    * Use the name of the 'Blob service' 'Container' for `azure_storage.blob_container_name`
-    * Use one of the keys for `azure.storage_key`
+    * Use the 'Storage account name' for `loki.loki.storage.object_store.azure.account_name`
+    * Use the name of the 'Blob service' 'Container' for `loki.loki.storage.bucketNames`
+    * Use one of the keys for `loki.loki.storage.object_store.azure.account_key`
     * With azure CLI
 ```
 az storage account keys list \
@@ -85,8 +85,12 @@ crossplane:
 loki:
   loki:
     storage:
-      azure:
-        useFederatedToken: true  # and drop accountKey
+      object_store:
+        type: azure
+        azure:
+          account_name: <storage-account-name>
+          # no account_key: the client falls back to DefaultAzureCredential,
+          # which uses the federated token
 ```
 
 plus the `loki.defaults.podLabels` / `loki.defaults.extraEnv` blocks that label the loki pods and pass the identity's `AZURE_CLIENT_ID`/`AZURE_TENANT_ID` — the complete configuration is in [`examples/values-capz-workload-identity.yaml`](../examples/values-capz-workload-identity.yaml). Those two blocks are deliberately *not* chart defaults: the webhook mutates every pod carrying `azure.workload.identity/use: "true"` on any cluster where it runs, whether or not Loki uses a federated token, so they must be set together with `workloadIdentity.enabled` (from shared-configs, for Giant Swarm installations). They are scoped to `defaults` rather than `global`/`loki.podLabels` so the gateway and memcached pods — which never talk to object storage — stay untouched.

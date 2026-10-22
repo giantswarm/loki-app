@@ -10,11 +10,13 @@ loki:
         chunks: my-container-name
         ruler: my-container-name
         admin: my-container-name
-      azure:
-        # 'Storage account' name
-        accountName: my-account-name
-        # 'Storage account' 'Access key'
-        accountKey: my-account-key
+      object_store:
+        type: azure
+        azure:
+          # 'Storage account' name
+          account_name: my-account-name
+          # 'Storage account' 'Access key'
+          account_key: my-account-key
 
   gateway:
     replicas: 3

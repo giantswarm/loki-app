@@ -125,6 +125,15 @@ loki:
         object_store: s3
         schema: v13
         store: tsdb
+    storage:
+      object_store:
+        type: s3
+        s3:
+          # The MinIO subchart service and its default root credentials.
+          endpoint: '{{ include "loki.minio" . }}'
+          insecure: true
+          access_key_id: root-user
+          secret_access_key: supersecretpassword
     server:
       grpc_server_max_recv_msg_size: 104857600
       grpc_server_max_send_msg_size: 104857600

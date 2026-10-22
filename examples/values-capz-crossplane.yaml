@@ -32,8 +32,10 @@ loki:
         ruler: giantswarm-my-installation-loki
         admin: giantswarm-my-installation-loki
       type: azure
-      azure:
-        # Authentication via storage account keys (no workload identity needed)
-        accountName: ""  # Will be set by connection secret
-        accountKey: ""   # Will be set by connection secret
-        containerName: giantswarm-my-installation-loki
+      object_store:
+        type: azure
+        azure:
+          # Authentication via storage account keys (no workload identity needed)
+          account_name: ""  # Will be set by connection secret
+          account_key: ""   # Will be set by connection secret
+          # container_name comes from bucketNames.

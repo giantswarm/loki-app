@@ -249,7 +249,7 @@ kubectl port-forward -n loki service/loki-minio-console 8080:9001
 ```
 Change the namespace according to the one in which your loki pods and services are deployed.
 
-Then one will have to access to the minio console at `127.0.0.1:8080`. Go to `identity` --> `user` and create a new user with whatever name and password one wants and attach the correct permissions needed (most likely the `readwrite` one). Then, one will have to click on the newly created, go to `service accounts` and click on `create service account`. This is where one needs to pay attention because both the `Access Key` and the `secret Key` are present in the values mentioned earlier as `loki.loki.storage.s3.accessKeyId` and `loki.loki.storage.s3.secretAccessKey`.
+Then one will have to access to the minio console at `127.0.0.1:8080`. Go to `identity` --> `user` and create a new user with whatever name and password one wants and attach the correct permissions needed (most likely the `readwrite` one). Then, one will have to click on the newly created, go to `service accounts` and click on `create service account`. This is where one needs to pay attention because both the `Access Key` and the `secret Key` are present in the values mentioned earlier as `loki.loki.storage.object_store.s3.access_key_id` and `loki.loki.storage.object_store.s3.secret_access_key`.
 
 Set the `Access Key` and `secret Key` in the console so that they have the same value as the corresponding fields in the loki values file and voilà ! 
 
