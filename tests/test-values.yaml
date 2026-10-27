@@ -253,5 +253,3 @@ loki:
       requests:
         cpu: 100m
         memory: 1Gi
-      policyTypes:
-        - Egress
