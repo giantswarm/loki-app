@@ -237,23 +237,14 @@ See [Deploying on Azure](./docs/deploying-on-azure.md) for the storage account a
 
 You might find yourself in a situation where you want to deploy Loki on a new cluster for testing purposes only. Depending on the testing requirements, you might need to avoid creating an object storage with a cloud-provider and manage its access permissions for your Loki pods.
 
-Then you should consider deploying Loki with [MinIO](https://min.io/) as an object storage solution. To put it in a nutshell, `MinIO` is an object storage solution with a S3-like API which uses the nodes' volumes to store its data. Thus, when used for testing purposes, one can mock an S3 bucket behavior to have quick and simple object storage access for Loki without the need for complex access permissions.
+Then you should consider deploying Loki with [RustFS](https://github.com/rustfs/rustfs) as an object storage solution. `RustFS` is an S3-compatible object storage server. When used for testing purposes, it mocks an S3 bucket with quick and simple access for Loki, without cloud credentials or access permissions.
 
-The good news is that the Loki chart directly provides a `minio` field where one can configure a `minio` deployment to serve as object storage for the Loki pods. Such a configuration is displayed in the `examples/values-eks-testing.yaml` file.
+`examples/values-eks-testing.yaml` deploys a single RustFS pod through `loki.extraObjects`:
+- The RustFS pod creates the `chunks`, `ruler` and `admin` buckets at startup.
+- Its access keys are set in the pod environment and match `loki.loki.storage.object_store.s3.access_key_id` and `loki.loki.storage.object_store.s3.secret_access_key`.
+- Its data lives in an `emptyDir` volume and is lost when the pod restarts.
 
-#### Creating access keys for MinIO access
-
-Once Loki is deployed with MinIO, one will have to create a key pair in the MinIO console to grant Loki pods access to the buckets. To achieve this, one will first have to port-forward the adequate service :
-```
-kubectl port-forward -n loki service/loki-minio-console 8080:9001
-```
-Change the namespace according to the one in which your loki pods and services are deployed.
-
-Then one will have to access to the minio console at `127.0.0.1:8080`. Go to `identity` --> `user` and create a new user with whatever name and password one wants and attach the correct permissions needed (most likely the `readwrite` one). Then, one will have to click on the newly created, go to `service accounts` and click on `create service account`. This is where one needs to pay attention because both the `Access Key` and the `secret Key` are present in the values mentioned earlier as `loki.loki.storage.object_store.s3.access_key_id` and `loki.loki.storage.object_store.s3.secret_access_key`.
-
-Set the `Access Key` and `secret Key` in the console so that they have the same value as the corresponding fields in the loki values file and voilà ! 
-
-Everything is now set for testing.
+No manual step is needed.
 
 ### Testing your deployment
 

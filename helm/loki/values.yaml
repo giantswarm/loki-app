@@ -33,6 +33,11 @@ loki:
   # -- Override the name of the loki subchart
   nameOverride: ""
 
+  # -- Labels added to every resource and pod of the loki subchart
+  commonLabels:
+    application.giantswarm.io/team: atlas
+    giantswarm.io/service-type: managed
+
   # `defaults` applies to the loki component pods (read/write/backend) only, not to
   # the gateway or memcached, which never talk to object storage.
   #
