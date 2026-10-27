@@ -28,26 +28,84 @@ loki:
       object_store:
         type: s3
         s3:
-          endpoint: loki-minio.kube-system.svc.cluster.local:9000
-          # The key pair needed to access minio needs to be created in the minio console.
-          secret_access_key: adminSecretKey
-          access_key_id: adminKey
+          # The RustFS service from extraObjects below.
+          endpoint: rustfs:9000
+          secret_access_key: rustfsadmin
+          access_key_id: rustfsadmin
           insecure: true
-  # Object storage mocking. The built-in MinIO subchart is deprecated upstream and
-  # removed on 2026-10-31, so opt out of the hard failure for as long as it lasts.
-  ignoreMinioDeprecation: true
-  minio:
-    enabled: true
-    buckets:
-      - name: chunks
-        policy: none
-        purge: false
-      - name: ruler
-        policy: none
-        purge: false
-      - name: admin
-        policy: none
-        purge: false
+  # Object storage mocking: a single RustFS pod with ephemeral storage.
+  extraObjects:
+    - apiVersion: v1
+      kind: Service
+      metadata:
+        name: rustfs
+      spec:
+        selector:
+          app: rustfs
+        ports:
+          - name: http
+            port: 9000
+            targetPort: 9000
+    - apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: rustfs
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: rustfs
+        template:
+          metadata:
+            labels:
+              app: rustfs
+          spec:
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 10001
+              runAsGroup: 10001
+              fsGroup: 10001
+              seccompProfile:
+                type: RuntimeDefault
+            containers:
+              - name: rustfs
+                image: docker.io/rustfs/rustfs:1.0.4
+                ports:
+                  - containerPort: 9000
+                    name: http
+                env:
+                  - name: RUSTFS_ACCESS_KEY
+                    value: rustfsadmin
+                  - name: RUSTFS_SECRET_KEY
+                    value: rustfsadmin
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
+                volumeMounts:
+                  - name: data
+                    mountPath: /data
+                readinessProbe:
+                  httpGet:
+                    path: /health
+                    port: http
+                  periodSeconds: 10
+                # RustFS serves each top-level directory of /data as a bucket.
+                startupProbe:
+                  exec:
+                    command:
+                      - mkdir
+                      - -p
+                      - /data/chunks/
+                      - /data/ruler/
+                      - /data/admin/
+                  initialDelaySeconds: 1
+                  periodSeconds: 1
+                  failureThreshold: 10
+            volumes:
+              - name: data
+                emptyDir: {}
 
   ## When using Crossplane storage provisioning with IAM, uncomment and configure:
   # serviceAccount:
