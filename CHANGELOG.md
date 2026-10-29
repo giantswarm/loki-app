@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade the upstream loki chart from 18.13.7 to 20.0.2 (Loki 3.7.9).
 - **Breaking:** The upstream chart rejects unknown keys under `loki`. Remove any key the upstream chart does not define.
 - Raise the `loki-sc-rules` sidecar memory limit from 100Mi to 128Mi.
+- Raise the `loki-sc-rules` sidecar CPU limit from 100m to 500m.
 - **Breaking:** The upstream chart no longer bundles MinIO. Remove `loki.minio`. `examples/values-eks-testing.yaml` deploys RustFS as test object storage.
 
 ## [0.49.0] - 2026-10-22
