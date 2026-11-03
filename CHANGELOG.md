@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade the upstream loki chart from 20.0.2 to 20.2.0.
+
 ## [0.50.0] - 2026-10-29
 
 ### Changed
