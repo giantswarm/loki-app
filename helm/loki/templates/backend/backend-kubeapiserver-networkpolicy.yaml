@@ -2,8 +2,9 @@
 {{- if and .Values.loki.networkPolicy.egressKubeApiserver.enabled (ne (include "loki.ciliumPolicies" .) "true") }}
 ---
 # There is no kube-apiserver egress rule among the standard NetworkPolicies, so without
-# CiliumNetworkPolicies the backend's k8s-sidecar (rules watcher) cannot reach the API
-# server once a CNI enforces NetworkPolicies. This wrapper template fills that gap.
+# CiliumNetworkPolicies the k8s-sidecar (rules watcher) of the backend, or of the ruler in
+# Distributed mode, cannot reach the API server once a CNI enforces NetworkPolicies. This
+# wrapper template fills that gap.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -11,13 +12,13 @@ metadata:
     ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   labels:
     {{- include "loki.labels" . | nindent 4 }}
-  name: {{ include "loki.name" . }}-backend-kubeapiserver-egress
+  name: {{ include "loki.name" . }}-{{ include "loki-app.rulerComponent" . }}-kubeapiserver-egress
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
     matchLabels:
       {{- include "loki.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: backend
+      app.kubernetes.io/component: {{ include "loki-app.rulerComponent" . }}
   policyTypes:
     - Egress
   egress:

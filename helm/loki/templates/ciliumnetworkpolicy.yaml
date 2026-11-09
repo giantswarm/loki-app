@@ -183,7 +183,7 @@ spec:
 
 {{- if .Values.loki.networkPolicy.egressWorld.enabled }}
 {{- $global := . }}
-{{- $componentsList := list "read" "write" "backend" }}
+{{- $componentsList := splitList " " (include "loki-app.objectStorageComponents" .) }}
 {{- if .Values.loki.tableManager.enabled }}
 {{- $componentsList = append $componentsList "table-manager" }}
 {{- end }}
@@ -216,13 +216,13 @@ kind: CiliumNetworkPolicy
 metadata:
   annotations:
     ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
-  name: {{ include "loki.name" . }}-backend-kubeapiserver-egress
+  name: {{ include "loki.name" . }}-{{ include "loki-app.rulerComponent" . }}-kubeapiserver-egress
   namespace: {{ .Release.Namespace }}
 spec:
   endpointSelector:
     matchLabels:
       {{- include "loki.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: backend
+      app.kubernetes.io/component: {{ include "loki-app.rulerComponent" . }}
   egress:
   - toEntities:
     - kube-apiserver

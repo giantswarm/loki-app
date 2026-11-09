@@ -1,0 +1,145 @@
+suite: network policies follow the deployment mode
+templates:
+  - templates/ciliumnetworkpolicy.yaml
+  - templates/backend/backend-kubeapiserver-networkpolicy.yaml
+  - templates/backend/backend-mimir-ciliumnetworkpolicy.yaml
+release:
+  name: loki
+  namespace: loki
+tests:
+  - it: SimpleScalable gives world egress to read, write and backend
+    template: templates/ciliumnetworkpolicy.yaml
+    asserts:
+      - containsDocument:
+          kind: CiliumNetworkPolicy
+          apiVersion: cilium.io/v2
+          name: loki-read-world-egress
+          any: true
+      - containsDocument:
+          kind: CiliumNetworkPolicy
+          apiVersion: cilium.io/v2
+          name: loki-write-world-egress
+          any: true
+      - containsDocument:
+          kind: CiliumNetworkPolicy
+          apiVersion: cilium.io/v2
+          name: loki-backend-world-egress
+          any: true
+      - notExists:
+          path: metadata.name
+        documentSelector:
+          path: metadata.name
+          value: loki-ingester-world-egress
+          skipEmptyTemplates: true
+
+  - it: Distributed gives world egress to the object storage components
+    template: templates/ciliumnetworkpolicy.yaml
+    set:
+      loki.deploymentMode: Distributed
+    asserts:
+      - containsDocument:
+          kind: CiliumNetworkPolicy
+          apiVersion: cilium.io/v2
+          name: loki-ingester-world-egress
+          any: true
+      - containsDocument:
+          kind: CiliumNetworkPolicy
+          apiVersion: cilium.io/v2
+          name: loki-querier-world-egress
+          any: true
+      - containsDocument:
+          kind: CiliumNetworkPolicy
+          apiVersion: cilium.io/v2
+          name: loki-index-gateway-world-egress
+          any: true
+      - containsDocument:
+          kind: CiliumNetworkPolicy
+          apiVersion: cilium.io/v2
+          name: loki-compactor-world-egress
+          any: true
+      - containsDocument:
+          kind: CiliumNetworkPolicy
+          apiVersion: cilium.io/v2
+          name: loki-ruler-world-egress
+          any: true
+      - equal:
+          path: spec.endpointSelector.matchLabels["app.kubernetes.io/component"]
+          value: ingester
+        documentSelector:
+          path: metadata.name
+          value: loki-ingester-world-egress
+      - notExists:
+          path: metadata.name
+        documentSelector:
+          path: metadata.name
+          value: loki-write-world-egress
+          skipEmptyTemplates: true
+
+  - it: SimpleScalable gives kube-apiserver egress to backend (Cilium)
+    template: templates/ciliumnetworkpolicy.yaml
+    documentSelector:
+      path: metadata.name
+      value: loki-backend-kubeapiserver-egress
+    asserts:
+      - equal:
+          path: spec.endpointSelector.matchLabels["app.kubernetes.io/component"]
+          value: backend
+
+  - it: Distributed gives kube-apiserver egress to ruler (Cilium)
+    template: templates/ciliumnetworkpolicy.yaml
+    set:
+      loki.deploymentMode: Distributed
+    documentSelector:
+      path: metadata.name
+      value: loki-ruler-kubeapiserver-egress
+    asserts:
+      - equal:
+          path: spec.endpointSelector.matchLabels["app.kubernetes.io/component"]
+          value: ruler
+
+  - it: SimpleScalable gives kube-apiserver egress to backend (NetworkPolicy)
+    template: templates/backend/backend-kubeapiserver-networkpolicy.yaml
+    set:
+      ciliumNetworkPolicy.enabled: false
+    asserts:
+      - equal:
+          path: metadata.name
+          value: loki-backend-kubeapiserver-egress
+      - equal:
+          path: spec.podSelector.matchLabels["app.kubernetes.io/component"]
+          value: backend
+
+  - it: Distributed gives kube-apiserver egress to ruler (NetworkPolicy)
+    template: templates/backend/backend-kubeapiserver-networkpolicy.yaml
+    set:
+      ciliumNetworkPolicy.enabled: false
+      loki.deploymentMode: Distributed
+    asserts:
+      - equal:
+          path: metadata.name
+          value: loki-ruler-kubeapiserver-egress
+      - equal:
+          path: spec.podSelector.matchLabels["app.kubernetes.io/component"]
+          value: ruler
+
+  - it: SimpleScalable gives Mimir egress to backend
+    template: templates/backend/backend-mimir-ciliumnetworkpolicy.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: loki-backend-mimir-egress
+      - equal:
+          path: spec.endpointSelector.matchLabels["app.kubernetes.io/component"]
+          value: backend
+
+  - it: Distributed gives Mimir egress to ruler
+    template: templates/backend/backend-mimir-ciliumnetworkpolicy.yaml
+    set:
+      loki.deploymentMode: Distributed
+    asserts:
+      - equal:
+          path: metadata.name
+          value: loki-ruler-mimir-egress
+      - equal:
+          path: spec.endpointSelector.matchLabels["app.kubernetes.io/component"]
+          value: ruler

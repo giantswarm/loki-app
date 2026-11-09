@@ -1,0 +1,26 @@
+suite: upstream validation accepts both deployment modes
+templates:
+  - charts/loki/templates/validate.yaml
+release:
+  name: loki
+  namespace: loki
+tests:
+  - it: accepts the default SimpleScalable values
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: accepts Distributed with the SimpleScalable targets scaled to 0
+    set:
+      loki.deploymentMode: Distributed
+      loki.read.replicas: 0
+      loki.write.replicas: 0
+      loki.backend.replicas: 0
+      loki.ingester.replicas: 3
+      loki.querier.replicas: 2
+      loki.queryFrontend.replicas: 2
+      loki.queryScheduler.replicas: 2
+      loki.indexGateway.replicas: 2
+      loki.compactor.replicas: 1
+      loki.ruler.replicas: 2
+    asserts:
+      - notFailedTemplate: {}

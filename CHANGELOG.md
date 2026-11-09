@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add defaults for `deploymentMode: Distributed`: distributor autoscaling, one ingester StatefulSet without zone-aware replication, ingester PVCs deleted with the StatefulSet, the ruler rules sidecar, the pattern-ingester, and resources for every component. `SimpleScalable` stays the default mode. To select Distributed mode, set `loki.read.replicas`, `loki.write.replicas` and `loki.backend.replicas` to 0, and set replicas for the ingester, querier, query-frontend, query-scheduler, index-gateway, compactor and ruler.
+- Add helm-unittest suites under `helm/loki/tests/`.
+
 ### Changed
 
 - Upgrade the upstream loki chart from 20.0.2 to 20.2.0.
+- The world egress, kube-apiserver egress and Mimir egress network policies select the Distributed components when `deploymentMode` is `Distributed`.
 
 ## [0.50.0] - 2026-10-29
 
