@@ -8,7 +8,7 @@ metadata:
     ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
   labels:
     {{- include "loki.labels" . | nindent 4 }}
-  name: {{ include "loki.name" . }}-backend-mimir-egress
+  name: {{ include "loki.name" . }}-{{ include "loki-app.rulerComponent" . }}-mimir-egress
   namespace: {{ .Release.Namespace }}
 spec:
   egress:
@@ -32,6 +32,6 @@ spec:
   endpointSelector:
     matchLabels:
       {{- include "loki.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: backend
+      app.kubernetes.io/component: {{ include "loki-app.rulerComponent" . }}
 {{- end }}
 {{- end }}

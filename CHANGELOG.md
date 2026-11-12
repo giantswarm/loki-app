@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add defaults for `deploymentMode: Distributed`. `SimpleScalable` stays the default.
+- Add helm-unittest suites under `helm/loki/tests/`.
+
 ### Changed
 
 - Upgrade the upstream loki chart from 20.0.2 to 20.2.0.
+- Network policies follow `deploymentMode`.
 
 ## [0.50.0] - 2026-10-29
 

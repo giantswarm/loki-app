@@ -202,6 +202,111 @@ loki:
         memory: 3Gi
         cpu: 500m
 
+  # Distributed mode components. They render only with `deploymentMode: Distributed`.
+  #
+  # Upstream fails the render when read/write/backend and the distributed targets (ingester,
+  # querier, query-frontend, query-scheduler, index-gateway, compactor, ruler) both have
+  # replicas, in any mode. So their replica counts stay at the upstream 0 here: a consumer
+  # that selects Distributed sets read/write/backend to 0 and these targets to their sizes.
+
+  distributor:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        memory: 256Mi
+        cpu: 100m
+
+  ingester:
+    # -- One StatefulSet. Zone-aware replication needs the rollout-operator.
+    zoneAwareReplication:
+      enabled: false
+    # -- Same WAL volume as `write`. The PVCs go with the StatefulSet: ingesters flush
+    # to object storage on shutdown (`ingester.wal.flush_on_shutdown`).
+    persistence:
+      enabled: true
+      claims:
+        - name: data
+          accessModes:
+            - ReadWriteOnce
+          size: 40Gi
+      enableStatefulSetAutoDeletePVC: true
+      whenDeleted: Delete
+      whenScaled: Delete
+    resources:
+      limits:
+        memory: 4Gi
+      requests:
+        memory: 3Gi
+        cpu: 500m
+
+  querier:
+    resources:
+      limits:
+        memory: 3Gi
+      requests:
+        memory: 1Gi
+        cpu: 200m
+
+  queryFrontend:
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        memory: 256Mi
+        cpu: 100m
+
+  queryScheduler:
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
+        cpu: 50m
+
+  indexGateway:
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        memory: 512Mi
+        cpu: 100m
+
+  compactor:
+    resources:
+      limits:
+        memory: 3Gi
+      requests:
+        memory: 1Gi
+        cpu: 200m
+
+  ruler:
+    # -- Run the rules sidecar, which loads the ConfigMaps labelled `loki_rule`.
+    sidecar: true
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        memory: 512Mi
+        cpu: 100m
+
+  # -- Matches `pattern_ingester.enabled` in the Loki config.
+  patternIngester:
+    enabled: true
+    replicas: 1
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        memory: 512Mi
+        cpu: 100m
+
   # -- Canary configuration
   # The Loki canary pushes logs to and queries from this loki installation to test
   # that it's working correctly

@@ -19,6 +19,29 @@ Returns a string, so compare it: `eq (include "loki.ciliumPolicies" .) "true"`.
 {{- end }}
 
 {{/*
+The component that runs the ruler and its rules sidecar: `ruler` in Distributed mode,
+`backend` otherwise.
+*/}}
+{{- define "loki-app.rulerComponent" -}}
+{{- if eq .Values.loki.deploymentMode "Distributed" -}}
+ruler
+{{- else -}}
+backend
+{{- end -}}
+{{- end }}
+
+{{/*
+The components that talk to object storage, as a space-separated string.
+*/}}
+{{- define "loki-app.objectStorageComponents" -}}
+{{- if eq .Values.loki.deploymentMode "Distributed" -}}
+ingester querier index-gateway compactor ruler
+{{- else -}}
+read write backend
+{{- end -}}
+{{- end }}
+
+{{/*
 Common labels
 */}}
 {{- define "loki.labels" -}}

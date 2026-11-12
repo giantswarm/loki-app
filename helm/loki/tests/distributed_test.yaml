@@ -1,0 +1,103 @@
+suite: Distributed mode defaults
+templates:
+  # The workloads checksum the rendered Loki config.
+  - charts/loki/templates/config.yaml
+  - charts/loki/templates/distributor/workload.yaml
+  - charts/loki/templates/distributor/hpa.yaml
+  - charts/loki/templates/ingester/workload.yaml
+  - charts/loki/templates/querier/workload.yaml
+  - charts/loki/templates/query-frontend/workload.yaml
+  - charts/loki/templates/query-scheduler/workload.yaml
+  - charts/loki/templates/index-gateway/workload.yaml
+  - charts/loki/templates/compactor/workload.yaml
+  - charts/loki/templates/ruler/workload.yaml
+  - charts/loki/templates/pattern-ingester/workload.yaml
+release:
+  name: loki
+  namespace: loki
+# What a consumer sets to select Distributed mode: see the comment above
+# `loki.distributor` in values.yaml.
+set:
+  loki.deploymentMode: Distributed
+  loki.read.replicas: 0
+  loki.write.replicas: 0
+  loki.backend.replicas: 0
+  loki.ingester.replicas: 3
+  loki.querier.replicas: 2
+  loki.queryFrontend.replicas: 2
+  loki.queryScheduler.replicas: 2
+  loki.indexGateway.replicas: 2
+  loki.compactor.replicas: 1
+  loki.ruler.replicas: 2
+tests:
+  - it: autoscales the distributor from 2 replicas
+    template: charts/loki/templates/distributor/hpa.yaml
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - equal:
+          path: spec.minReplicas
+          value: 2
+
+  - it: runs the ingesters in a single StatefulSet
+    template: charts/loki/templates/ingester/workload.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: StatefulSet
+      - equal:
+          path: metadata.name
+          value: loki-ingester
+
+  - it: gives the ingesters a 40Gi PVC deleted with the StatefulSet
+    template: charts/loki/templates/ingester/workload.yaml
+    asserts:
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.resources.requests.storage
+          value: 40Gi
+      - equal:
+          path: spec.persistentVolumeClaimRetentionPolicy
+          value:
+            whenDeleted: Delete
+            whenScaled: Delete
+
+  - it: runs the rules sidecar in the ruler
+    template: charts/loki/templates/ruler/workload.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers
+          content:
+            name: loki-sc-rules
+          any: true
+
+  - it: runs 1 pattern-ingester
+    template: charts/loki/templates/pattern-ingester/workload.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.replicas
+          value: 1
+
+  - it: runs every Deployment as the shared loki ServiceAccount
+    documentSelector:
+      path: kind
+      value: Deployment
+      matchMany: true
+      skipEmptyTemplates: true
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: loki
+
+  - it: runs every StatefulSet as the shared loki ServiceAccount
+    documentSelector:
+      path: kind
+      value: StatefulSet
+      matchMany: true
+      skipEmptyTemplates: true
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: loki
