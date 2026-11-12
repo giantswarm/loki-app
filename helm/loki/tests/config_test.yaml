@@ -1,0 +1,23 @@
+suite: Loki config
+templates:
+  - charts/loki/templates/config.yaml
+release:
+  name: loki
+  namespace: loki
+tests:
+  - it: enables multi-tenant queries in SimpleScalable mode
+    asserts:
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: '(?m)^querier:\n  multi_tenant_queries_enabled: true$'
+
+  - it: enables multi-tenant queries in Distributed mode
+    set:
+      loki.deploymentMode: Distributed
+      loki.read.replicas: 0
+      loki.write.replicas: 0
+      loki.backend.replicas: 0
+    asserts:
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: '(?m)^querier:\n  multi_tenant_queries_enabled: true$'

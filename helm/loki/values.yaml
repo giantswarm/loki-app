@@ -73,6 +73,11 @@ loki:
     image:
       repository: giantswarm/loki
 
+    # -- Allow queries across several tenants (`X-Scope-OrgID: a|b`). Set in the config, not
+    # as a `read` extra arg, so every component that queries gets it in both deployment modes.
+    querier:
+      multi_tenant_queries_enabled: true
+
     # -- Loki Storage schema configuration
     #    Loki 3 requires a schema to be configured so we configure v13, the latest.
     #    Doc is here: https://grafana.com/docs/loki/latest/configure/storage/#schema-config
@@ -182,8 +187,6 @@ loki:
       requests:
         memory: 1Gi
         cpu: 200m
-    extraArgs:
-      - -querier.multi-tenant-queries-enabled
 
   write:
     # -- Disable per-component service account so write uses the shared
