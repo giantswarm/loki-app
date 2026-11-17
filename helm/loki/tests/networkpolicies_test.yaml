@@ -77,6 +77,8 @@ tests:
 
   - it: SimpleScalable gives kube-apiserver egress to backend (Cilium)
     template: templates/ciliumnetworkpolicy.yaml
+    set:
+      loki.sidecar.rules.enabled: true
     documentSelector:
       path: metadata.name
       value: loki-backend-kubeapiserver-egress
@@ -88,6 +90,7 @@ tests:
   - it: Distributed gives kube-apiserver egress to ruler (Cilium)
     template: templates/ciliumnetworkpolicy.yaml
     set:
+      loki.sidecar.rules.enabled: true
       loki.deploymentMode: Distributed
     documentSelector:
       path: metadata.name
@@ -101,6 +104,7 @@ tests:
     template: templates/backend/backend-kubeapiserver-networkpolicy.yaml
     set:
       ciliumNetworkPolicy.enabled: false
+      loki.sidecar.rules.enabled: true
     asserts:
       - equal:
           path: metadata.name
@@ -113,6 +117,7 @@ tests:
     template: templates/backend/backend-kubeapiserver-networkpolicy.yaml
     set:
       ciliumNetworkPolicy.enabled: false
+      loki.sidecar.rules.enabled: true
       loki.deploymentMode: Distributed
     asserts:
       - equal:
@@ -121,6 +126,24 @@ tests:
       - equal:
           path: spec.podSelector.matchLabels["app.kubernetes.io/component"]
           value: ruler
+
+  - it: gives no kube-apiserver egress without the rules sidecar (Cilium)
+    template: templates/ciliumnetworkpolicy.yaml
+    asserts:
+      - notExists:
+          path: metadata.name
+        documentSelector:
+          path: metadata.name
+          value: loki-backend-kubeapiserver-egress
+          skipEmptyTemplates: true
+
+  - it: gives no kube-apiserver egress without the rules sidecar (NetworkPolicy)
+    template: templates/backend/backend-kubeapiserver-networkpolicy.yaml
+    set:
+      ciliumNetworkPolicy.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
 
   - it: SimpleScalable gives Mimir egress to backend
     template: templates/backend/backend-mimir-ciliumnetworkpolicy.yaml

@@ -290,8 +290,6 @@ loki:
         cpu: 200m
 
   ruler:
-    # -- Run the rules sidecar, which loads the ConfigMaps labelled `loki_rule`.
-    sidecar: true
     resources:
       limits:
         memory: 2Gi
@@ -351,7 +349,7 @@ loki:
       # -- Enable additional cilium egress rules to coredns for write, read and backend.
       enabled: true
     egressKubeApiserver:
-      # -- Enable additional cilium egress rules to kube-apiserver for backend.
+      # -- Enable egress to kube-apiserver for the rules sidecar. Applies only with `sidecar.rules.enabled`.
       enabled: true
     egressMimir:
       # -- Enable additional cilium egress rules to Mimir for backend.
@@ -367,6 +365,10 @@ loki:
   sidecar:
     image:
       repository: giantswarm/k8s-sidecar
+    rules:
+      # -- Rules load through the ruler API into ruler storage. The sidecar would
+      # need cluster-wide read on ConfigMaps and Secrets.
+      enabled: false
     resources:
       limits:
         cpu: 500m

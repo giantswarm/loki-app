@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Disable the Loki rules sidecar. Rules load through the ruler API.
+
 ## [0.50.2] - 2026-11-17
 
 ### Changed

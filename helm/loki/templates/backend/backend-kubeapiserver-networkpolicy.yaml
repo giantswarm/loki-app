@@ -1,5 +1,5 @@
 {{- if .Values.loki.enabled }}
-{{- if and .Values.loki.networkPolicy.egressKubeApiserver.enabled (ne (include "loki.ciliumPolicies" .) "true") }}
+{{- if and .Values.loki.networkPolicy.egressKubeApiserver.enabled .Values.loki.sidecar.rules.enabled (ne (include "loki.ciliumPolicies" .) "true") }}
 ---
 # There is no kube-apiserver egress rule among the standard NetworkPolicies, so without
 # CiliumNetworkPolicies the k8s-sidecar (rules watcher) of the backend, or of the ruler in

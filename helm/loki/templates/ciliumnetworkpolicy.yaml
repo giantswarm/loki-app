@@ -209,7 +209,7 @@ spec:
 {{- end }}
 {{- end }}
 
-{{- if .Values.loki.networkPolicy.egressKubeApiserver.enabled }}
+{{- if and .Values.loki.networkPolicy.egressKubeApiserver.enabled .Values.loki.sidecar.rules.enabled }}
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
