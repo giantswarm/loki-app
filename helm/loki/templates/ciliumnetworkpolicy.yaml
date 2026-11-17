@@ -209,25 +209,6 @@ spec:
 {{- end }}
 {{- end }}
 
-{{- if and .Values.loki.networkPolicy.egressKubeApiserver.enabled .Values.loki.sidecar.rules.enabled }}
----
-apiVersion: "cilium.io/v2"
-kind: CiliumNetworkPolicy
-metadata:
-  annotations:
-    ignore-check.kube-linter.io/sorted-keys: "imported lists from upstream chart can't be sorted (`loki.labels` and `loki.selectorLabels`)"
-  name: {{ include "loki.name" . }}-{{ include "loki-app.rulerComponent" . }}-kubeapiserver-egress
-  namespace: {{ .Release.Namespace }}
-spec:
-  endpointSelector:
-    matchLabels:
-      {{- include "loki.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: {{ include "loki-app.rulerComponent" . }}
-  egress:
-  - toEntities:
-    - kube-apiserver
-{{- end }}
-
 {{- end }}
 
 {{- if and .Values.loki.enabled .Values.loki.networkPolicy.discovery.port (eq (include "loki.ciliumPolicies" .) "true") }}

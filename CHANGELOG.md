@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Disable the Loki rules sidecar. Rules load through the ruler API.
 
+### Removed
+
+- Remove the kube-apiserver egress policies and `loki.networkPolicy.egressKubeApiserver`.
+
 ## [0.50.2] - 2026-11-17
 
 ### Changed

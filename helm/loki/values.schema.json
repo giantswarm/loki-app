@@ -588,14 +588,6 @@
                                 }
                             }
                         },
-                        "egressKubeApiserver": {
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "type": "boolean"
-                                }
-                            }
-                        },
                         "egressMimir": {
                             "type": "object",
                             "properties": {

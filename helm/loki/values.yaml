@@ -348,9 +348,6 @@ loki:
     egressCoredns:
       # -- Enable additional cilium egress rules to coredns for write, read and backend.
       enabled: true
-    egressKubeApiserver:
-      # -- Enable egress to kube-apiserver for the rules sidecar. Applies only with `sidecar.rules.enabled`.
-      enabled: true
     egressMimir:
       # -- Enable additional cilium egress rules to Mimir for backend.
       enabled: true
@@ -366,8 +363,8 @@ loki:
     image:
       repository: giantswarm/k8s-sidecar
     rules:
-      # -- Rules load through the ruler API into ruler storage. The sidecar would
-      # need cluster-wide read on ConfigMaps and Secrets.
+      # -- Not supported: the ruler reads rules from ruler storage, never from the
+      # sidecar's folder. Rules load through the ruler API.
       enabled: false
     resources:
       limits:
