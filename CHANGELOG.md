@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.50.2] - 2026-11-17
+
 ### Changed
 
 - Multi-tenant queries are enabled in the Loki config, for both deployment modes.
@@ -943,7 +945,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.50.1...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.50.2...HEAD
+[0.50.2]: https://github.com/giantswarm/loki-app/compare/v0.50.1...v0.50.2
 [0.50.1]: https://github.com/giantswarm/loki-app/compare/v0.50.0...v0.50.1
 [0.50.0]: https://github.com/giantswarm/loki-app/compare/v0.49.0...v0.50.0
 [0.49.0]: https://github.com/giantswarm/loki-app/compare/v0.48.0...v0.49.0
