@@ -1,0 +1,25 @@
+suite: RBAC without the rules sidecar
+templates:
+  - charts/loki/templates/config.yaml
+  - charts/loki/templates/backend/clusterrole.yaml
+  - charts/loki/templates/backend/workload.yaml
+release:
+  name: loki
+  namespace: loki
+tests:
+  - it: gives the ClusterRole no rules
+    template: charts/loki/templates/backend/clusterrole.yaml
+    asserts:
+      - isKind:
+          of: ClusterRole
+      - isEmpty:
+          path: rules
+
+  - it: runs the backend without the rules sidecar
+    template: charts/loki/templates/backend/workload.yaml
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers
+          content:
+            name: loki-sc-rules
+          any: true

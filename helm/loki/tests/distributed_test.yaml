@@ -62,10 +62,10 @@ tests:
             whenDeleted: Delete
             whenScaled: Delete
 
-  - it: runs the rules sidecar in the ruler
+  - it: runs the ruler without the rules sidecar
     template: charts/loki/templates/ruler/workload.yaml
     asserts:
-      - contains:
+      - notContains:
           path: spec.template.spec.containers
           content:
             name: loki-sc-rules
