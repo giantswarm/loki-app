@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Multi-tenant queries are enabled in the Loki config, for both deployment modes.
+
 ## [0.50.1] - 2026-11-12
 
 ### Added
