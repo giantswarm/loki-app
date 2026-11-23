@@ -213,6 +213,19 @@ loki:
   # that selects Distributed sets read/write/backend to 0 and these targets to their sizes.
 
   distributor:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: distributor
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     autoscaling:
       enabled: true
       minReplicas: 2
@@ -227,6 +240,19 @@ loki:
         cpu: 100m
 
   ingester:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: ingester
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     # -- One StatefulSet. Zone-aware replication needs the rollout-operator.
     zoneAwareReplication:
       enabled: false
@@ -250,6 +276,19 @@ loki:
         cpu: 500m
 
   querier:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: querier
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     resources:
       limits:
         memory: 3Gi
@@ -258,6 +297,19 @@ loki:
         cpu: 200m
 
   queryFrontend:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: query-frontend
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     resources:
       limits:
         memory: 1Gi
@@ -266,6 +318,19 @@ loki:
         cpu: 100m
 
   queryScheduler:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: query-scheduler
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     resources:
       limits:
         memory: 512Mi
@@ -274,6 +339,19 @@ loki:
         cpu: 50m
 
   indexGateway:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: index-gateway
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     resources:
       limits:
         memory: 2Gi
@@ -282,6 +360,19 @@ loki:
         cpu: 100m
 
   compactor:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: compactor
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     resources:
       limits:
         memory: 3Gi
@@ -290,6 +381,19 @@ loki:
         cpu: 200m
 
   ruler:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: ruler
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     resources:
       limits:
         memory: 2Gi
@@ -299,6 +403,19 @@ loki:
 
   # -- Matches `pattern_ingester.enabled` in the Loki config.
   patternIngester:
+    # -- Soft anti-affinity. Upstream requires 1 pod per node and ignores `affinity: {}`.
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: pattern-ingester
+                  app.kubernetes.io/name: '{{ include "loki.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}'
+              topologyKey: kubernetes.io/hostname
+        requiredDuringSchedulingIgnoredDuringExecution: []
     enabled: true
     replicas: 1
     resources:
