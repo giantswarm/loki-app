@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.50.3] - 2026-11-24
+
 ### Changed
 
 - Disable the Loki rules sidecar. Rules load through the ruler API.
@@ -955,7 +957,8 @@ Notes:
 
 - Initial release of the App.
 
-[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.50.2...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-app/compare/v0.50.3...HEAD
+[0.50.3]: https://github.com/giantswarm/loki-app/compare/v0.50.2...v0.50.3
 [0.50.2]: https://github.com/giantswarm/loki-app/compare/v0.50.1...v0.50.2
 [0.50.1]: https://github.com/giantswarm/loki-app/compare/v0.50.0...v0.50.1
 [0.50.0]: https://github.com/giantswarm/loki-app/compare/v0.49.0...v0.50.0
