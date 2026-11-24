@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Disable the Loki rules sidecar. Rules load through the ruler API.
+- Give the Distributed mode components soft pod anti-affinity. Upstream requires 1 pod per node.
 - Update architect to v10.18.0 (giantswarm/loki-app#601)
 
 ### Removed

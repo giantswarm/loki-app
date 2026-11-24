@@ -101,3 +101,29 @@ tests:
       - equal:
           path: spec.template.spec.serviceAccountName
           value: loki
+
+  - it: spreads every Deployment without requiring 1 pod per node
+    documentSelector:
+      path: kind
+      value: Deployment
+      matchMany: true
+      skipEmptyTemplates: true
+    asserts:
+      - isNullOrEmpty:
+          path: spec.template.spec.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution
+      - equal:
+          path: spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.topologyKey
+          value: kubernetes.io/hostname
+
+  - it: spreads every StatefulSet without requiring 1 pod per node
+    documentSelector:
+      path: kind
+      value: StatefulSet
+      matchMany: true
+      skipEmptyTemplates: true
+    asserts:
+      - isNullOrEmpty:
+          path: spec.template.spec.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution
+      - equal:
+          path: spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.topologyKey
+          value: kubernetes.io/hostname
